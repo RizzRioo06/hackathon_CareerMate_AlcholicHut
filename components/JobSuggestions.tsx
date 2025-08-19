@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Briefcase, MapPin, Building, ExternalLink, Loader2, TrendingUp } from 'lucide-react'
+import { Briefcase, MapPin, Building, ExternalLink, Loader2, TrendingUp, Search, Target, Star, Clock, DollarSign, Users } from 'lucide-react'
 
 interface JobOpportunity {
   title: string
@@ -65,219 +65,269 @@ export default function JobSuggestions() {
   }
 
   const getSkillMatchColor = (match: number) => {
-    if (match >= 80) return 'text-green-600'
-    if (match >= 60) return 'text-yellow-600'
-    return 'text-red-600'
+    if (match >= 80) return 'text-emerald-400'
+    if (match >= 60) return 'text-amber-400'
+    return 'text-red-400'
   }
 
   const getSkillMatchBg = (match: number) => {
-    if (match >= 80) return 'bg-green-100'
-    if (match >= 60) return 'bg-yellow-100'
-    return 'bg-red-100'
+    if (match >= 80) return 'bg-emerald-900/20'
+    if (match >= 60) return 'bg-amber-900/20'
+    return 'bg-red-900/20'
   }
 
   return (
-    <div className="space-y-8">
-      {/* Header */}
-      <div className="text-center">
-        <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
-          <Briefcase className="h-8 w-8 text-purple-600" />
+    <div className="space-y-16">
+      {/* Enhanced Header */}
+      <div className="text-center relative">
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div className="w-40 h-40 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse-glow"></div>
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Job Opportunities</h2>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-          Discover personalized job and internship opportunities based on your skills and preferences. 
-          Our AI analyzes your profile to find the best matches in the market.
-        </p>
+        <div className="relative">
+          <div className="inline-flex items-center justify-center w-28 h-28 bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl shadow-2xl mb-8 animate-bounce-in">
+            <Briefcase className="h-14 w-14 text-white" />
+          </div>
+          <h2 className="text-5xl font-bold gradient-text mb-6">Job Opportunities</h2>
+          <p className="text-xl text-slate-300 max-w-4xl mx-auto leading-relaxed">
+            Discover personalized job and internship opportunities based on your skills and preferences. 
+            Our AI analyzes your profile to find the best matches in the market.
+          </p>
+        </div>
       </div>
 
-      {/* Form */}
-      <div className="card max-w-4xl mx-auto">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label htmlFor="skills" className="block text-sm font-medium text-gray-700 mb-2">
-                Your Skills
-              </label>
-              <textarea
-                id="skills"
-                name="skills"
-                value={formData.skills}
-                onChange={handleInputChange}
-                placeholder="e.g., JavaScript, React, Python, AWS, Docker..."
-                className="input-field h-24 resize-none"
-                required
-              />
+      {/* Enhanced Form */}
+      <div className="card max-w-6xl mx-auto relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-purple-400/10 to-pink-400/10 rounded-full blur-2xl"></div>
+        <div className="relative">
+          <div className="flex items-center space-x-4 mb-10">
+            <div className="p-4 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl">
+              <Target className="h-7 w-7 text-white" />
             </div>
-            
-            <div>
-              <label htmlFor="experience" className="block text-sm font-medium text-gray-700 mb-2">
-                Years of Experience
-              </label>
-              <input
-                type="text"
-                id="experience"
-                name="experience"
-                value={formData.experience}
-                onChange={handleInputChange}
-                placeholder="e.g., 2 years, Entry level, 5+ years..."
-                className="input-field"
-                required
-              />
-            </div>
+            <h3 className="text-3xl font-bold text-slate-100">Your Profile</h3>
           </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-2">
-                Preferred Location
-              </label>
-              <input
-                type="text"
-                id="location"
-                name="location"
-                value={formData.location}
-                onChange={handleInputChange}
-                placeholder="e.g., San Francisco, Remote, New York..."
-                className="input-field"
-                required
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="preferredRole" className="block text-sm font-medium text-gray-700 mb-2">
-                Preferred Role
-              </label>
-              <input
-                type="text"
-                id="preferredRole"
-                name="preferredRole"
-                value={formData.preferredRole}
-                onChange={handleInputChange}
-                placeholder="e.g., Frontend Developer, Data Scientist..."
-                className="input-field"
-                required
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label htmlFor="education" className="block text-sm font-medium text-gray-700 mb-2">
-                Education Level
-              </label>
-              <input
-                type="text"
-                id="education"
-                name="education"
-                value={formData.education}
-                onChange={handleInputChange}
-                placeholder="e.g., Bachelor's, Master's, Bootcamp..."
-                className="input-field"
-                required
-              />
-            </div>
-            
-            <div>
-              <label htmlFor="interests" className="block text-sm font-medium text-gray-700 mb-2">
-                Areas of Interest
-              </label>
-              <input
-                type="text"
-                id="interests"
-                name="interests"
-                value={formData.interests}
-                onChange={handleInputChange}
-                placeholder="e.g., AI/ML, Web3, Cloud, Mobile..."
-                className="input-field"
-                required
-              />
-            </div>
-          </div>
-
-          <div className="text-center">
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="btn-primary px-8 py-3 text-lg disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isLoading ? (
-                <div className="flex items-center space-x-2">
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                  <span>Finding Opportunities...</span>
-                </div>
-              ) : (
-                'Find Job Opportunities'
-              )}
-            </button>
-          </div>
-        </form>
-      </div>
-
-      {/* Response */}
-      {response && (
-        <div className="max-w-6xl mx-auto space-y-8 animate-slide-up">
-          {/* Skill Match Analysis */}
-          <div className="card">
-            <div className="flex items-center space-x-3 mb-6">
-              <TrendingUp className="h-6 w-6 text-blue-600" />
-              <h3 className="text-xl font-semibold text-gray-900">Skill Match Analysis</h3>
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {Object.entries(response.skillMatch).map(([skill, match]) => (
-                <div key={skill} className="text-center">
-                  <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full mb-2 ${getSkillMatchBg(match)}`}>
-                    <span className={`text-lg font-bold ${getSkillMatchColor(match)}`}>
-                      {match}%
-                    </span>
+          
+          <form onSubmit={handleSubmit} className="space-y-10">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <div className="space-y-6">
+                <label htmlFor="skills" className="block text-lg font-semibold text-slate-200 mb-4">
+                  <div className="flex items-center space-x-3 mb-3">
+                    <Star className="h-6 w-6 text-purple-400" />
+                    <span>Skills/Technologies</span>
                   </div>
-                  <p className="text-sm text-gray-600">{skill}</p>
+                </label>
+                <input
+                  id="skills"
+                  name="skills"
+                  type="text"
+                  value={formData.skills}
+                  onChange={handleInputChange}
+                  placeholder="e.g., JavaScript, React, Python, AWS, Docker..."
+                  className="input-field"
+                  required
+                />
+              </div>
+              
+              <div className="space-y-6">
+                <label htmlFor="location" className="block text-lg font-semibold text-slate-200 mb-4">
+                  <div className="flex items-center space-x-3 mb-3">
+                    <MapPin className="h-6 w-6 text-red-400" />
+                    <span>Location</span>
+                  </div>
+                </label>
+                <input
+                  type="text"
+                  id="location"
+                  name="location"
+                  value={formData.location}
+                  onChange={handleInputChange}
+                  placeholder="e.g., San Francisco, Remote, New York..."
+                  className="input-field"
+                  required
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <div className="space-y-6">
+                <label htmlFor="education" className="block text-lg font-semibold text-slate-200 mb-4">
+                  <div className="flex items-center space-x-3 mb-3">
+                    <Users className="h-6 w-6 text-yellow-400" />
+                    <span>Education</span>
+                  </div>
+                </label>
+                <input
+                  type="text"
+                  id="education"
+                  name="education"
+                  value={formData.education}
+                  onChange={handleInputChange}
+                  placeholder="e.g., Bachelor's, Master's, Bootcamp..."
+                  className="input-field"
+                  required
+                />
+              </div>
+              
+              <div className="space-y-6">
+                <label htmlFor="experience" className="block text-lg font-semibold text-slate-200 mb-4">
+                  <div className="flex items-center space-x-3 mb-3">
+                  <Clock className="h-6 w-6 text-blue-400" />
+                    <span>Experience</span>
+                  </div>
+                </label>
+                <input
+                  type="text"
+                  id="experience"
+                  name="experience"
+                  value={formData.experience}
+                  onChange={handleInputChange}
+                  placeholder="e.g., 2 years, Entry level, 5+ years..."
+                  className="input-field"
+                  required
+                />
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+              <div className="space-y-6">
+                <label htmlFor="preferredRole" className="block text-lg font-semibold text-slate-200 mb-4">
+                  <div className="flex items-center space-x-3 mb-3">
+                    <Briefcase className="h-6 w-6 text-green-400" />
+                    <span>Job Roles</span>
+                  </div>
+                </label>
+                <input
+                  type="text"
+                  id="preferredRole"
+                  name="preferredRole"
+                  value={formData.preferredRole}
+                  onChange={handleInputChange}
+                  placeholder="e.g., Frontend Developer, Data Scientist..."
+                  className="input-field"
+                  required
+                />
+              </div>
+              
+              <div className="space-y-6">
+                <label htmlFor="interests" className="block text-lg font-semibold text-slate-200 mb-4">
+                  <div className="flex items-center space-x-3 mb-3">
+                    <TrendingUp className="h-6 w-6 text-cyan-400" />
+                    <span>Interests/Specialization</span>
+                  </div>
+                </label>
+                <input
+                  type="text"
+                  id="interests"
+                  name="interests"
+                  value={formData.interests}
+                  onChange={handleInputChange}
+                  placeholder="e.g., AI/ML, Web3, Cloud, Mobile..."
+                  className="input-field"
+                  required
+                />
+              </div>
+            </div>
+            
+            <div className="flex justify-center pt-6">
+              <button
+                type="submit"
+                disabled={isLoading}
+                className="btn-primary text-lg px-12 py-5"
+              >
+                {isLoading ? (
+                  <div className="flex items-center space-x-3">
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                    <span>Finding Opportunities...</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center space-x-3">
+                    <Search className="h-6 w-6" />
+                    <span>Find Job Opportunities</span>
+                  </div>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      {/* Enhanced Response */}
+      {response && (
+        <div className="max-w-7xl mx-auto space-y-16 animate-slide-up">
+          {/* Enhanced Skill Match Analysis */}
+          <div className="card relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-2xl"></div>
+            <div className="relative">
+              <div className="flex items-center space-x-4 mb-8">
+                <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl">
+                  <TrendingUp className="h-6 w-6 text-white" />
                 </div>
-              ))}
+                <h3 className="text-2xl font-bold text-slate-100">Skill Match Analysis</h3>
+              </div>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                {Object.entries(response.skillMatch).map(([skill, match]) => (
+                  <div key={skill} className="text-center group">
+                    <div className={`inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-3 transition-all duration-300 group-hover:scale-110 ${getSkillMatchBg(match)}`}>
+                      <span className={`text-xl font-bold ${getSkillMatchColor(match)}`}>
+                        {match}%
+                      </span>
+                    </div>
+                    <p className="text-sm text-slate-300 font-medium">{skill}</p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
-          {/* Job Opportunities */}
-          <div className="space-y-6">
-            <div className="flex items-center space-x-3">
-              <Briefcase className="h-6 w-6 text-green-600" />
-              <h3 className="text-xl font-semibold text-gray-900">Recommended Opportunities</h3>
+          {/* Enhanced Job Opportunities */}
+          <div className="space-y-8">
+            <div className="flex items-center space-x-4">
+              <div className="p-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl">
+                <Briefcase className="h-6 w-6 text-white" />
+              </div>
+              <h3 className="text-2xl font-bold text-slate-100">Recommended Opportunities</h3>
             </div>
             
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               {response.opportunities.map((job, index) => (
-                <div key={index} className="card hover:shadow-md transition-shadow duration-200">
-                  <div className="flex items-start justify-between mb-4">
+                <div key={index} className="card-hover group">
+                  <div className="flex items-start justify-between mb-6">
                     <div className="flex-1">
-                      <h4 className="text-lg font-semibold text-gray-900 mb-2">{job.title}</h4>
-                      <div className="flex items-center space-x-4 text-sm text-gray-600 mb-3">
-                        <div className="flex items-center space-x-1">
-                          <Building className="h-4 w-4" />
-                          <span>{job.company}</span>
+                      <h4 className="text-xl font-bold text-slate-100 mb-3 group-hover:text-blue-400 transition-colors duration-300">{job.title}</h4>
+                      <div className="flex items-center space-x-4 text-sm text-slate-300 mb-4">
+                        <div className="flex items-center space-x-2">
+                          <Building className="h-4 w-4 text-blue-400" />
+                          <span className="font-medium">{job.company}</span>
                         </div>
-                        <div className="flex items-center space-x-1">
-                          <MapPin className="h-4 w-4" />
-                          <span>{job.location}</span>
+                        <div className="flex items-center space-x-2">
+                          <MapPin className="h-4 w-4 text-red-400" />
+                          <span className="font-medium">{job.location}</span>
                         </div>
                       </div>
-                      <div className="flex items-center space-x-4 text-sm text-gray-500 mb-3">
-                        <span className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full">
+                      <div className="flex items-center space-x-4 text-sm text-slate-400 mb-4">
+                        <span className="px-3 py-1 bg-blue-900/30 text-blue-300 rounded-full font-medium border border-blue-600/30">
                           {job.type}
                         </span>
-                        <span>{job.salary}</span>
-                        <span>{job.postedDate}</span>
+                        <div className="flex items-center space-x-1">
+                          <DollarSign className="h-4 w-4 text-green-400" />
+                          <span>{job.salary}</span>
+                        </div>
+                        <div className="flex items-center space-x-1">
+                          <Clock className="h-4 w-4 text-amber-400" />
+                          <span>{job.postedDate}</span>
+                        </div>
                       </div>
                     </div>
                   </div>
                   
-                  <p className="text-gray-700 mb-4 line-clamp-3">{job.description}</p>
+                  <p className="text-slate-200 mb-6 text-lg leading-relaxed line-clamp-3">{job.description}</p>
                   
-                  <div className="mb-4">
-                    <h5 className="font-medium text-gray-900 mb-2">Required Skills:</h5>
+                  <div className="mb-6">
+                    <h5 className="font-semibold text-slate-100 mb-3 text-lg">Required Skills:</h5>
                     <div className="flex flex-wrap gap-2">
                       {job.requiredSkills.map((skill, skillIndex) => (
                         <span
                           key={skillIndex}
-                          className="px-2 py-1 bg-gray-100 text-gray-700 text-sm rounded"
+                          className="px-3 py-2 bg-slate-700/50 text-slate-200 text-sm rounded-xl border border-slate-600/50 font-medium"
                         >
                           {skill}
                         </span>
@@ -290,10 +340,10 @@ export default function JobSuggestions() {
                       href={job.applicationLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="btn-primary flex items-center space-x-2"
+                      className="btn-accent flex items-center space-x-2 group"
                     >
                       <span>Apply Now</span>
-                      <ExternalLink className="h-4 w-4" />
+                      <ExternalLink className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
                     </a>
                   </div>
                 </div>
@@ -301,16 +351,22 @@ export default function JobSuggestions() {
             </div>
           </div>
 
-          {/* Recommendations */}
-          <div className="card">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">Career Recommendations</h3>
-            <div className="space-y-3">
-              {response.recommendations.map((recommendation, index) => (
-                <div key={index} className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full mt-2 flex-shrink-0"></div>
-                  <span className="text-gray-700">{recommendation}</span>
-                </div>
-              ))}
+          {/* Enhanced Recommendations */}
+          <div className="card relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-emerald-400/10 to-teal-400/10 rounded-full blur-2xl"></div>
+            <div className="relative">
+              <h3 className="text-2xl font-bold text-slate-100 mb-6 flex items-center space-x-3">
+                <Star className="h-6 w-6 text-yellow-400 fill-current" />
+                <span>Career Recommendations</span>
+              </h3>
+              <div className="space-y-4">
+                {response.recommendations.map((recommendation, index) => (
+                  <div key={index} className="flex items-start space-x-4 p-4 bg-emerald-900/20 rounded-2xl border border-emerald-600/30">
+                    <div className="w-3 h-3 bg-emerald-400 rounded-full mt-2 flex-shrink-0"></div>
+                    <span className="text-slate-200 text-lg">{recommendation}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>

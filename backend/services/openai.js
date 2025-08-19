@@ -133,40 +133,49 @@ function parseJsonFromText(text) {
 async function generateCareerGuidance(userProfile) {
   try {
     if (PROVIDER === 'gemini') {
-      const system = 'Return STRICT JSON only with keys: careerPaths (string[]), skillGaps (string[]), learningRoadmap { courses (string[]), projects (string[]), timeline (string) }. Use the provided profile as context. No extra text.';
+      const system = 'You are a career advisor. Analyze the user profile and return strict JSON with career paths, skill gaps, and recommendations.';
       const userJson = JSON.stringify({
         skills: userProfile.skills,
-        interests: userProfile.interests,
-        goals: userProfile.goals,
         experience: userProfile.experience,
+        location: userProfile.location,
+        preferredRole: userProfile.preferredRole,
         education: userProfile.education,
+        interests: userProfile.interests,
       });
       const model = gemini.getGenerativeModel({ model: GEMINI_MODEL, systemInstruction: system });
       const result = await model.generateContent({ contents: [{ role: 'user', parts: [{ text: userJson }] }], generationConfig: { responseMimeType: 'application/json' } });
       const text = result.response.text();
       return parseJsonFromText(text);
     }
+
+    // Enhanced prompt for GPT-5 to provide better career guidance
+    const enhancedPrompt = `You are an expert career advisor with deep knowledge of the tech industry and current market trends.
+
+Based on the user's profile, provide comprehensive career guidance including:
+1. Specific career paths that match their skills and interests
+2. Identified skill gaps with actionable improvement steps
+3. Personalized recommendations for career advancement
+
+User Profile: ${JSON.stringify(userProfile, null, 2)}
+
+Provide detailed, actionable advice that considers current market conditions and realistic career progression.`;
+
     const completion = await openai.chat.completions.create({
       model: DEFAULT_MODEL,
       messages: [
         {
           role: "system",
-          content: "Return STRICT JSON only with keys: careerPaths (string[]), skillGaps (string[]), learningRoadmap { courses (string[]), projects (string[]), timeline (string) }. Infer content from the provided profile. No extra text."
+          content: "You are a career advisor. Analyze the user profile and return strict JSON with career paths, skill gaps, and recommendations."
         },
         {
           role: "user",
-          content: JSON.stringify({
-            skills: userProfile.skills,
-            interests: userProfile.interests,
-            goals: userProfile.goals,
-            experience: userProfile.experience,
-            education: userProfile.education,
-          })
+          content: enhancedPrompt
         }
       ],
       response_format: { type: 'json_object' },
-      temperature: 0.7,
-      max_tokens: 2000,
+      temperature: 0.4, // Balanced creativity and consistency
+      max_tokens: 2500, // Increased for GPT-5's capabilities
+      top_p: 0.9, // Better control over output quality
     });
 
     const response = completion.choices[0].message.content;
@@ -182,28 +191,47 @@ async function generateCareerGuidance(userProfile) {
 async function generateMockInterview(role) {
   try {
     if (PROVIDER === 'gemini') {
-      const system = 'Return STRICT JSON only: { "questions": [{ "question": string, "tips": string[], "category": string }] }. Create 5 relevant questions for the given role covering technical, problem-solving, system design, behavioral, and industry knowledge. No extra text.';
+      const system = 'You are an expert technical interviewer. Generate interview questions and return strict JSON.';
       const userJson = JSON.stringify({ role });
       const model = gemini.getGenerativeModel({ model: GEMINI_MODEL, systemInstruction: system });
       const result = await model.generateContent({ contents: [{ role: 'user', parts: [{ text: userJson }] }], generationConfig: { responseMimeType: 'application/json' } });
       const text = result.response.text();
       return parseJsonFromText(text);
     }
+
+    // Enhanced prompt for GPT-5 to generate better interview questions
+    const enhancedPrompt = `You are an expert technical interviewer with deep knowledge of the ${role} position.
+
+Generate 5-7 comprehensive interview questions that cover:
+1. Technical skills and problem-solving
+2. Real-world scenarios and challenges
+3. System design and architecture
+4. Team collaboration and communication
+5. Industry best practices and current trends
+
+Each question should include:
+- The main question
+- 2-3 helpful tips for candidates
+- The relevant category (Technical, Behavioral, System Design, etc.)
+
+Make questions challenging but fair, suitable for the ${role} level.`;
+
     const completion = await openai.chat.completions.create({
       model: DEFAULT_MODEL,
       messages: [
         {
           role: "system",
-          content: "Return STRICT JSON only: { \"questions\": [{ \"question\": string, \"tips\": string[], \"category\": string }] }. Create 5 relevant questions for the given role covering diverse aspects. No extra text."
+          content: "You are an expert technical interviewer. Generate interview questions and return strict JSON."
         },
         {
           role: "user",
-          content: JSON.stringify({ role })
+          content: enhancedPrompt
         }
       ],
       response_format: { type: 'json_object' },
-      temperature: 0.7,
-      max_tokens: 1500,
+      temperature: 0.5, // Balanced creativity and consistency
+      max_tokens: 2000, // Increased for GPT-5's capabilities
+      top_p: 0.9, // Better control over output quality
     });
 
     const response = completion.choices[0].message.content;
@@ -219,7 +247,7 @@ async function generateMockInterview(role) {
 async function generateJobSuggestions(userProfile) {
   try {
     if (PROVIDER === 'gemini') {
-      const system = 'Return STRICT JSON only: { "opportunities": [{ title, company, location, type, requiredSkills: string[], description, salary, applicationLink, postedDate }], "skillMatch": { [skill: string]: number }, "recommendations": string[] }. No extra text.';
+      const system = 'You are a career advisor providing job opportunities. Generate ONLY realistic job opportunities with REAL, existing companies (like Google, Microsoft, Amazon, Meta, Apple, Netflix, etc.). Do NOT create fictional companies or URLs. Use actual company names and realistic job descriptions. Return STRICT JSON only: { "opportunities": [{ title, company, location, type, requiredSkills: string[], description, salary, applicationLink: string (use realistic URLs like "https://careers.company.com" or "Apply on company website"), postedDate: string (use realistic dates like "2 days ago", "This week", "Recently") }], "skillMatch": { [skill: string]: number }, "recommendations": string[] }. No extra text.';
       const userJson = JSON.stringify({
         skills: userProfile.skills,
         experience: userProfile.experience,
@@ -233,28 +261,41 @@ async function generateJobSuggestions(userProfile) {
       const text = result.response.text();
       return parseJsonFromText(text);
     }
+    
+    // Enhanced prompt for GPT-5 to generate more realistic job opportunities
+    const enhancedPrompt = `You are an expert career advisor with access to current job market data. 
+
+Based on the user's profile, generate realistic job opportunities that actually exist in the market.
+
+IMPORTANT RULES:
+1. Use ONLY real, existing companies (Google, Microsoft, Amazon, Meta, Apple, Netflix, Uber, Airbnb, Stripe, etc.)
+2. Do NOT create fictional company names
+3. Use realistic job titles that actually exist
+4. Provide accurate salary ranges based on current market data
+5. Use realistic URLs like "https://careers.company.com" or "Apply on company website"
+6. Use recent posting dates like "2 days ago", "This week", "Recently"
+7. Ensure required skills match the job title and company
+
+User Profile: ${JSON.stringify(userProfile, null, 2)}
+
+Generate 3-5 realistic job opportunities with the above requirements.`;
+
     const completion = await openai.chat.completions.create({
       model: DEFAULT_MODEL,
       messages: [
         {
           role: "system",
-          content: "Return STRICT JSON only: { \"opportunities\": [{ title, company, location, type, requiredSkills: string[], description, salary, applicationLink, postedDate }], \"skillMatch\": { [skill: string]: number }, \"recommendations\": string[] }. No extra text."
+          content: "You are a career advisor providing job opportunities. Generate ONLY realistic job opportunities with REAL, existing companies (like Google, Microsoft, Amazon, Meta, Apple, Netflix, etc.). Do NOT create fictional companies or URLs. Use actual company names and realistic job descriptions. Return STRICT JSON only: { \"opportunities\": [{ title, company, location, type, requiredSkills: string[], description, salary, applicationLink: string (use realistic URLs like 'https://careers.company.com' or 'Apply on company website'), postedDate: string (use realistic dates like '2 days ago', 'This week', 'Recently') }], \"skillMatch\": { [skill: string]: number }, \"recommendations\": string[] }. No extra text."
         },
         {
           role: "user",
-          content: JSON.stringify({
-            skills: userProfile.skills,
-            experience: userProfile.experience,
-            location: userProfile.location,
-            preferredRole: userProfile.preferredRole,
-            education: userProfile.education,
-            interests: userProfile.interests,
-          })
+          content: enhancedPrompt
         }
       ],
       response_format: { type: 'json_object' },
-      temperature: 0.7,
-      max_tokens: 2000,
+      temperature: 0.3, // Lower temperature for more consistent, realistic output
+      max_tokens: 3000, // Increased for GPT-5's capabilities
+      top_p: 0.9, // Better control over output quality
     });
 
     const response = completion.choices[0].message.content;

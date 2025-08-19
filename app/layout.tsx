@@ -6,7 +6,7 @@ const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'CareerMate - AI Career & Interview Mentor',
-  description: 'Your AI-powered career guidance, interview practice, and job opportunity platform',
+  description: 'AI-powered career guidance, mock interview practice, and personalized job recommendations',
 }
 
 export default function RootLayout({
@@ -17,9 +17,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="min-h-screen bg-gray-50">
-          {children}
-        </div>
+        {children}
       </body>
     </html>
   )

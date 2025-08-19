@@ -1,0 +1,340 @@
+const OpenAI = require('openai');
+const { GoogleGenerativeAI } = require('@google/generative-ai');
+
+// Lightweight HTTP client for OpenAI-compatible providers (e.g., AIMLAPI)
+// Used when OPENAI_BASE_URL is set or USE_OPENAI_HTTP=true
+function createOpenAIHttpCompatClient() {
+  const baseUrl = (process.env.OPENAI_BASE_URL || 'https://api.aimlapi.com/v1').replace(/\/$/, '');
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey) {
+    throw new Error('OPENAI_API_KEY is required when using OPENAI_BASE_URL/http client');
+  }
+
+  async function postJson(path, body) {
+    const res = await fetch(`${baseUrl}${path}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify(body),
+    });
+    const text = await res.text();
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}: ${text}`);
+    }
+    try {
+      return JSON.parse(text);
+    } catch (_) {
+      throw new Error('Failed to parse JSON response from provider');
+    }
+  }
+
+  return {
+    chat: {
+      completions: {
+        create: async ({ model, messages, temperature, max_tokens, response_format }) => {
+          const body = { model, messages };
+          if (typeof temperature !== 'undefined') body.temperature = temperature;
+          if (typeof max_tokens !== 'undefined') body.max_tokens = max_tokens;
+          if (typeof response_format !== 'undefined') body.response_format = response_format;
+          return postJson('/chat/completions', body);
+        }
+      }
+    }
+  };
+}
+
+// Initialize OpenAI client (supports Azure OpenAI if envs are present)
+function createOpenAIClient() {
+  const isAzure = !!process.env.AZURE_OPENAI_ENDPOINT;
+  const shouldUseHttpClient = !!process.env.OPENAI_BASE_URL || process.env.USE_OPENAI_HTTP === 'true';
+  if (isAzure) {
+    const endpoint = process.env.AZURE_OPENAI_ENDPOINT?.replace(/\/$/, '');
+    const deployment = process.env.AZURE_OPENAI_DEPLOYMENT;
+    const apiKey = process.env.AZURE_OPENAI_API_KEY;
+    const apiVersion = process.env.AZURE_OPENAI_API_VERSION || '2024-06-01';
+    if (!endpoint || !deployment || !apiKey) {
+      throw new Error('Azure OpenAI configuration missing. Set AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_DEPLOYMENT, AZURE_OPENAI_API_KEY');
+    }
+    return new OpenAI({
+      apiKey,
+      baseURL: `${endpoint}/openai/deployments/${deployment}`,
+      defaultQuery: { 'api-version': apiVersion },
+      defaultHeaders: { 'api-key': apiKey },
+    });
+  }
+  if (shouldUseHttpClient) {
+    return createOpenAIHttpCompatClient();
+  }
+  return new OpenAI({ apiKey: process.env.OPENAI_API_KEY, baseURL: process.env.OPENAI_BASE_URL || undefined });
+}
+
+let openai = null;
+if ((process.env.PROVIDER || (process.env.AZURE_OPENAI_ENDPOINT ? 'azure' : 'openai')) !== 'gemini') {
+  openai = createOpenAIClient();
+}
+
+function createGeminiClient() {
+  const apiKey = process.env.GOOGLE_API_KEY;
+  if (!apiKey) return null;
+  return new GoogleGenerativeAI(apiKey);
+}
+
+const gemini = createGeminiClient();
+const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-1.5-flash';
+const PROVIDER = process.env.PROVIDER || (process.env.AZURE_OPENAI_ENDPOINT ? 'azure' : 'openai');
+
+const DEFAULT_MODEL = process.env.AZURE_OPENAI_DEPLOYMENT || process.env.OPENAI_MODEL || 'gpt-4o-mini';
+
+function extractOpenAIError(error) {
+  try {
+    if (error?.response?.data?.error?.message) return error.response.data.error.message;
+    if (error?.error?.message) return error.error.message;
+    if (error?.message) return error.message;
+  } catch (_) {}
+  return 'Unknown error';
+}
+
+// Removed pre-scripted content templates. Functions below instruct only the JSON schema
+// and use the provided input as context, minimizing opinionated prompt content.
+
+function parseJsonFromText(text) {
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    // Try to extract a fenced JSON block ```json ... ``` or ``` ... ```
+    const fenced = text.match(/```json[\s\S]*?```|```[\s\S]*?```/);
+    if (fenced && fenced[0]) {
+      const cleaned = fenced[0]
+        .replace(/^```json\n?/, '')
+        .replace(/^```\n?/, '')
+        .replace(/```$/, '');
+      try {
+        return JSON.parse(cleaned);
+      } catch (_) {}
+    }
+
+    // Fallback: attempt to find first { ... } JSON object greedily
+    const braceIndex = text.indexOf('{');
+    const lastBraceIndex = text.lastIndexOf('}');
+    if (braceIndex !== -1 && lastBraceIndex !== -1 && lastBraceIndex > braceIndex) {
+      const maybe = text.slice(braceIndex, lastBraceIndex + 1);
+      try {
+        return JSON.parse(maybe);
+      } catch (_) {}
+    }
+
+    throw new Error('Failed to parse JSON from model response');
+  }
+}
+
+// Function to generate career guidance using GPT-5
+async function generateCareerGuidance(userProfile) {
+  try {
+    if (PROVIDER === 'gemini') {
+      const system = 'Return STRICT JSON only with keys: careerPaths (string[]), skillGaps (string[]), learningRoadmap { courses (string[]), projects (string[]), timeline (string) }. Use the provided profile as context. No extra text.';
+      const userJson = JSON.stringify({
+        skills: userProfile.skills,
+        interests: userProfile.interests,
+        goals: userProfile.goals,
+        experience: userProfile.experience,
+        education: userProfile.education,
+      });
+      const model = gemini.getGenerativeModel({ model: GEMINI_MODEL, systemInstruction: system });
+      const result = await model.generateContent({ contents: [{ role: 'user', parts: [{ text: userJson }] }], generationConfig: { responseMimeType: 'application/json' } });
+      const text = result.response.text();
+      return parseJsonFromText(text);
+    }
+    const completion = await openai.chat.completions.create({
+      model: DEFAULT_MODEL,
+      messages: [
+        {
+          role: "system",
+          content: "Return STRICT JSON only with keys: careerPaths (string[]), skillGaps (string[]), learningRoadmap { courses (string[]), projects (string[]), timeline (string) }. Infer content from the provided profile. No extra text."
+        },
+        {
+          role: "user",
+          content: JSON.stringify({
+            skills: userProfile.skills,
+            interests: userProfile.interests,
+            goals: userProfile.goals,
+            experience: userProfile.experience,
+            education: userProfile.education,
+          })
+        }
+      ],
+      response_format: { type: 'json_object' },
+      temperature: 0.7,
+      max_tokens: 2000,
+    });
+
+    const response = completion.choices[0].message.content;
+    return parseJsonFromText(response);
+  } catch (error) {
+    const msg = extractOpenAIError(error);
+    console.error('OpenAI API error (career-guidance):', msg);
+    throw new Error('Failed to generate career guidance: ' + msg);
+  }
+}
+
+// Function to generate mock interview questions using GPT-5
+async function generateMockInterview(role) {
+  try {
+    if (PROVIDER === 'gemini') {
+      const system = 'Return STRICT JSON only: { "questions": [{ "question": string, "tips": string[], "category": string }] }. Create 5 relevant questions for the given role covering technical, problem-solving, system design, behavioral, and industry knowledge. No extra text.';
+      const userJson = JSON.stringify({ role });
+      const model = gemini.getGenerativeModel({ model: GEMINI_MODEL, systemInstruction: system });
+      const result = await model.generateContent({ contents: [{ role: 'user', parts: [{ text: userJson }] }], generationConfig: { responseMimeType: 'application/json' } });
+      const text = result.response.text();
+      return parseJsonFromText(text);
+    }
+    const completion = await openai.chat.completions.create({
+      model: DEFAULT_MODEL,
+      messages: [
+        {
+          role: "system",
+          content: "Return STRICT JSON only: { \"questions\": [{ \"question\": string, \"tips\": string[], \"category\": string }] }. Create 5 relevant questions for the given role covering diverse aspects. No extra text."
+        },
+        {
+          role: "user",
+          content: JSON.stringify({ role })
+        }
+      ],
+      response_format: { type: 'json_object' },
+      temperature: 0.7,
+      max_tokens: 1500,
+    });
+
+    const response = completion.choices[0].message.content;
+    return parseJsonFromText(response);
+  } catch (error) {
+    const msg = extractOpenAIError(error);
+    console.error('OpenAI API error (mock-interview):', msg);
+    throw new Error('Failed to generate mock interview: ' + msg);
+  }
+}
+
+// Function to generate job suggestions using GPT-5
+async function generateJobSuggestions(userProfile) {
+  try {
+    if (PROVIDER === 'gemini') {
+      const system = 'Return STRICT JSON only: { "opportunities": [{ title, company, location, type, requiredSkills: string[], description, salary, applicationLink, postedDate }], "skillMatch": { [skill: string]: number }, "recommendations": string[] }. No extra text.';
+      const userJson = JSON.stringify({
+        skills: userProfile.skills,
+        experience: userProfile.experience,
+        location: userProfile.location,
+        preferredRole: userProfile.preferredRole,
+        education: userProfile.education,
+        interests: userProfile.interests,
+      });
+      const model = gemini.getGenerativeModel({ model: GEMINI_MODEL, systemInstruction: system });
+      const result = await model.generateContent({ contents: [{ role: 'user', parts: [{ text: userJson }] }], generationConfig: { responseMimeType: 'application/json' } });
+      const text = result.response.text();
+      return parseJsonFromText(text);
+    }
+    const completion = await openai.chat.completions.create({
+      model: DEFAULT_MODEL,
+      messages: [
+        {
+          role: "system",
+          content: "Return STRICT JSON only: { \"opportunities\": [{ title, company, location, type, requiredSkills: string[], description, salary, applicationLink, postedDate }], \"skillMatch\": { [skill: string]: number }, \"recommendations\": string[] }. No extra text."
+        },
+        {
+          role: "user",
+          content: JSON.stringify({
+            skills: userProfile.skills,
+            experience: userProfile.experience,
+            location: userProfile.location,
+            preferredRole: userProfile.preferredRole,
+            education: userProfile.education,
+            interests: userProfile.interests,
+          })
+        }
+      ],
+      response_format: { type: 'json_object' },
+      temperature: 0.7,
+      max_tokens: 2000,
+    });
+
+    const response = completion.choices[0].message.content;
+    return parseJsonFromText(response);
+  } catch (error) {
+    const msg = extractOpenAIError(error);
+    console.error('OpenAI API error (job-suggestions):', msg);
+    throw new Error('Failed to generate job suggestions: ' + msg);
+  }
+}
+
+// Function to evaluate interview answers and provide feedback
+async function evaluateInterviewAnswer(question, userAnswer, role) {
+  try {
+    if (PROVIDER === 'gemini') {
+      const system = 'You are an expert interviewer. Evaluate answers and return strict JSON.'
+      const prompt = `Question: ${question}\nCandidate's Answer: ${userAnswer}\nRole: ${role}`;
+      const model = gemini.getGenerativeModel({ model: GEMINI_MODEL, systemInstruction: system });
+      const result = await model.generateContent({ contents: [{ role: 'user', parts: [{ text: prompt }] }], generationConfig: { responseMimeType: 'application/json' } });
+      const text = result.response.text();
+      return parseJsonFromText(text);
+    }
+    const prompt = `
+You are an expert technical interviewer evaluating a candidate's answer for a {role} position.
+
+Question: {question}
+Candidate's Answer: {userAnswer}
+
+Please evaluate this answer on a scale of 1-10 and provide:
+1. A numerical score (1-10)
+2. Constructive feedback
+3. 2-3 specific areas for improvement
+
+Provide your response in this exact JSON format:
+{
+  "score": 8,
+  "feedback": "Your answer shows good understanding of the concept...",
+  "improvements": [
+    "Be more specific about implementation details",
+    "Include examples from your experience"
+  ]
+}
+
+Be fair but thorough in your evaluation. Consider technical accuracy, clarity, and completeness.
+`;
+
+    const formattedPrompt = prompt
+      .replace('{role}', role)
+      .replace('{question}', question)
+      .replace('{userAnswer}', userAnswer);
+
+    const completion = await openai.chat.completions.create({
+      model: DEFAULT_MODEL,
+      messages: [
+        {
+          role: "system",
+          content: "You are an expert technical interviewer. Evaluate the answer fairly and provide feedback in the exact JSON format requested."
+        },
+        {
+          role: "user",
+          content: formattedPrompt
+        }
+      ],
+      response_format: { type: 'json_object' },
+      temperature: 0.5,
+      max_tokens: 1000,
+    });
+
+    const response = completion.choices[0].message.content;
+    return parseJsonFromText(response);
+  } catch (error) {
+    const msg = extractOpenAIError(error);
+    console.error('OpenAI API error (evaluate-answer):', msg);
+    throw new Error('Failed to evaluate interview answer: ' + msg);
+  }
+}
+
+module.exports = {
+  generateCareerGuidance,
+  generateMockInterview,
+  generateJobSuggestions,
+  evaluateInterviewAnswer
+};

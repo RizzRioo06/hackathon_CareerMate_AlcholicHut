@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(helmet());
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  origin: true, // Allow all origins in production
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
@@ -28,6 +28,20 @@ app.use('/api/', limiter);
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', message: 'CareerMate API is running' });
+});
+
+// Root endpoint for testing
+app.get('/', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    message: 'CareerMate Backend API is running',
+    endpoints: [
+      'POST /api/career-guidance',
+      'POST /api/mock-interview', 
+      'POST /api/evaluate-answer',
+      'POST /api/job-suggestions'
+    ]
+  });
 });
 
 // AI service integration - all responses come from AI APIs

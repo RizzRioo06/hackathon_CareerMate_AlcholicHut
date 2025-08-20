@@ -1,8 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    appDir: true,
-  },
   async rewrites() {
     const target = process.env.NEXT_PUBLIC_API_BASE_URL
       ? `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/:path*`

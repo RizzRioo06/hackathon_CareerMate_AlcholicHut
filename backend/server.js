@@ -9,7 +9,12 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(helmet());
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}));
 app.use(express.json({ limit: '10mb' }));
 
 // Rate limiting
@@ -25,8 +30,7 @@ app.get('/health', (req, res) => {
   res.json({ status: 'OK', message: 'CareerMate API is running' });
 });
 
-// Feature flag to enable mock AI responses (useful for demos when API quota is exhausted)
-const useMockAi = process.env.USE_MOCK_AI === 'true';
+// AI service integration - all responses come from AI APIs
 
 // Career Guidance API
 app.post('/api/career-guidance', async (req, res) => {
@@ -39,41 +43,7 @@ app.post('/api/career-guidance', async (req, res) => {
       });
     }
 
-    if (useMockAi) {
-      return res.json({
-        careerPaths: [
-          'Full-Stack Developer',
-          'Data Analyst',
-          'Machine Learning Engineer',
-          'DevOps Engineer',
-          'Product Manager'
-        ],
-        skillGaps: [
-          'Advanced JavaScript (React/Next.js)',
-          'Cloud fundamentals (AWS/GCP/Azure)',
-          'SQL and database optimization',
-          'System design basics',
-          'CI/CD tooling'
-        ],
-        learningRoadmap: {
-          courses: [
-            'Meta Front-End Developer (Coursera)',
-            'Google Data Analytics (Coursera)',
-            'AWS Cloud Practitioner Essentials',
-            'Grokking System Design',
-            'Docker & Kubernetes Fundamentals'
-          ],
-          projects: [
-            'Build a full-stack task manager with auth',
-            'Create a data dashboard from a public dataset',
-            'Deploy a containerized API and frontend',
-            'Implement a small-scale recommendation system',
-            'Automate CI with GitHub Actions'
-          ],
-          timeline: '3-6 months'
-        }
-      });
-    }
+
 
     const openaiService = require('./services/openai');
     const response = await openaiService.generateCareerGuidance({
@@ -96,19 +66,7 @@ app.post('/api/mock-interview', async (req, res) => {
       return res.status(400).json({ error: 'Job role is required' });
     }
 
-    if (useMockAi) {
-      const questions = {
-        questions: [
-          { question: `Explain key responsibilities of a ${role}.`, tips: ['Structure your answer', 'Give examples'], category: 'Behavioral' },
-          { question: 'Describe a challenging project and your contribution.', tips: ['Focus on impact', 'Quantify results'], category: 'Behavioral' },
-          { question: 'How would you design a scalable API for search?', tips: ['Discuss endpoints', 'Consider caching and pagination'], category: 'System Design' },
-          { question: 'Debugging scenario: intermittent 500 errors in production. Steps?', tips: ['Logs/metrics', 'Rollback and canary'], category: 'Problem Solving' },
-          { question: 'What recent trend in the industry excites you and why?', tips: ['Relate to the role', 'Show curiosity'], category: 'Industry Knowledge' }
-        ]
-      };
-      const feedback = questions.questions.map(() => ({ score: 0, feedback: '', improvements: [] }));
-      return res.json({ ...questions, feedback, overallScore: 0, summary: 'Complete the interview to get your score.' });
-    }
+
 
     const openaiService = require('./services/openai');
     const questions = await openaiService.generateMockInterview(role);
@@ -135,6 +93,28 @@ app.post('/api/mock-interview', async (req, res) => {
   }
 });
 
+// Interview Answer Evaluation API
+app.post('/api/evaluate-answer', async (req, res) => {
+  try {
+    const { question, answer, role } = req.body;
+    
+    if (!question || !answer || !role) {
+      return res.status(400).json({ error: 'Question, answer, and role are required' });
+    }
+
+
+
+    const openaiService = require('./services/openai');
+    const feedback = await openaiService.evaluateInterviewAnswer(question, answer, role);
+    
+    res.json(feedback);
+  } catch (error) {
+    console.error('Answer evaluation error:', error);
+    const message = typeof error?.message === 'string' ? error.message : 'Internal server error';
+    res.status(500).json({ error: message });
+  }
+});
+
 // Job Suggestions API
 app.post('/api/job-suggestions', async (req, res) => {
   try {
@@ -146,40 +126,7 @@ app.post('/api/job-suggestions', async (req, res) => {
       });
     }
 
-    if (useMockAi) {
-      return res.json({
-        opportunities: [
-          {
-            title: `${preferredRole} Intern`,
-            company: 'Acme Corp',
-            location: location || 'Remote',
-            type: 'Internship',
-            requiredSkills: (skills || '').split(',').slice(0, 3).map(s => s.trim()).filter(Boolean),
-            description: 'Work with mentors on real features. Learn modern workflows.',
-            salary: 'Stipend',
-            applicationLink: 'https://example.com/apply',
-            postedDate: 'Recently'
-          },
-          {
-            title: `${preferredRole}`,
-            company: 'Globex',
-            location: location || 'Hybrid',
-            type: 'Full-time',
-            requiredSkills: ['JavaScript', 'React', 'API'],
-            description: 'Build user-facing features and collaborate across teams.',
-            salary: '$60k-$90k',
-            applicationLink: 'https://example.com/apply2',
-            postedDate: 'This week'
-          }
-        ],
-        skillMatch: { 'JavaScript': 85, 'React': 75, 'Communication': 70 },
-        recommendations: [
-          'Polish your portfolio with 2-3 targeted projects',
-          'Tailor your resume to highlight role-specific achievements',
-          'Network with peers and attend virtual meetups'
-        ]
-      });
-    }
+
 
     const openaiService = require('./services/openai');
     const response = await openaiService.generateJobSuggestions({
@@ -192,6 +139,10 @@ app.post('/api/job-suggestions', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
+
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -209,6 +160,9 @@ app.listen(PORT, () => {
   console.log(`📚 API endpoints:`);
   console.log(`   POST /api/career-guidance`);
   console.log(`   POST /api/mock-interview`);
+  console.log(`   POST /api/evaluate-answer`);
+
   console.log(`   POST /api/job-suggestions`);
-  console.log(`🔑 Remember to set OPENAI_API_KEY in your .env file`);
+
+  console.log(`🔑 Remember to set your AI API credentials in your .env file`);
 });

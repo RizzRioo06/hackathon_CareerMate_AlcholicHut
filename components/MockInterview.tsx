@@ -4,9 +4,10 @@ import { useState } from 'react'
 import { MessageSquare, Play, CheckCircle, Star, Loader2, ArrowRight, Brain, Target, Award, Clock, Users, Search } from 'lucide-react'
 
 interface InterviewQuestion {
-  question: string
-  tips: string[]
-  category: string
+  question?: string
+  mainQuestion?: string
+  tips?: string[]
+  category?: string
 }
 
 interface InterviewFeedback {
@@ -51,6 +52,18 @@ export default function MockInterview() {
     'Cybersecurity Analyst'
   ]
 
+  const getScoreColor = (score: number) => {
+    if (score >= 80) return 'text-emerald-400'
+    if (score >= 60) return 'text-amber-400'
+    return 'text-red-400'
+  }
+
+  const getScoreBg = (score: number) => {
+    if (score >= 80) return 'bg-emerald-900/20'
+    if (score >= 60) return 'bg-amber-900/20'
+    return 'bg-red-900/20'
+  }
+
   const startInterview = async () => {
     if (!selectedRole.trim()) return
     
@@ -73,6 +86,7 @@ export default function MockInterview() {
         throw new Error(msg)
       }
       const data = JSON.parse(text)
+      console.log('Interview response data:', data) // Debug log
       if (!data?.questions || !Array.isArray(data.questions) || data.questions.length === 0) {
         throw new Error('Interview service returned no questions. Check API key and backend logs.')
       }
@@ -89,10 +103,38 @@ export default function MockInterview() {
     }
   }
 
-  const handleAnswerSubmit = (answer: string) => {
+  const handleAnswerSubmit = async (answer: string) => {
     const newAnswers = [...userAnswers]
     newAnswers[currentQuestion] = answer
     setUserAnswers(newAnswers)
+    
+    // Evaluate the answer with AI
+    try {
+      const currentQ = response?.questions[currentQuestion]
+      if (currentQ && answer.trim()) {
+        const evalResponse = await fetch('/api/evaluate-answer', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            question: currentQ.question || currentQ.mainQuestion,
+            answer: answer.trim(),
+            role: selectedRole
+          })
+        })
+        
+        if (evalResponse.ok) {
+          const feedback = await evalResponse.json()
+          // Update the feedback for this question
+          if (response) {
+            const updatedResponse = { ...response }
+            updatedResponse.feedback[currentQuestion] = feedback
+            setResponse(updatedResponse)
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Failed to evaluate answer:', error)
+    }
     
     if (currentQuestion < (response?.questions.length || 0) - 1) {
       setCurrentQuestion(currentQuestion + 1)
@@ -111,18 +153,6 @@ export default function MockInterview() {
     setErrorMessage(null)
   }
 
-  const getScoreColor = (score: number) => {
-    if (score >= 8) return 'text-emerald-400'
-    if (score >= 6) return 'text-amber-400'
-    return 'text-red-400'
-  }
-
-  const getScoreBg = (score: number) => {
-    if (score >= 8) return 'bg-emerald-900/20'
-    if (score >= 6) return 'bg-amber-900/20'
-    return 'bg-red-900/20'
-  }
-
   if (!interviewStarted) {
     return (
       <div className="space-y-16">
@@ -135,10 +165,9 @@ export default function MockInterview() {
             <div className="inline-flex items-center justify-center w-28 h-28 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl shadow-2xl mb-8 animate-bounce-in">
               <MessageSquare className="h-14 w-14 text-white" />
             </div>
-            <h2 className="text-5xl font-bold gradient-text mb-6">Mock Interview Practice</h2>
+            <h2 className="text-5xl font-bold gradient-text mb-6">AI Interview Practice</h2>
             <p className="text-xl text-slate-300 max-w-4xl mx-auto leading-relaxed">
-              Practice your interview skills with our AI-powered mock interviews. Enter your target job role and answer 
-              questions to get personalized feedback and scoring.
+              Practice your interview skills with our AI-powered mock interviews. Answer questions in your own words to improve your interview performance.
             </p>
           </div>
         </div>
@@ -215,7 +244,7 @@ export default function MockInterview() {
               ) : (
                 <div className="flex items-center space-x-3">
                   <Play className="h-6 w-6" />
-                  <span>Start Mock Interview</span>
+                  <span>Start AI Interview Practice</span>
                 </div>
               )}
             </button>
@@ -257,7 +286,7 @@ export default function MockInterview() {
               <div className="relative">
                 <div className="flex items-start justify-between mb-6">
                   <h3 className="text-xl font-bold text-slate-100 flex-1">
-                    Question {index + 1}: {question.question}
+                    Question {index + 1}: {question.question || question.mainQuestion}
                   </h3>
                   <div className={`px-4 py-2 rounded-2xl ${getScoreBg(response.feedback[index].score)} shadow-md ml-4`}>
                     <span className={`font-bold text-lg ${getScoreColor(response.feedback[index].score)}`}>
@@ -379,30 +408,34 @@ export default function MockInterview() {
         <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-2xl"></div>
         <div className="relative">
           <div className="mb-8">
-            <div className="flex items-center space-x-3 mb-4">
-              <span className="px-3 py-2 bg-blue-900/30 text-blue-300 text-sm font-semibold rounded-full border border-blue-600/30">
-                {currentQ.category}
-              </span>
-            </div>
-            <h3 className="text-2xl font-bold text-slate-100 mb-6">{currentQ.question}</h3>
+            {currentQ.category && (
+              <div className="flex items-center space-x-3 mb-4">
+                <span className="px-3 py-2 bg-blue-900/30 text-blue-300 text-sm font-semibold rounded-full border border-blue-600/30">
+                  {currentQ.category}
+                </span>
+              </div>
+            )}
+            <h3 className="text-2xl font-bold text-slate-100 mb-6">{currentQ.question || currentQ.mainQuestion}</h3>
             
-            <div className="bg-blue-900/20 border border-blue-600/30 rounded-2xl p-6 mb-8">
-              <h4 className="font-semibold text-blue-300 mb-4 flex items-center space-x-3">
-                <Star className="h-5 w-5 text-yellow-400 fill-current" />
-                <span className="text-lg">Pro Tips</span>
-              </h4>
-              <ul className="space-y-3">
-                {currentQ.tips.map((tip, index) => (
-                  <li key={index} className="text-blue-200 text-lg flex items-start space-x-3">
-                    <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0"></div>
-                    <span>{tip}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {currentQ.tips && currentQ.tips.length > 0 && (
+              <div className="bg-blue-900/20 border border-blue-600/30 rounded-2xl p-6 mb-8">
+                <h4 className="font-semibold text-blue-300 mb-4 flex items-center space-x-3">
+                  <Star className="h-5 w-5 text-yellow-400 fill-current" />
+                  <span className="text-lg">Pro Tips</span>
+                </h4>
+                <ul className="space-y-3">
+                  {currentQ.tips.map((tip, index) => (
+                    <li key={index} className="text-blue-200 text-lg flex items-start space-x-3">
+                      <div className="w-2 h-2 bg-blue-400 rounded-full mt-2 flex-shrink-0"></div>
+                      <span>{tip}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
 
-          {/* Enhanced Answer Input */}
+          {/* Text Response Mode */}
           <div className="space-y-6">
             <label htmlFor="answer" className="block text-lg font-semibold text-slate-200">
               Your Answer:

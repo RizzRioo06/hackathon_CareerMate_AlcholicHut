@@ -1,17 +1,28 @@
 'use client'
 
+import CareerGuidance from '../components/CareerGuidance'
+import JobSuggestions from '../components/JobSuggestions'
+import MockInterview from '../components/MockInterview'
 import { useState } from 'react'
-import { Briefcase, MessageSquare, Target, Sparkles, Star, Zap, Users } from 'lucide-react'
-import CareerGuidance from '@/components/CareerGuidance'
-import MockInterview from '@/components/MockInterview'
-import JobSuggestions from '@/components/JobSuggestions'
+import { 
+  Brain, 
+  Briefcase, 
+  MessageSquare, 
+  Star, 
+  Zap, 
+  Github, 
+  Linkedin, 
+  Mail, 
+  Phone,
+  Sparkles
+} from 'lucide-react'
 
 export default function Home() {
   const [activeTab, setActiveTab] = useState('career')
 
   const tabs = [
-    { id: 'career', label: 'Career Guidance', icon: Target, description: 'AI-powered career path analysis' },
-    { id: 'interview', label: 'Mock Interview', icon: MessageSquare, description: 'Practice with AI interviewer' },
+    { id: 'career', label: 'Career Guidance', icon: Brain, description: 'AI-powered career path analysis' },
+            { id: 'interview', label: 'AI Interview Practice', icon: MessageSquare, description: 'Practice with AI interviewer' },
     { id: 'jobs', label: 'Job Opportunities', icon: Briefcase, description: 'Personalized job recommendations' },
   ]
 
@@ -122,9 +133,8 @@ export default function Home() {
               <h4 className="font-semibold text-slate-100 mb-6 text-lg">Features</h4>
               <div className="space-y-3 text-base text-slate-300">
                 <p>🎯 Career Path Analysis</p>
-                <p>💬 Mock Interview Practice</p>
+                <p>💬 AI Interview Practice</p>
                 <p>💼 Job Recommendations</p>
-                <p>🚀 AI-Powered Insights</p>
               </div>
             </div>
             

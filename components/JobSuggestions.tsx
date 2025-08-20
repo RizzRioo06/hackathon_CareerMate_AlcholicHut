@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Briefcase, MapPin, Building, ExternalLink, Loader2, TrendingUp, Search, Target, Star, Clock, DollarSign, Users } from 'lucide-react'
+import { Briefcase, MapPin, Building, Loader2, TrendingUp, Search, Target, Star, Clock, DollarSign, Users } from 'lucide-react'
 
 interface JobOpportunity {
   title: string
@@ -11,7 +11,6 @@ interface JobOpportunity {
   requiredSkills: string[]
   description: string
   salary: string
-  applicationLink: string
   postedDate: string
 }
 
@@ -254,29 +253,7 @@ export default function JobSuggestions() {
       {response && (
         <div className="max-w-7xl mx-auto space-y-16 animate-slide-up">
           {/* Enhanced Skill Match Analysis */}
-          <div className="card relative overflow-hidden">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-2xl"></div>
-            <div className="relative">
-              <div className="flex items-center space-x-4 mb-8">
-                <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl">
-                  <TrendingUp className="h-6 w-6 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold text-slate-100">Skill Match Analysis</h3>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-                {Object.entries(response.skillMatch).map(([skill, match]) => (
-                  <div key={skill} className="text-center group">
-                    <div className={`inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-3 transition-all duration-300 group-hover:scale-110 ${getSkillMatchBg(match)}`}>
-                      <span className={`text-xl font-bold ${getSkillMatchColor(match)}`}>
-                        {match}%
-                      </span>
-                    </div>
-                    <p className="text-sm text-slate-300 font-medium">{skill}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          
 
           {/* Enhanced Job Opportunities */}
           <div className="space-y-8">
@@ -335,16 +312,8 @@ export default function JobSuggestions() {
                     </div>
                   </div>
                   
-                  <div className="flex items-center justify-between">
-                    <a
-                      href={job.applicationLink}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="btn-accent flex items-center space-x-2 group"
-                    >
-                      <span>Apply Now</span>
-                      <ExternalLink className="h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
-                    </a>
+                  <div className="text-center">
+                    <p className="text-slate-400 text-sm">Contact the company directly to apply for this position</p>
                   </div>
                 </div>
               ))}

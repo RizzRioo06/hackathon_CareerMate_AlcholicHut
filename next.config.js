@@ -1,8 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   async rewrites() {
-    // Force the backend URL - no fallback to localhost
-    const target = process.env.NEXT_PUBLIC_API_BASE_URL || 'https://careermate-alcholichut.onrender.com'
+    // Use local backend for development, hosted backend for production
+    const target = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'
     return [
       {
         source: '/api/:path*',

@@ -3,6 +3,7 @@
 import CareerGuidance from '../components/CareerGuidance'
 import JobSuggestions from '../components/JobSuggestions'
 import MockInterview from '../components/MockInterview'
+import CareerDiscovery from '../components/CareerDiscovery'
 import { useState } from 'react'
 import { 
   Brain, 
@@ -22,8 +23,9 @@ export default function Home() {
 
   const tabs = [
     { id: 'career', label: 'Career Guidance', icon: Brain, description: 'AI-powered career path analysis' },
-            { id: 'interview', label: 'AI Interview Practice', icon: MessageSquare, description: 'Practice with AI interviewer' },
+    { id: 'interview', label: 'AI Interview Practice', icon: MessageSquare, description: 'Practice with AI interviewer' },
     { id: 'jobs', label: 'Job Opportunities', icon: Briefcase, description: 'Personalized job recommendations' },
+    { id: 'discovery', label: 'Career Discovery', icon: Sparkles, description: 'AI-powered career path discovery' },
   ]
 
   const renderActiveComponent = () => {
@@ -34,6 +36,8 @@ export default function Home() {
         return <MockInterview />
       case 'jobs':
         return <JobSuggestions />
+      case 'discovery':
+        return <CareerDiscovery />
       default:
         return <CareerGuidance />
     }
@@ -150,7 +154,7 @@ export default function Home() {
           </div>
           
           <div className="border-t border-slate-700 mt-12 pt-8 text-center">
-            <p className="text-slate-400 text-base">&copy; 2024 CareerMate. Built with ❤️ for career growth.</p>
+            <p className="text-slate-400 text-base">&copy; 2025 CareerMate. Built with ❤️ for career growth.</p>
           </div>
         </div>
       </footer>

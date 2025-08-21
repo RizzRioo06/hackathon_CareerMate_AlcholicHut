@@ -154,6 +154,29 @@ app.post('/api/job-suggestions', async (req, res) => {
   }
 });
 
+// Career Discovery API
+app.post('/api/career-discovery', async (req, res) => {
+  try {
+    const { name, currentRole, primaryInterest, secondaryInterest, experience, education } = req.body;
+    
+    if (!name || !currentRole || !primaryInterest) {
+      return res.status(400).json({ 
+        error: 'Missing required fields: name, currentRole, and primaryInterest are required' 
+      });
+    }
+
+    const openaiService = require('./services/openai');
+    const response = await openaiService.generateCareerDiscovery({
+      name, currentRole, primaryInterest, secondaryInterest, experience, education
+    });
+
+    res.json(response);
+  } catch (error) {
+    console.error('Career discovery error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 
 
@@ -175,8 +198,8 @@ app.listen(PORT, () => {
   console.log(`   POST /api/career-guidance`);
   console.log(`   POST /api/mock-interview`);
   console.log(`   POST /api/evaluate-answer`);
-
   console.log(`   POST /api/job-suggestions`);
+  console.log(`   POST /api/career-discovery`);
 
   console.log(`🔑 Remember to set your AI API credentials in your .env file`);
 });

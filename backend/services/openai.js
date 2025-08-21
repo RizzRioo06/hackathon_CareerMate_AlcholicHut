@@ -150,8 +150,7 @@ async function generateCareerGuidance(userProfile) {
       "Real project idea with scope and tech stack",
       "Real project idea with scope and tech stack",
       "Real project idea with scope and tech stack"
-    ],
-    "timeline": "Real timeline like '3-6 months for basic skills, 6-12 months for advanced concepts'"
+    ]
   }
 }`;
       const userJson = JSON.stringify({
@@ -212,8 +211,7 @@ Return the response in this exact JSON format:
       "Real project idea with scope and tech stack",
       "Real project idea with scope and tech stack",
       "Real project idea with scope and tech stack"
-    ],
-    "timeline": "Real timeline like '3-6 months for basic skills, 6-12 months for advanced concepts'"
+    ]
   }
 }`;
 
@@ -539,7 +537,6 @@ async function generateCareerDiscovery(userProfile) {
       "skillGaps": ["Specific skill to develop 1", "Specific skill to develop 2", "Specific skill to develop 3"],
       "marketDemand": "High/Medium/Low based on current market trends",
       "salaryRange": "Realistic salary range for this role",
-      "timeline": "Realistic timeline to transition to this role",
       "companies": ["Real company 1", "Real company 2", "Real company 3"],
       "nextSteps": ["Specific actionable step 1", "Specific actionable step 2", "Specific actionable step 3"]
     }
@@ -553,8 +550,7 @@ async function generateCareerDiscovery(userProfile) {
       "projects": ["Real project idea 1", "Real project idea 2"],
       "certifications": ["Real certification name 1", "Real certification name 2"],
       "networking": ["Specific networking strategy 1", "Specific networking strategy 2"]
-    },
-    "timeline": "Realistic timeline like '3-6 months for basic skills, 6-12 months for advanced concepts'"
+    }
   },
   "conversation": [
     {
@@ -592,7 +588,7 @@ CRITICAL INSTRUCTIONS:
 3. Provide realistic career paths that actually exist in the market
 4. Show specific transferable skills from their current role
 5. Identify realistic skill gaps they need to develop
-6. Give actionable next steps with timelines
+6. Give actionable next steps
 7. Use real company names and realistic salary ranges
 8. Make recommendations highly personalized to their unique combination
 
@@ -606,7 +602,6 @@ Return the response in this exact JSON format:
       "skillGaps": ["Specific skill to develop 1", "Specific skill to develop 2", "Specific skill to develop 3"],
       "marketDemand": "High/Medium/Low based on current market trends",
       "salaryRange": "Realistic salary range for this role",
-      "timeline": "Realistic timeline to transition to this role",
       "companies": ["Real company 1", "Real company 2", "Real company 3"],
       "nextSteps": ["Specific actionable step 1", "Specific actionable step 2", "Specific actionable step 3"]
     }
@@ -620,8 +615,7 @@ Return the response in this exact JSON format:
       "projects": ["Real project idea 1", "Real project idea 2"],
       "certifications": ["Real certification name 1", "Real certification name 2"],
       "networking": ["Specific networking strategy 1", "Specific networking strategy 2"]
-    },
-    "timeline": "Realistic timeline like '3-6 months for basic skills, 6-12 months for advanced concepts'"
+    }
   },
   "conversation": [
     {

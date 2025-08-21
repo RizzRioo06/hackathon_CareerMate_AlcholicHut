@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Brain, MessageSquare, Lightbulb, Target, Rocket, Star, Loader2, Sparkles, ArrowRight, CheckCircle, TrendingUp, Users, BookOpen, Award, Clock, MapPin, Building, DollarSign, Search, Eye, Download, Share2 } from 'lucide-react'
+import { Brain, MessageSquare, Lightbulb, Target, Rocket, Star, Loader2, Sparkles, ArrowRight, CheckCircle, TrendingUp, Users, BookOpen, Award, MapPin, Building, DollarSign, Search, Eye, Download, Share2 } from 'lucide-react'
 
 interface DiscoverySession {
   id: string
@@ -27,7 +27,6 @@ interface CareerPath {
   skillGaps: string[]
   marketDemand: 'High' | 'Medium' | 'Low'
   salaryRange: string
-  timeline: string
   companies: string[]
   nextSteps: string[]
 }
@@ -42,7 +41,6 @@ interface LearningRoadmap {
     certifications: string[]
     networking: string[]
   }
-  timeline: string
 }
 
 interface ConversationMessage {
@@ -166,8 +164,7 @@ export default function CareerDiscovery() {
           immediate: [],
           shortTerm: [],
           longTerm: [],
-          resources: { courses: [], projects: [], certifications: [], networking: [] },
-          timeline: ''
+          resources: { courses: [], projects: [], certifications: [], networking: [] }
         },
         conversationHistory: [...userMessages, ...(data.conversation || [])]
       }
@@ -187,14 +184,99 @@ export default function CareerDiscovery() {
   const exportSession = () => {
     if (!discoverySession) return
     
-    const dataStr = JSON.stringify(discoverySession, null, 2)
-    const dataBlob = new Blob([dataStr], { type: 'application/json' })
-    const url = URL.createObjectURL(dataBlob)
+    // Create formatted report content
+    const reportContent = generateReportContent(discoverySession)
+    
+    // Create and download as text file (users can convert to PDF)
+    const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' })
+    const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
-    link.download = `career-discovery-${discoverySession.userProfile.name}-${new Date().toISOString().split('T')[0]}.json`
+    link.download = `career-discovery-${discoverySession.userProfile.name}-${new Date().toISOString().split('T')[0]}.txt`
     link.click()
     URL.revokeObjectURL(url)
+  }
+
+  const generateReportContent = (session: DiscoverySession) => {
+    // Create a formatted text report that can be saved as a file
+    // Users can then convert this to PDF using their preferred method
+    
+    const content = `
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                           CAREER DISCOVERY REPORT                            ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+Generated on: ${new Date().toLocaleDateString()}
+User: ${session.userProfile.name}
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                              CURRENT PROFILE                                ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+Role: ${session.userProfile.currentRole}
+Experience: ${session.userProfile.experience}
+Education: ${session.userProfile.education}
+Interests: ${session.userProfile.interests.join(', ')}
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                           DISCOVERED CAREER PATHS                           ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+${session.careerPaths.map((path, index) => `
+${index + 1}. ${path.title.toUpperCase()}
+   Market Demand: ${path.marketDemand}
+   Salary Range: ${path.salaryRange}
+   
+   Description:
+   ${path.description}
+   
+   Transferable Skills:
+   ${path.transferableSkills.map(skill => `   • ${skill}`).join('\n')}
+   
+   Skills to Develop:
+   ${path.skillGaps.map(skill => `   • ${skill}`).join('\n')}
+   
+   Next Steps:
+   ${path.nextSteps.map(step => `   • ${step}`).join('\n')}
+   
+   ───────────────────────────────────────────────────────────────────────────────
+`).join('\n')}
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                            LEARNING ROADMAP                                 ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+🚀 IMMEDIATE ACTIONS (This Week):
+${session.learningRoadmap.immediate.map(action => `• ${action}`).join('\n')}
+
+📈 SHORT TERM (1-3 Months):
+${session.learningRoadmap.shortTerm.map(action => `• ${action}`).join('\n')}
+
+⭐ LONG TERM (6-12 Months):
+${session.learningRoadmap.longTerm.map(action => `• ${action}`).join('\n')}
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                              RESOURCES                                       ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+
+📚 Courses:
+${session.learningRoadmap.resources.courses.map(course => `• ${course}`).join('\n')}
+
+🔨 Projects:
+${session.learningRoadmap.resources.projects.map(project => `• ${project}`).join('\n')}
+
+🏆 Certifications:
+${session.learningRoadmap.resources.certifications.map(cert => `• ${cert}`).join('\n')}
+
+🤝 Networking:
+${session.learningRoadmap.resources.networking.map(network => `• ${network}`).join('\n')}
+
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    Generated by CareerMate AI Career Discovery Engine       ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+    `.trim()
+    
+    return content
   }
 
   const resetDiscovery = () => {
@@ -356,10 +438,7 @@ export default function CareerDiscovery() {
                         <DollarSign className="h-4 w-4 text-green-400" />
                         <span>{path.salaryRange}</span>
                       </div>
-                      <div className="flex items-center space-x-1">
-                        <Clock className="h-4 w-4 text-amber-400" />
-                        <span>{path.timeline}</span>
-                      </div>
+
                     </div>
                   </div>
                 </div>
@@ -462,30 +541,33 @@ export default function CareerDiscovery() {
                 </div>
               </div>
 
-              <div className="bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-800 to-blue-900 border border-gray-200 dark:border-gray-600 rounded-2xl p-6">
-                <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-3 text-xl">Timeline</h4>
-                <p className="text-gray-700 dark:text-gray-300 text-lg">{discoverySession.learningRoadmap.timeline}</p>
-              </div>
+
             </div>
           </div>
         </div>
 
         {/* Action Buttons */}
         <div className="flex justify-center space-x-6">
-          <button
-            onClick={exportSession}
-            className="btn-accent flex items-center space-x-3"
-          >
-            <Download className="h-5 w-5" />
-            <span>Export Results</span>
-          </button>
-          <button
-            onClick={resetDiscovery}
-            className="btn-secondary flex items-center space-x-3"
-          >
-            <Sparkles className="h-5 w-5" />
-            <span>Start New Discovery</span>
-          </button>
+          {/* Export functionality - creates a formatted text report that users can convert to PDF */}
+                                                          <div className="flex flex-col items-center space-y-2">
+              <button
+                onClick={exportSession}
+                className="btn-accent flex items-center space-x-3"
+              >
+                <Download className="h-5 w-5" />
+                <span>Export Report</span>
+              </button>
+              <div className="text-center text-sm text-slate-400">
+                Downloads as .txt file - open in Word/Google Docs to convert to PDF
+              </div>
+            </div>
+            <button
+              onClick={resetDiscovery}
+              className="btn-secondary flex items-center space-x-3"
+            >
+              <Sparkles className="h-5 w-5" />
+              <span>Start New Discovery</span>
+            </button>
         </div>
       </div>
     )

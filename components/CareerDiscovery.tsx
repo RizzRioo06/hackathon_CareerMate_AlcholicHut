@@ -63,7 +63,7 @@ export default function CareerDiscovery() {
     education: ''
   })
   const [discoverySession, setDiscoverySession] = useState<DiscoverySession | null>(null)
-  const [currentQuestion, setCurrentQuestion] = useState(0)
+
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   // Progressive questions that adapt based on user responses
@@ -110,12 +110,8 @@ export default function CareerDiscovery() {
     setUserInputs(prev => ({ ...prev, [field]: value }))
   }
 
-  const handleNextQuestion = () => {
-    if (currentQuestion < discoveryQuestions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1)
-    } else {
-      startDiscovery()
-    }
+  const handleGenerateDiscovery = () => {
+    startDiscovery()
   }
 
   const startDiscovery = async () => {
@@ -281,7 +277,6 @@ ${session.learningRoadmap.resources.networking.map(network => `• ${network}`).
 
   const resetDiscovery = () => {
     setCurrentStep('start')
-    setCurrentQuestion(0)
     setConversation([])
     setDiscoverySession(null)
     setUserInputs({
@@ -308,10 +303,10 @@ ${session.learningRoadmap.resources.networking.map(network => `• ${network}`).
               <Brain className="h-14 w-14 text-white" />
             </div>
             <h2 className="text-5xl font-bold gradient-text mb-6">AI Career Discovery</h2>
-            <p className="text-xl text-slate-300 max-w-4xl mx-auto leading-relaxed">
-              Let our AI discover unexpected career possibilities you never knew existed. 
-              Answer a few simple questions and unlock your hidden potential.
-            </p>
+                         <p className="text-xl text-slate-300 max-w-4xl mx-auto leading-relaxed">
+               Let our AI discover unexpected career possibilities you never knew existed. 
+               Fill out all the questions below and generate your personalized career discovery.
+             </p>
           </div>
         </div>
 
@@ -319,35 +314,40 @@ ${session.learningRoadmap.resources.networking.map(network => `• ${network}`).
         <div className="card max-w-4xl mx-auto relative overflow-hidden">
           <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-emerald-400/10 to-teal-400/10 rounded-full blur-2xl"></div>
           <div className="relative">
-            <div className="flex items-center space-x-4 mb-10">
-              <div className="p-4 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl">
-                <Sparkles className="h-7 w-7 text-white" />
-              </div>
-              <h3 className="text-3xl font-bold text-slate-100">Discover Your Potential</h3>
-            </div>
+                         <div className="flex items-center space-x-4 mb-10">
+               <div className="p-4 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl">
+                 <Sparkles className="h-7 w-7 text-white" />
+               </div>
+               <h3 className="text-3xl font-bold text-slate-100">Discover Your Potential</h3>
+             </div>
+             <div className="text-center mb-8">
+               <p className="text-slate-300 text-lg">
+                 Fill out all the questions below, then click "Generate Discovery" to get your personalized career insights
+               </p>
+             </div>
             
-            <div className="space-y-8">
-              {discoveryQuestions.map((question, index) => (
-                <div key={question.id} className={`transition-all duration-500 ${index === currentQuestion ? 'opacity-100 scale-100' : 'opacity-50 scale-95'}`}>
-                  <label htmlFor={question.id} className="block text-lg font-semibold text-slate-200 mb-4">
-                    <div className="flex items-center space-x-3 mb-3">
-                      <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full flex items-center justify-center text-white font-bold">
-                        {index + 1}
-                      </div>
-                      <span>{question.question}</span>
-                    </div>
-                  </label>
-                  <input
-                    type={question.type}
-                    id={question.id}
-                    value={userInputs[question.id as keyof typeof userInputs] || ''}
-                    onChange={(e) => handleInputChange(question.id, e.target.value)}
-                    placeholder={question.placeholder}
-                    className="input-field text-lg"
-                    required
-                  />
-                </div>
-              ))}
+                         <div className="space-y-8">
+               {discoveryQuestions.map((question, index) => (
+                 <div key={question.id} className="transition-all duration-500 opacity-100 scale-100">
+                   <label htmlFor={question.id} className="block text-lg font-semibold text-slate-200 mb-4">
+                     <div className="flex items-center space-x-3 mb-3">
+                       <div className="w-8 h-8 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-full flex items-center justify-center text-white font-bold">
+                         {index + 1}
+                       </div>
+                       <span>{question.question}</span>
+                     </div>
+                   </label>
+                   <input
+                     type={question.type}
+                     id={question.id}
+                     value={userInputs[question.id as keyof typeof userInputs] || ''}
+                     onChange={(e) => handleInputChange(question.id, e.target.value)}
+                     placeholder={question.placeholder}
+                     className={`input-field text-lg ${userInputs[question.id as keyof typeof userInputs]?.trim() ? 'border-green-500/50 bg-green-900/20' : ''}`}
+                     required
+                   />
+                 </div>
+               ))}
               
               {errorMessage && (
                 <div className="rounded-2xl border border-red-600/30 bg-red-900/20 p-4 text-red-300">
@@ -358,30 +358,25 @@ ${session.learningRoadmap.resources.networking.map(network => `• ${network}`).
                 </div>
               )}
               
-              <div className="flex justify-center pt-6">
-                <button
-                  onClick={handleNextQuestion}
-                  disabled={!userInputs[discoveryQuestions[currentQuestion].id as keyof typeof userInputs]?.trim() || isLoading}
-                  className="btn-primary text-lg px-12 py-5 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isLoading ? (
-                    <div className="flex items-center space-x-3">
-                      <Loader2 className="h-6 w-6 animate-spin" />
-                      <span>Discovering...</span>
-                    </div>
-                  ) : currentQuestion === discoveryQuestions.length - 1 ? (
-                    <div className="flex items-center space-x-3">
-                      <Sparkles className="h-6 w-6" />
-                      <span>Start Discovery</span>
-                    </div>
-                  ) : (
-                    <div className="flex items-center space-x-3">
-                      <span>Next Question</span>
-                      <ArrowRight className="h-5 w-5" />
-                    </div>
-                  )}
-                </button>
-              </div>
+                             <div className="flex justify-center pt-6">
+                 <button
+                   onClick={handleGenerateDiscovery}
+                   disabled={!Object.values(userInputs).every(value => value.trim()) || isLoading}
+                   className="btn-primary text-lg px-12 py-5 disabled:opacity-50 disabled:cursor-not-allowed"
+                 >
+                   {isLoading ? (
+                     <div className="flex items-center space-x-3">
+                       <Loader2 className="h-6 w-6 animate-spin" />
+                       <span>Discovering...</span>
+                     </div>
+                   ) : (
+                     <div className="flex items-center space-x-3">
+                       <Sparkles className="h-6 w-6" />
+                       <span>Generate Discovery</span>
+                     </div>
+                   )}
+                 </button>
+               </div>
             </div>
           </div>
         </div>

@@ -293,11 +293,6 @@ export default function CareerGuidance() {
                     ))}
                   </div>
                 </div>
-
-                <div className="bg-gradient-to-r from-gray-50 to-blue-50 dark:from-gray-800 to-blue-900 border border-gray-200 dark:border-gray-600 rounded-2xl p-6">
-                  <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-3 text-xl">Timeline</h4>
-                  <p className="text-gray-700 dark:text-gray-300 text-lg">{response.learningRoadmap.timeline}</p>
-                </div>
               </div>
             </div>
           </div>

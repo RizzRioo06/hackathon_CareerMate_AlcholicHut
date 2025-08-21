@@ -58,13 +58,13 @@ export default function Home() {
           <div className="flex items-center justify-between h-24">
             <div className="flex items-center space-x-6">
               <div className="relative">
-                <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 p-4 rounded-2xl shadow-xl animate-pulse-glow">
-                  <Sparkles className="h-10 w-10 text-white" />
+                <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 p-3 rounded-xl shadow-lg animate-pulse-glow">
+                  <Sparkles className="h-7 w-7 text-white" />
                 </div>
                 <div className="absolute -top-2 -right-2 w-4 h-4 bg-amber-400 rounded-full animate-bounce"></div>
               </div>
               <div>
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
                   CareerMate
                 </h1>
                 <p className="text-base text-slate-300 font-medium mt-1">AI Career & Interview Mentor</p>
@@ -125,8 +125,8 @@ export default function Home() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <div className="text-center md:text-left">
               <div className="flex items-center justify-center md:justify-start space-x-4 mb-6">
-                <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 p-3 rounded-lg">
-                  <Sparkles className="h-7 w-7 text-white" />
+                <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 p-2 rounded-lg">
+                  <Sparkles className="h-5 w-5 text-white" />
                 </div>
                 <h3 className="text-2xl font-bold bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">CareerMate</h3>
               </div>

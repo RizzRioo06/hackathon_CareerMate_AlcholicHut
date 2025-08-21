@@ -654,12 +654,81 @@ Return the response in this exact JSON format:
   }
 }
 
+async function generateCareerStory(userProfile, storyType) {
+  const prompt = `You are an expert career storyteller and personal branding specialist. 
+  
+  Create a compelling ${storyType} story for this person:
+  
+  Name: ${userProfile.name}
+  Current Role: ${userProfile.currentRole}
+  Experience: ${userProfile.experience}
+  Education: ${userProfile.education}
+  Key Skills: ${userProfile.keySkills.join(', ')}
+  Achievements: ${userProfile.achievements.join(', ')}
+  Career Goals: ${userProfile.careerGoals}
+  Personal Interests: ${userProfile.personalInterests.join(', ')}
+  
+  Generate a ${storyType} story that is:
+  
+  ${storyType === 'interview' ? 
+    '1. A compelling 2-3 minute story for "Tell me about yourself" or "Walk me through your background"\n' +
+    '2. Shows progression and growth\n' +
+    '3. Highlights key achievements and skills\n' +
+    '4. Connects personal interests to professional goals\n' +
+    '5. Ends with current role and future aspirations' :
+    storyType === 'linkedin' ? 
+    '1. A professional LinkedIn bio (150-200 words)\n' +
+    '2. Shows personality and expertise\n' +
+    '3. Includes relevant keywords for recruiters\n' +
+    '4. Has a clear call-to-action\n' +
+    '5. Professional yet approachable tone' :
+    storyType === 'networking' ? 
+    '1. A 30-second elevator pitch for networking events\n' +
+    '2. Clear value proposition\n' +
+    '3. Memorable and engaging\n' +
+    '4. Easy to remember and repeat\n' +
+    '5. Opens conversation naturally' :
+    '1. A compelling resume summary (3-4 sentences)\n' +
+    '2. Highlights key achievements and skills\n' +
+    '3. Shows career progression\n' +
+    '4. Tailored for their target role\n' +
+    '5. Professional and impactful'
+  }
+  
+  6. Use their actual name, role, and achievements
+  7. Make it personal and authentic
+  8. Show passion and enthusiasm
+  9. Keep it concise but impactful
+  10. Use active voice and strong verbs
+  
+  Return ONLY the story content, no additional formatting or explanations.`
 
+  try {
+    if (PROVIDER === 'azure' || PROVIDER === 'openai') {
+      const response = await openai.chat.completions.create({
+        model: DEFAULT_MODEL,
+        messages: [{ role: 'user', content: prompt }],
+        temperature: 0.8,
+        max_tokens: 500,
+        response_format: { type: 'text' }
+      })
+      return { story: response.choices[0].message.content.trim() }
+    } else if (PROVIDER === 'gemini') {
+      const result = await genAI.generateContent(prompt)
+      const response = await result.response
+      return { story: response.text().trim() }
+    }
+  } catch (error) {
+    console.error('Error generating career story:', error)
+    throw new Error('Failed to generate career story')
+  }
+}
 
 module.exports = {
   generateCareerGuidance,
   generateMockInterview,
   generateJobSuggestions,
   evaluateInterviewAnswer,
-  generateCareerDiscovery
+  generateCareerDiscovery,
+  generateCareerStory
 };

@@ -177,6 +177,27 @@ app.post('/api/career-discovery', async (req, res) => {
   }
 });
 
+// Career Storyteller API
+app.post('/api/career-storyteller', async (req, res) => {
+  try {
+    const { storyType, ...userProfile } = req.body;
+    
+    if (!storyType || !userProfile.name || !userProfile.currentRole) {
+      return res.status(400).json({ 
+        error: 'Missing required fields: storyType, name, and currentRole are required' 
+      });
+    }
+
+    const openaiService = require('./services/openai');
+    const response = await openaiService.generateCareerStory(userProfile, storyType);
+
+    res.json(response);
+  } catch (error) {
+    console.error('Career storyteller error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 
 
@@ -200,6 +221,7 @@ app.listen(PORT, () => {
   console.log(`   POST /api/evaluate-answer`);
   console.log(`   POST /api/job-suggestions`);
   console.log(`   POST /api/career-discovery`);
+  console.log(`   POST /api/career-storyteller`);
 
   console.log(`🔑 Remember to set your AI API credentials in your .env file`);
 });

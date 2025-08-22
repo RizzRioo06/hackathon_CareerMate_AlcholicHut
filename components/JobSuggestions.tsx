@@ -44,7 +44,7 @@ export default function JobSuggestions() {
     setIsLoading(true)
     
     try {
-          const res = await fetch('http://localhost:5000/api/job-suggestions', {
+          const res = await fetch('https://careermate-backend-nzb0.onrender.com/api/job-suggestions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ...formData, language: 'en' })

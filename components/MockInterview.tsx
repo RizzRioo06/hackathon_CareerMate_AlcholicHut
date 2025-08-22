@@ -70,7 +70,7 @@ export default function MockInterview() {
     setIsLoading(true)
     setErrorMessage(null)
     try {
-      const res = await fetch('http://localhost:5000/api/mock-interview', {
+      const res = await fetch('https://careermate-backend-nzb0.onrender.com/api/mock-interview', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role: selectedRole.trim(), language: 'en' })
@@ -112,7 +112,7 @@ export default function MockInterview() {
     try {
       const currentQ = response?.questions[currentQuestion]
       if (currentQ && answer.trim()) {
-        const evalResponse = await fetch('http://localhost:5000/api/evaluate-answer', {
+        const evalResponse = await fetch('https://careermate-backend-nzb0.onrender.com/api/evaluate-answer', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

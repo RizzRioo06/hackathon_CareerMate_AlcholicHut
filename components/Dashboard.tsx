@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Brain, Target, MessageSquare, Briefcase, Trash2, Eye, Calendar, User } from 'lucide-react'
+import config from './config'
 
 interface SavedData {
   careerDiscoveries: any[]
@@ -27,11 +28,17 @@ export default function Dashboard() {
   const fetchAllData = async () => {
     setIsLoading(true)
     try {
+      // First check if backend is accessible
+      const healthCheck = await fetch(`${config.apiUrl.replace('/api', '')}/health`)
+      if (!healthCheck.ok) {
+        console.warn('Backend health check failed, backend might not be running')
+      }
+      
       const [discoveries, guidance, interviews, jobs] = await Promise.all([
-        fetch('https://careermate-backend-nzb0.onrender.com/api/career-discoveries').then(res => res.ok ? res.json() : []),
-        fetch('https://careermate-backend-nzb0.onrender.com/api/career-guidance').then(res => res.ok ? res.json() : []),
-        fetch('https://careermate-backend-nzb0.onrender.com/api/mock-interviews').then(res => res.ok ? res.json() : []),
-        fetch('https://careermate-backend-nzb0.onrender.com/api/job-suggestions').then(res => res.ok ? res.json() : [])
+        fetch(`${config.apiUrl}/career-discoveries`).then(res => res.ok ? res.json() : []),
+        fetch(`${config.apiUrl}/career-guidance`).then(res => res.ok ? res.json() : []),
+        fetch(`${config.apiUrl}/mock-interviews`).then(res => res.ok ? res.json() : []),
+        fetch(`${config.apiUrl}/job-suggestions`).then(res => res.ok ? res.json() : [])
       ])
 
       setSavedData({
@@ -53,18 +60,30 @@ export default function Dashboard() {
                      type === 'careerGuidance' ? 'career-guidance' :
                      type === 'mockInterviews' ? 'mock-interviews' : 'job-suggestions'
       
-      const res = await fetch(`https://careermate-backend-nzb0.onrender.com/api/${endpoint}/${id}`, {
+      console.log(`Attempting to delete ${type} with ID: ${id} from endpoint: /api/${endpoint}/${id}`)
+      
+      const res = await fetch(`${config.apiUrl}/${endpoint}/${id}`, {
         method: 'DELETE'
       })
       
+      console.log(`Delete response status: ${res.status}`)
+      
       if (res.ok) {
+        const responseData = await res.json()
+        console.log('Delete successful:', responseData)
+        
         setSavedData(prev => ({
           ...prev,
           [type]: prev[type].filter((item: any) => item._id !== id)
         }))
+      } else {
+        const errorData = await res.json().catch(() => ({ error: 'Unknown error' }))
+        console.error('Delete failed:', errorData)
+        alert(`Failed to delete item: ${errorData.error || 'Unknown error'}`)
       }
     } catch (error) {
       console.error('Failed to delete item:', error)
+      alert('Failed to delete item. Please check the console for details.')
     }
   }
 

@@ -38,6 +38,15 @@ app.get('/health', (req, res) => {
   res.json({ status: 'OK', message: 'CareerMate API is running' });
 });
 
+// Test delete endpoint for debugging
+app.delete('/api/test-delete/:id', (req, res) => {
+  res.json({ 
+    message: 'Test delete endpoint working', 
+    id: req.params.id,
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Root endpoint for testing
 app.get('/', (req, res) => {
   res.json({ 
@@ -53,6 +62,21 @@ app.get('/', (req, res) => {
 });
 
 // AI service integration - all responses come from AI APIs
+
+// Helper function to validate AI response structure
+function validateAIResponse(response, expectedFields) {
+  if (!response || typeof response !== 'object') {
+    throw new Error('Invalid AI response: response must be an object');
+  }
+  
+  for (const field of expectedFields) {
+    if (!(field in response)) {
+      console.warn(`Missing field in AI response: ${field}`);
+    }
+  }
+  
+  return response;
+}
 
 // Career Guidance API
 app.post('/api/career-guidance', async (req, res) => {
@@ -70,11 +94,21 @@ app.post('/api/career-guidance', async (req, res) => {
       skills, interests, goals, experience, education
     });
 
+    // Validate AI response structure
+    validateAIResponse(aiResponse, ['careerPaths', 'skillRecommendations', 'actionPlan']);
+
+    // Log the AI response for debugging
+    console.log('AI Response for Career Guidance:', JSON.stringify(aiResponse, null, 2));
+
     // Save to database
     const CareerGuidance = require('./models/CareerGuidance');
     const careerGuidance = new CareerGuidance({
       userProfile: { skills, interests, goals, experience, education },
-      guidance: aiResponse
+      guidance: {
+        careerPaths: aiResponse.careerPaths || [],
+        skillRecommendations: aiResponse.skillRecommendations || [],
+        actionPlan: aiResponse.actionPlan || {}
+      }
     });
 
     await careerGuidance.save();
@@ -82,6 +116,15 @@ app.post('/api/career-guidance', async (req, res) => {
     res.json(aiResponse);
   } catch (error) {
     console.error('Career guidance error:', error);
+    
+    // Provide more specific error messages
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ 
+        error: 'Data validation failed', 
+        details: error.message 
+      });
+    }
+    
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -203,35 +246,21 @@ app.post('/api/career-discovery', async (req, res) => {
       name, currentRole, primaryInterest, secondaryInterest, experience, education
     });
 
+    // Validate AI response structure
+    validateAIResponse(aiResponse, ['careerPaths', 'learningRoadmap', 'conversation']);
+
+    // Log the AI response for debugging
+    console.log('AI Response for Career Discovery:', JSON.stringify(aiResponse, null, 2));
+
     // Save to database
     const CareerDiscovery = require('./models/CareerDiscovery');
     
-    // Ensure conversation is properly formatted as an array
-    let conversation = [];
-    if (aiResponse.conversation) {
-      if (Array.isArray(aiResponse.conversation)) {
-        conversation = aiResponse.conversation;
-      } else if (typeof aiResponse.conversation === 'string') {
-        try {
-          // Try to parse if it's a string representation of an array
-          conversation = JSON.parse(aiResponse.conversation);
-        } catch (e) {
-          // If parsing fails, create a default conversation entry
-          conversation = [{
-            role: 'ai',
-            content: aiResponse.conversation,
-            timestamp: Date.now(),
-            type: 'insight'
-          }];
-        }
-      }
-    }
-    
+    // Create career discovery document - let the model handle validation
     const careerDiscovery = new CareerDiscovery({
       userProfile: { name, currentRole, primaryInterest, secondaryInterest, experience, education },
-      careerPaths: aiResponse.careerPaths,
-      learningRoadmap: aiResponse.learningRoadmap,
-      conversation: conversation
+      careerPaths: aiResponse.careerPaths || [],
+      learningRoadmap: aiResponse.learningRoadmap || {},
+      conversation: aiResponse.conversation || []
     });
 
     await careerDiscovery.save();
@@ -239,6 +268,15 @@ app.post('/api/career-discovery', async (req, res) => {
     res.json(aiResponse);
   } catch (error) {
     console.error('Career discovery error:', error);
+    
+    // Provide more specific error messages
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ 
+        error: 'Data validation failed', 
+        details: error.message 
+      });
+    }
+    
     res.status(500).json({ error: 'Internal server error' });
   }
 });
@@ -306,6 +344,51 @@ app.delete('/api/career-discoveries/:id', async (req, res) => {
   }
 });
 
+// Delete career guidance session
+app.delete('/api/career-guidance/:id', async (req, res) => {
+  try {
+    const CareerGuidance = require('./models/CareerGuidance');
+    const guidance = await CareerGuidance.findByIdAndDelete(req.params.id);
+    if (!guidance) {
+      return res.status(404).json({ error: 'Career guidance session not found' });
+    }
+    res.json({ message: 'Career guidance session deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting career guidance session:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Delete mock interview
+app.delete('/api/mock-interviews/:id', async (req, res) => {
+  try {
+    const MockInterview = require('./models/MockInterview');
+    const interview = await MockInterview.findByIdAndDelete(req.params.id);
+    if (!interview) {
+      return res.status(404).json({ error: 'Mock interview not found' });
+    }
+    res.json({ message: 'Mock interview deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting mock interview:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Delete job suggestion
+app.delete('/api/job-suggestions/:id', async (req, res) => {
+  try {
+    const JobSuggestion = require('./models/JobSuggestion');
+    const suggestion = await JobSuggestion.findByIdAndDelete(req.params.id);
+    if (!suggestion) {
+      return res.status(404).json({ error: 'Job suggestion not found' });
+    }
+    res.json({ message: 'Job suggestion deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting job suggestion:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Get all saved career guidance sessions
 app.get('/api/career-guidance', async (req, res) => {
   try {
@@ -366,8 +449,11 @@ app.listen(PORT, () => {
   console.log(`   GET /api/career-discoveries/:id`);
   console.log(`   DELETE /api/career-discoveries/:id`);
   console.log(`   GET /api/career-guidance`);
+  console.log(`   DELETE /api/career-guidance/:id`);
   console.log(`   GET /api/mock-interviews`);
+  console.log(`   DELETE /api/mock-interviews/:id`);
   console.log(`   GET /api/job-suggestions`);
+  console.log(`   DELETE /api/job-suggestions/:id`);
 
   console.log(`🔑 Remember to set your AI API credentials in your .env file`);
 });

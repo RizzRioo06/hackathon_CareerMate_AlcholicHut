@@ -258,15 +258,79 @@ app.post('/api/career-discovery', async (req, res) => {
     console.log('Conversation type:', typeof aiResponse.conversation);
     console.log('Conversation value:', aiResponse.conversation);
 
+    // Pre-process the conversation field to ensure it's an array
+    let processedConversation = [];
+    if (aiResponse.conversation) {
+      if (typeof aiResponse.conversation === 'string') {
+        try {
+          // Try to parse if it's a JSON string
+          const parsed = JSON.parse(aiResponse.conversation);
+          if (Array.isArray(parsed)) {
+            processedConversation = parsed;
+          } else {
+            // If parsed but not array, wrap in array
+            processedConversation = [parsed];
+          }
+        } catch (e) {
+          console.log('Failed to parse conversation as JSON, trying to clean the string...');
+          
+          // Try to clean the string if it contains concatenated parts
+          let cleanedString = aiResponse.conversation;
+          
+          // Remove common concatenation artifacts
+          cleanedString = cleanedString.replace(/\\n/g, '\n');
+          cleanedString = cleanedString.replace(/\\'/g, "'");
+          cleanedString = cleanedString.replace(/\\"/g, '"');
+          
+          // Try to extract the actual content
+          if (cleanedString.includes("role: 'ai'") || cleanedString.includes('role: "ai"')) {
+            // Extract the content from the string
+            const contentMatch = cleanedString.match(/content:\s*['"]([^'"]+)['"]/);
+            if (contentMatch) {
+              processedConversation = [{
+                role: 'ai',
+                content: contentMatch[1],
+                timestamp: Date.now(),
+                type: 'insight'
+              }];
+            } else {
+              // Fallback: use the entire string as content
+              processedConversation = [{
+                role: 'ai',
+                content: cleanedString,
+                timestamp: Date.now(),
+                type: 'insight'
+              }];
+            }
+          } else {
+            // Fallback: use the entire string as content
+            processedConversation = [{
+              role: 'ai',
+              content: aiResponse.conversation,
+              timestamp: Date.now(),
+              type: 'insight'
+            }];
+          }
+        }
+      } else if (Array.isArray(aiResponse.conversation)) {
+        processedConversation = aiResponse.conversation;
+      } else {
+        // If it's not a string and not an array, make it an array
+        processedConversation = [aiResponse.conversation];
+      }
+    }
+
+    console.log('Processed conversation:', processedConversation);
+
     // Save to database
     const CareerDiscovery = require('./models/CareerDiscovery');
     
-    // Create career discovery document - let the model handle validation
+    // Create career discovery document with processed data
     const careerDiscovery = new CareerDiscovery({
       userProfile: { name, currentRole, primaryInterest, secondaryInterest, experience, education },
       careerPaths: aiResponse.careerPaths || [],
       learningRoadmap: aiResponse.learningRoadmap || {},
-      conversation: aiResponse.conversation || []
+      conversation: processedConversation
     });
 
     console.log('Before save - conversation:', careerDiscovery.conversation);

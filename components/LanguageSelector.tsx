@@ -23,13 +23,7 @@ export default function LanguageSelector() {
 
   // Group languages by region for better organization
   const languageGroups: Record<string, LanguageCode[]> = {
-    'Popular': ['en', 'es', 'fr', 'de', 'it', 'pt', 'ru', 'ja', 'ko', 'zh'],
-    'Europe': ['nl', 'sv', 'da', 'no', 'fi', 'pl', 'cs', 'hu', 'ro', 'bg', 'hr', 'sk', 'sl', 'et', 'lv', 'lt', 'uk', 'be', 'mk', 'sr', 'bs', 'me', 'sq', 'el', 'mt', 'ga', 'cy', 'gd', 'is', 'fo', 'kl', 'se'],
-    'Asia': ['th', 'vi', 'id', 'ms', 'tl', 'jv', 'su', 'min', 'ace', 'ban', 'bug', 'mad', 'sun', 'ceb', 'ilo', 'war', 'hil', 'kap', 'pam', 'bcl', 'bik', 'pag', 'iba', 'kac', 'shn', 'kha', 'mni', 'sat', 'kok', 'sck', 'brx', 'doi'],
-    'Africa & Middle East': ['ar', 'he', 'fa', 'ur', 'sw', 'am', 'ha', 'ig', 'yo', 'so', 'om', 'ti', 'st', 'zu', 'xh', 'af'],
-    'Americas': ['qu', 'gn', 'ay', 'haw'],
-    'Oceania': ['sm', 'to', 'fj', 'mi'],
-    'South Asia': ['hi', 'bn', 'ta', 'te', 'ml', 'kn', 'gu', 'pa', 'mr', 'or', 'as', 'ne', 'si', 'my', 'km', 'lo']
+    'Popular': ['en', 'es', 'fr', 'de', 'it', 'pt', 'ru', 'ja', 'ko', 'zh', 'my']
   }
 
   const handleLanguageSelect = (lang: LanguageCode) => {

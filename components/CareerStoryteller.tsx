@@ -18,9 +18,7 @@ import {
   Target,
   Heart
 } from 'lucide-react'
-import { useTranslation } from './TranslationContext'
-import { getTranslation, TRANSLATION_KEYS } from './translations'
-import LanguageSelector from './LanguageSelector'
+
 
 interface CareerStory {
   id: string
@@ -41,7 +39,6 @@ interface UserProfile {
 }
 
 export default function CareerStoryteller() {
-  const { currentLanguage } = useTranslation()
   
   // Add refs for input fields
   const skillInputRef = useRef<HTMLInputElement>(null)
@@ -128,7 +125,7 @@ export default function CareerStoryteller() {
         const res = await fetch('http://localhost:5000/api/career-storyteller', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...userProfile, storyType: type, language: currentLanguage })
+          body: JSON.stringify({ ...userProfile, storyType: type })
         })
         
         if (!res.ok) {
@@ -149,7 +146,7 @@ export default function CareerStoryteller() {
       
     } catch (error) {
       console.error('Story generation error:', error)
-      setErrorMessage(getTranslation(currentLanguage, 'FAILED_TO_GENERATE'))
+      setErrorMessage('Failed to generate story. Please try again.')
     } finally {
       setIsGenerating(false)
     }
@@ -182,7 +179,7 @@ export default function CareerStoryteller() {
       const res = await fetch('http://localhost:5000/api/career-storyteller', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...userProfile, storyType, language: currentLanguage })
+        body: JSON.stringify({ ...userProfile, storyType })
       })
       
       if (!res.ok) {
@@ -199,7 +196,7 @@ export default function CareerStoryteller() {
       
     } catch (error) {
       console.error('Story regeneration error:', error)
-      setErrorMessage(getTranslation(currentLanguage, 'FAILED_TO_REGENERATE'))
+      setErrorMessage('Failed to regenerate story. Please try again.')
     } finally {
       setIsGenerating(false)
     }
@@ -234,10 +231,10 @@ export default function CareerStoryteller() {
               <BookOpen className="h-10 w-10 text-white" />
             </div>
             <h2 className="text-4xl font-bold gradient-text mb-6">
-              {getTranslation(currentLanguage, 'YOUR_CAREER_STORIES')}
+              Your Career Stories
             </h2>
             <p className="text-xl text-slate-300 max-w-4xl mx-auto leading-relaxed">
-              {getTranslation(currentLanguage, 'STORIES_DESCRIPTION')}
+              Your personalized career stories for different professional contexts.
             </p>
           </div>
         </div>
@@ -258,13 +255,13 @@ export default function CareerStoryteller() {
                     </div>
                     <div>
                       <h3 className="text-2xl font-bold text-slate-100 capitalize">
-                        {story.type === 'interview' && getTranslation(currentLanguage, 'INTERVIEW_STORY')}
-                        {story.type === 'linkedin' && getTranslation(currentLanguage, 'LINKEDIN_BIO')}
-                        {story.type === 'networking' && getTranslation(currentLanguage, 'NETWORKING_PITCH')}
-                        {story.type === 'resume' && getTranslation(currentLanguage, 'RESUME_SUMMARY')}
+                        {story.type === 'interview' && 'Interview Story'}
+                        {story.type === 'linkedin' && 'LinkedIn Bio'}
+                        {story.type === 'networking' && 'Networking Pitch'}
+                        {story.type === 'resume' && 'Resume Summary'}
                       </h3>
                                               <p className="text-slate-400 text-sm">
-                          {getTranslation(currentLanguage, 'GENERATED_ON')} {new Date(story.timestamp).toLocaleString()}
+                          Generated on {new Date(story.timestamp).toLocaleString()}
                         </p>
                     </div>
                   </div>
@@ -275,21 +272,21 @@ export default function CareerStoryteller() {
                       className="btn-secondary flex items-center space-x-2"
                     >
                       <RefreshCw className={`h-4 w-4 ${isGenerating ? 'animate-spin' : ''}`} />
-                      <span>{getTranslation(currentLanguage, 'REGENERATE')}</span>
+                      <span>Regenerate</span>
                     </button>
                     <button
                       onClick={() => copyToClipboard(story.content)}
                       className="btn-accent flex items-center space-x-2"
                     >
                       <Copy className="h-4 w-4" />
-                      <span>{getTranslation(currentLanguage, 'COPY')}</span>
+                      <span>Copy</span>
                     </button>
                     <button
                       onClick={() => downloadStory(story)}
                       className="btn-primary flex items-center space-x-2"
                     >
                       <Download className="h-4 w-4" />
-                      <span>{getTranslation(currentLanguage, 'DOWNLOAD')}</span>
+                      <span>Download</span>
                     </button>
                   </div>
                 </div>
@@ -313,7 +310,7 @@ export default function CareerStoryteller() {
             className="btn-secondary flex items-center space-x-3"
           >
             <Sparkles className="h-5 w-5" />
-            <span>{getTranslation(currentLanguage, 'CREATE_NEW_STORIES')}</span>
+            <span>Create New Stories</span>
           </button>
         </div>
       </div>
@@ -330,17 +327,17 @@ export default function CareerStoryteller() {
         <div className="relative">
           {/* Language Selector */}
           <div className="absolute top-0 right-0 z-10">
-            <LanguageSelector />
+
           </div>
           
           <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-xl mb-6 animate-bounce-in">
             <BookOpen className="h-10 w-10 text-white" />
           </div>
           <h2 className="text-4xl font-bold gradient-text mb-6">
-            {getTranslation(currentLanguage, 'AI_CAREER_STORYTELLER')}
+            AI Career Storyteller
           </h2>
           <p className="text-xl text-slate-300 max-w-4xl mx-auto leading-relaxed">
-            {getTranslation(currentLanguage, 'HEADER_DESCRIPTION')}
+            Create compelling stories that showcase your professional journey and achievements for any context.
           </p>
         </div>
       </div>
@@ -354,7 +351,7 @@ export default function CareerStoryteller() {
               <Sparkles className="h-7 w-7 text-white" />
             </div>
             <h3 className="text-3xl font-bold text-slate-100">
-              {getTranslation(currentLanguage, 'TELL_YOUR_STORY')}
+              Tell Your Story
             </h3>
           </div>
           
@@ -365,14 +362,14 @@ export default function CareerStoryteller() {
                 <label className="block text-lg font-semibold text-slate-200 mb-4">
                   <div className="flex items-center space-x-3 mb-3">
                     <User className="h-5 w-5 text-blue-400" />
-                    <span>{getTranslation(currentLanguage, 'YOUR_NAME')}</span>
+                    <span>Your Name</span>
                   </div>
                 </label>
                 <input
                   type="text"
                   value={userProfile.name}
                   onChange={(e) => handleInputChange('name', e.target.value)}
-                  placeholder={getTranslation(currentLanguage, 'ENTER_FULL_NAME')}
+                  placeholder="Enter your full name"
                   className="input-field text-lg"
                   required
                 />
@@ -382,14 +379,14 @@ export default function CareerStoryteller() {
                 <label className="block text-lg font-semibold text-slate-200 mb-4">
                   <div className="flex items-center space-x-3 mb-3">
                     <Briefcase className="h-5 w-5 text-blue-400" />
-                    <span>{getTranslation(currentLanguage, 'CURRENT_ROLE')}</span>
+                    <span>Current Role</span>
                   </div>
                 </label>
                 <input
                   type="text"
                   value={userProfile.currentRole}
                   onChange={(e) => handleInputChange('currentRole', e.target.value)}
-                  placeholder={getTranslation(currentLanguage, 'CURRENT_ROLE_PLACEHOLDER')}
+                  placeholder="e.g., Software Developer, Marketing Manager"
                   className="input-field text-lg"
                   required
                 />
@@ -402,14 +399,14 @@ export default function CareerStoryteller() {
                 <label className="block text-lg font-semibold text-slate-200 mb-4">
                   <div className="flex items-center space-x-3 mb-3">
                     <Target className="h-5 w-5 text-blue-400" />
-                    <span>{getTranslation(currentLanguage, 'YEARS_OF_EXPERIENCE')}</span>
+                    <span>Years of Experience</span>
                   </div>
                 </label>
                 <input
                   type="text"
                   value={userProfile.experience}
                   onChange={(e) => handleInputChange('experience', e.target.value)}
-                  placeholder={getTranslation(currentLanguage, 'EXPERIENCE_PLACEHOLDER')}
+                  placeholder="e.g., 5 years, Entry level, 10+ years"
                   className="input-field text-lg"
                   required
                 />
@@ -419,14 +416,14 @@ export default function CareerStoryteller() {
                 <label className="block text-lg font-semibold text-slate-200 mb-4">
                   <div className="flex items-center space-x-3 mb-3">
                     <GraduationCap className="h-5 w-5 text-blue-400" />
-                    <span>{getTranslation(currentLanguage, 'EDUCATION')}</span>
+                    <span>Education</span>
                   </div>
                 </label>
                 <input
                   type="text"
                   value={userProfile.education}
                   onChange={(e) => handleInputChange('education', e.target.value)}
-                  placeholder={getTranslation(currentLanguage, 'EDUCATION_PLACEHOLDER')}
+                  placeholder="e.g., Bachelor's in Computer Science"
                   className="input-field text-lg"
                   required
                 />
@@ -438,7 +435,7 @@ export default function CareerStoryteller() {
               <label className="block text-lg font-semibold text-slate-200 mb-4">
                 <div className="flex items-center space-x-3 mb-3">
                   <Award className="h-5 w-5 text-blue-400" />
-                  <span>{getTranslation(currentLanguage, 'KEY_SKILLS')}</span>
+                  <span>Key Skills</span>
                 </div>
               </label>
               <div className="space-y-4">
@@ -446,7 +443,7 @@ export default function CareerStoryteller() {
                   <input
                     ref={skillInputRef}
                     type="text"
-                    placeholder={getTranslation(currentLanguage, 'SKILL_PLACEHOLDER')}
+                    placeholder="e.g., JavaScript, Project Management"
                     className="input-field flex-1"
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
@@ -464,7 +461,7 @@ export default function CareerStoryteller() {
                      }}
                      className="btn-primary px-6"
                    >
-                     {getTranslation(currentLanguage, 'ADD')}
+                     Add
                    </button>
                 </div>
                 {userProfile.keySkills.length > 0 && (
@@ -493,7 +490,7 @@ export default function CareerStoryteller() {
               <label className="block text-lg font-semibold text-slate-200 mb-4">
                 <div className="flex items-center space-x-3 mb-3">
                   <Award className="h-5 w-5 text-blue-400" />
-                  <span>{getTranslation(currentLanguage, 'KEY_ACHIEVEMENTS')}</span>
+                  <span>Key Achievements</span>
                 </div>
               </label>
               <div className="space-y-4">
@@ -501,7 +498,7 @@ export default function CareerStoryteller() {
                   <input
                     ref={achievementInputRef}
                     type="text"
-                    placeholder={getTranslation(currentLanguage, 'ACHIEVEMENT_PLACEHOLDER')}
+                    placeholder="e.g., Led team of 10 developers"
                     className="input-field flex-1"
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
@@ -519,7 +516,7 @@ export default function CareerStoryteller() {
                      }}
                      className="btn-primary px-6"
                    >
-                     {getTranslation(currentLanguage, 'ADD')}
+                     Add
                    </button>
                 </div>
                 {userProfile.achievements.length > 0 && (
@@ -548,13 +545,13 @@ export default function CareerStoryteller() {
               <label className="block text-lg font-semibold text-slate-200 mb-4">
                 <div className="flex items-center space-x-3 mb-3">
                   <Target className="h-5 w-5 text-blue-400" />
-                  <span>{getTranslation(currentLanguage, 'CAREER_GOALS')}</span>
+                  <span>Career Goals</span>
                 </div>
               </label>
               <textarea
                 value={userProfile.careerGoals}
                 onChange={(e) => handleInputChange('careerGoals', e.target.value)}
-                placeholder={getTranslation(currentLanguage, 'CAREER_GOALS_PLACEHOLDER')}
+                placeholder="e.g., Lead a tech team, Start my own business"
                 className="input-field text-lg min-h-[100px]"
                 required
               />
@@ -565,7 +562,7 @@ export default function CareerStoryteller() {
               <label className="block text-lg font-semibold text-slate-200 mb-4">
                 <div className="flex items-center space-x-3 mb-3">
                   <Heart className="h-5 w-5 text-blue-400" />
-                  <span>{getTranslation(currentLanguage, 'PERSONAL_INTERESTS')}</span>
+                  <span>Personal Interests</span>
                 </div>
               </label>
               <div className="space-y-4">
@@ -573,7 +570,7 @@ export default function CareerStoryteller() {
                   <input
                     ref={interestInputRef}
                     type="text"
-                    placeholder={getTranslation(currentLanguage, 'INTEREST_PLACEHOLDER')}
+                    placeholder="e.g., Photography, Hiking"
                     className="input-field flex-1"
                     onKeyPress={(e) => {
                       if (e.key === 'Enter') {
@@ -591,7 +588,7 @@ export default function CareerStoryteller() {
                      }}
                      className="btn-primary px-6"
                    >
-                     {getTranslation(currentLanguage, 'ADD')}
+                     Add
                    </button>
                 </div>
                 {userProfile.personalInterests.length > 0 && (
@@ -633,12 +630,12 @@ export default function CareerStoryteller() {
                 {isGenerating ? (
                   <div className="flex items-center space-x-3">
                     <Loader2 className="h-6 w-6 animate-spin" />
-                    <span>{getTranslation(currentLanguage, 'GENERATING_STORIES')}</span>
+                    <span>Generating Stories...</span>
                   </div>
                 ) : (
                   <div className="flex items-center space-x-3">
                     <Sparkles className="h-6 w-6" />
-                    <span>{getTranslation(currentLanguage, 'GENERATE_MY_STORIES')}</span>
+                    <span>Generate My Stories</span>
                   </div>
                 )}
               </button>

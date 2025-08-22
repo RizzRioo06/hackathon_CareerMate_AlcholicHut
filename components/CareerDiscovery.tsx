@@ -2,9 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { Brain, MessageSquare, Lightbulb, Target, Rocket, Star, Loader2, Sparkles, ArrowRight, CheckCircle, TrendingUp, Users, BookOpen, Award, MapPin, Building, DollarSign, Search, Eye, Download, Share2 } from 'lucide-react'
-import { useTranslation } from './TranslationContext'
-import { getTranslation, TRANSLATION_KEYS } from './translations'
-import LanguageSelector from './LanguageSelector'
+
 
 interface DiscoverySession {
   id: string
@@ -54,7 +52,6 @@ interface ConversationMessage {
 }
 
 export default function CareerDiscovery() {
-  const { currentLanguage } = useTranslation()
   
   const [currentStep, setCurrentStep] = useState<'start' | 'discovery' | 'analysis' | 'results'>('start')
   const [isLoading, setIsLoading] = useState(false)
@@ -75,38 +72,38 @@ export default function CareerDiscovery() {
   const discoveryQuestions = [
     {
       id: 'name',
-      question: getTranslation(currentLanguage, 'DISCOVERY_QUESTION_NAME'),
-      placeholder: getTranslation(currentLanguage, 'DISCOVERY_PLACEHOLDER_NAME'),
+      question: "What's your name?",
+      placeholder: "Enter your full name",
       type: 'text'
     },
     {
       id: 'currentRole',
-      question: getTranslation(currentLanguage, 'DISCOVERY_QUESTION_CURRENT_ROLE'),
-      placeholder: getTranslation(currentLanguage, 'DISCOVERY_PLACEHOLDER_CURRENT_ROLE'),
+      question: "What's your current role or profession?",
+      placeholder: "e.g., Software Developer, Teacher, Manager",
       type: 'text'
     },
     {
       id: 'primaryInterest',
-      question: getTranslation(currentLanguage, 'DISCOVERY_QUESTION_PRIMARY_INTEREST'),
-      placeholder: getTranslation(currentLanguage, 'DISCOVERY_PLACEHOLDER_PRIMARY_INTEREST'),
+      question: "What's your primary interest or passion?",
+      placeholder: "e.g., Technology, Arts, Health, Education",
       type: 'text'
     },
     {
       id: 'secondaryInterest',
-      question: getTranslation(currentLanguage, 'DISCOVERY_QUESTION_SECONDARY_INTEREST'),
-      placeholder: getTranslation(currentLanguage, 'DISCOVERY_PLACEHOLDER_SECONDARY_INTEREST'),
+      question: "What's a secondary interest you'd like to explore?",
+      placeholder: "e.g., Leadership, Creative Writing, Data Analysis",
       type: 'text'
     },
     {
       id: 'experience',
-      question: getTranslation(currentLanguage, 'DISCOVERY_QUESTION_EXPERIENCE'),
-      placeholder: getTranslation(currentLanguage, 'DISCOVERY_PLACEHOLDER_EXPERIENCE'),
+      question: "How many years of experience do you have in your field?",
+      placeholder: "e.g., 3 years, Entry level, 10+ years",
       type: 'text'
     },
     {
       id: 'education',
-      question: getTranslation(currentLanguage, 'DISCOVERY_QUESTION_EDUCATION'),
-      placeholder: getTranslation(currentLanguage, 'DISCOVERY_PLACEHOLDER_EDUCATION'),
+      question: "What's your educational background?",
+      placeholder: "e.g., Bachelor's in Computer Science, Self-taught",
       type: 'text'
     }
   ]
@@ -138,7 +135,7 @@ export default function CareerDiscovery() {
       const res = await fetch('http://localhost:5000/api/career-discovery', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...userInputs, language: currentLanguage })
+        body: JSON.stringify({ ...userInputs })
       })
       
       if (!res.ok) {
@@ -176,7 +173,7 @@ export default function CareerDiscovery() {
       
     } catch (error) {
       console.error('Discovery error:', error)
-      setErrorMessage(getTranslation(currentLanguage, 'DISCOVERY_ERROR_FAILED_TO_START'))
+      setErrorMessage('Failed to start career discovery. Please try again.')
     } finally {
       setIsLoading(false)
     }
@@ -306,15 +303,15 @@ ${session.learningRoadmap.resources.networking.map(network => `• ${network}`).
           <div className="relative">
             {/* Language Selector */}
             <div className="absolute top-0 right-0 z-10">
-              <LanguageSelector />
+
             </div>
             
             <div className="inline-flex items-center justify-center w-28 h-28 bg-gradient-to-r from-emerald-600 to-teal-600 rounded-3xl shadow-2xl mb-8 animate-bounce-in">
               <Brain className="h-14 w-14 text-white" />
             </div>
-            <h2 className="text-5xl font-bold gradient-text mb-6">{getTranslation(currentLanguage, 'CAREER_DISCOVERY')}</h2>
+            <h2 className="text-5xl font-bold gradient-text mb-6">Career Discovery</h2>
             <p className="text-xl text-slate-300 max-w-4xl mx-auto leading-relaxed">
-              {getTranslation(currentLanguage, 'DISCOVERY_DESCRIPTION')}
+              Discover unexpected career paths by combining your current skills with your interests. Our AI analyzes your unique profile to uncover opportunities you might never have considered.
             </p>
           </div>
         </div>
@@ -327,11 +324,11 @@ ${session.learningRoadmap.resources.networking.map(network => `• ${network}`).
                <div className="p-4 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl">
                  <Sparkles className="h-7 w-7 text-white" />
                </div>
-               <h3 className="text-3xl font-bold text-slate-100">{getTranslation(currentLanguage, 'START_DISCOVERY')}</h3>
+               <h3 className="text-3xl font-bold text-slate-100">Start Your Discovery</h3>
              </div>
              <div className="text-center mb-8">
                <p className="text-slate-300 text-lg">
-                 {getTranslation(currentLanguage, 'DISCOVERY_DESCRIPTION')}
+                 Tell us about yourself and we'll discover unique career paths that combine your skills with your interests.
                </p>
              </div>
             
@@ -376,12 +373,12 @@ ${session.learningRoadmap.resources.networking.map(network => `• ${network}`).
                    {isLoading ? (
                      <div className="flex items-center space-x-3">
                        <Loader2 className="h-6 w-6 animate-spin" />
-                       <span>{getTranslation(currentLanguage, 'DISCOVERY_BUTTON_GENERATING')}</span>
+                       <span>Generating...</span>
                      </div>
                    ) : (
                      <div className="flex items-center space-x-3">
                        <Sparkles className="h-6 w-6" />
-                       <span>{getTranslation(currentLanguage, 'DISCOVERY_BUTTON_START')}</span>
+                       <span>Start Discovery</span>
                      </div>
                    )}
                  </button>
@@ -404,15 +401,15 @@ ${session.learningRoadmap.resources.networking.map(network => `• ${network}`).
           <div className="relative">
             {/* Language Selector */}
             <div className="absolute top-0 right-0 z-10">
-              <LanguageSelector />
+
             </div>
             
             <div className="inline-flex items-center justify-center w-28 h-28 bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl shadow-2xl mb-8 animate-bounce-in">
               <CheckCircle className="h-14 w-14 text-white" />
             </div>
-            <h2 className="text-5xl font-bold gradient-text mb-6">{getTranslation(currentLanguage, 'CAREER_DISCOVERY')} Results</h2>
+            <h2 className="text-5xl font-bold gradient-text mb-6">Career Discovery Results</h2>
             <p className="text-xl text-slate-300 max-w-4xl mx-auto leading-relaxed">
-              {getTranslation(currentLanguage, 'DISCOVERY_DESCRIPTION')}
+              Based on your profile, we've discovered exciting career paths that combine your skills with your interests.
             </p>
           </div>
         </div>
@@ -423,7 +420,7 @@ ${session.learningRoadmap.resources.networking.map(network => `• ${network}`).
             <div className="p-3 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl">
               <Target className="h-6 w-6 text-white" />
             </div>
-            <h3 className="text-2xl font-bold text-slate-100">{getTranslation(currentLanguage, 'DISCOVERY_RESULT_CAREER_PATHS')}</h3>
+            <h3 className="text-2xl font-bold text-slate-100">Discovered Career Paths</h3>
           </div>
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -454,7 +451,7 @@ ${session.learningRoadmap.resources.networking.map(network => `• ${network}`).
                 <p className="text-slate-200 mb-6 text-lg leading-relaxed">{path.description}</p>
                 
                 <div className="mb-6">
-                  <h5 className="font-semibold text-slate-100 mb-3 text-lg">{getTranslation(currentLanguage, 'DISCOVERY_RESULT_TRANSFERABLE_SKILLS')}:</h5>
+                  <h5 className="font-semibold text-slate-100 mb-3 text-lg">Transferable Skills:</h5>
                   <div className="flex flex-wrap gap-2">
                     {path.transferableSkills.map((skill, skillIndex) => (
                       <span
@@ -468,7 +465,7 @@ ${session.learningRoadmap.resources.networking.map(network => `• ${network}`).
                 </div>
 
                 <div className="mb-6">
-                  <h5 className="font-semibold text-slate-100 mb-3 text-lg">{getTranslation(currentLanguage, 'DISCOVERY_RESULT_SKILL_GAPS')}:</h5>
+                  <h5 className="font-semibold text-slate-100 mb-3 text-lg">Skills to Develop:</h5>
                   <div className="flex flex-wrap gap-2">
                     {path.skillGaps.map((skill, skillIndex) => (
                       <span
@@ -482,7 +479,7 @@ ${session.learningRoadmap.resources.networking.map(network => `• ${network}`).
                 </div>
 
                 <div className="mb-6">
-                  <h5 className="font-semibold text-slate-100 mb-3 text-lg">{getTranslation(currentLanguage, 'DISCOVERY_RESULT_NEXT_STEPS')}:</h5>
+                  <h5 className="font-semibold text-slate-100 mb-3 text-lg">Next Steps:</h5>
                   <ul className="space-y-2">
                     {path.nextSteps.map((step, stepIndex) => (
                       <li key={stepIndex} className="flex items-start space-x-3 p-3 bg-slate-700/50 rounded-2xl border border-slate-600/50">
@@ -503,14 +500,14 @@ ${session.learningRoadmap.resources.networking.map(network => `• ${network}`).
           <div className="relative">
             <h3 className="text-2xl font-bold text-slate-100 mb-8 flex items-center space-x-3">
               <BookOpen className="h-6 w-6 text-blue-400" />
-              <span>{getTranslation(currentLanguage, 'DISCOVERY_RESULT_LEARNING_ROADMAP')}</span>
+              <span>Learning Roadmap</span>
             </h3>
             
             <div className="space-y-8">
               <div>
                 <h4 className="font-bold text-slate-100 mb-4 text-xl flex items-center space-x-2">
                   <Rocket className="h-5 w-5 text-green-400" />
-                  <span>{getTranslation(currentLanguage, 'DISCOVERY_RESULT_IMMEDIATE')} Actions (This Week)</span>
+                  <span>Immediate Actions (This Week)</span>
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {discoverySession.learningRoadmap.immediate.map((action, index) => (
@@ -524,7 +521,7 @@ ${session.learningRoadmap.resources.networking.map(network => `• ${network}`).
               <div>
                 <h4 className="font-bold text-slate-100 mb-4 text-xl flex items-center space-x-2">
                   <TrendingUp className="h-5 w-5 text-blue-400" />
-                  <span>{getTranslation(currentLanguage, 'DISCOVERY_RESULT_SHORT_TERM')} (1-3 Months)</span>
+                  <span>Short Term (1-3 Months)</span>
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {discoverySession.learningRoadmap.shortTerm.map((action, index) => (
@@ -538,7 +535,7 @@ ${session.learningRoadmap.resources.networking.map(network => `• ${network}`).
               <div>
                 <h4 className="font-bold text-slate-100 mb-4 text-xl flex items-center space-x-2">
                   <Star className="h-5 w-5 text-purple-400" />
-                  <span>{getTranslation(currentLanguage, 'DISCOVERY_RESULT_LONG_TERM')} (6-12 Months)</span>
+                  <span>Long Term (6-12 Months)</span>
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {discoverySession.learningRoadmap.longTerm.map((action, index) => (
@@ -563,7 +560,7 @@ ${session.learningRoadmap.resources.networking.map(network => `• ${network}`).
                 className="btn-accent flex items-center space-x-3"
               >
                 <Download className="h-5 w-5" />
-                <span>{getTranslation(currentLanguage, 'DISCOVERY_BUTTON_EXPORT')}</span>
+                <span>Export Report</span>
               </button>
               <div className="text-center text-sm text-slate-400">
                 Downloads as .txt file - open in Word/Google Docs to convert to PDF
@@ -574,7 +571,7 @@ ${session.learningRoadmap.resources.networking.map(network => `• ${network}`).
               className="btn-secondary flex items-center space-x-3"
             >
               <Sparkles className="h-5 w-5" />
-              <span>{getTranslation(currentLanguage, 'START_DISCOVERY')}</span>
+              <span>Start New Discovery</span>
             </button>
         </div>
       </div>

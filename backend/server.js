@@ -31,6 +31,10 @@ const limiter = rateLimit({
   message: 'Too many requests from this IP, please try again later.',
   trustProxy: true // Trust proxy headers from Render
 });
+
+// Enable trust proxy for deployed environments
+app.set('trust proxy', 1);
+
 app.use('/api/', limiter);
 
 // Health check endpoint
@@ -251,6 +255,8 @@ app.post('/api/career-discovery', async (req, res) => {
 
     // Log the AI response for debugging
     console.log('AI Response for Career Discovery:', JSON.stringify(aiResponse, null, 2));
+    console.log('Conversation type:', typeof aiResponse.conversation);
+    console.log('Conversation value:', aiResponse.conversation);
 
     // Save to database
     const CareerDiscovery = require('./models/CareerDiscovery');
@@ -263,7 +269,12 @@ app.post('/api/career-discovery', async (req, res) => {
       conversation: aiResponse.conversation || []
     });
 
+    console.log('Before save - conversation:', careerDiscovery.conversation);
+    console.log('Before save - conversation type:', typeof careerDiscovery.conversation);
+
     await careerDiscovery.save();
+
+    console.log('After save - conversation:', careerDiscovery.conversation);
 
     res.json(aiResponse);
   } catch (error) {

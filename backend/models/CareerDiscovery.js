@@ -39,23 +39,33 @@ const careerDiscoverySchema = new mongoose.Schema({
 
 // Add a pre-save middleware to handle data validation
 careerDiscoverySchema.pre('save', function(next) {
-  // Ensure conversation is always an array
-  if (this.conversation && typeof this.conversation === 'string') {
-    try {
-      this.conversation = JSON.parse(this.conversation);
-    } catch (e) {
-      // If parsing fails, create a default conversation entry
-      this.conversation = [{
-        role: 'ai',
-        content: this.conversation,
-        timestamp: Date.now(),
-        type: 'insight'
-      }];
+  // Handle conversation field - convert string to array if needed
+  if (this.conversation) {
+    if (typeof this.conversation === 'string') {
+      try {
+        // Try to parse if it's a JSON string
+        const parsed = JSON.parse(this.conversation);
+        if (Array.isArray(parsed)) {
+          this.conversation = parsed;
+        } else {
+          // If parsed but not array, wrap in array
+          this.conversation = [parsed];
+        }
+      } catch (e) {
+        // If parsing fails, create a default conversation entry
+        this.conversation = [{
+          role: 'ai',
+          content: this.conversation,
+          timestamp: Date.now(),
+          type: 'insight'
+        }];
+      }
+    } else if (!Array.isArray(this.conversation)) {
+      // If it's not a string and not an array, make it an array
+      this.conversation = [this.conversation];
     }
-  }
-  
-  // Ensure conversation is an array
-  if (!Array.isArray(this.conversation)) {
+  } else {
+    // If conversation is undefined/null, set default
     this.conversation = [];
   }
   

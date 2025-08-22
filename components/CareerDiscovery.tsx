@@ -138,7 +138,7 @@ export default function CareerDiscovery() {
       const res = await fetch('http://localhost:5000/api/career-discovery', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userInputs)
+        body: JSON.stringify({ ...userInputs, language: currentLanguage })
       })
       
       if (!res.ok) {

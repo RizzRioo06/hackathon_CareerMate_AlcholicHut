@@ -37,7 +37,7 @@ export default function CareerGuidance() {
           const res = await fetch('http://localhost:5000/api/career-guidance', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData)
+      body: JSON.stringify({ ...formData, language: 'en' })
     })
       
       if (res.ok) {

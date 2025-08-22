@@ -123,7 +123,7 @@ export default function CareerStoryteller() {
         const res = await fetch('http://localhost:5000/api/career-storyteller', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ ...userProfile, storyType: type })
+          body: JSON.stringify({ ...userProfile, storyType: type, language: currentLanguage })
         })
         
         if (!res.ok) {
@@ -177,7 +177,7 @@ export default function CareerStoryteller() {
       const res = await fetch('http://localhost:5000/api/career-storyteller', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...userProfile, storyType })
+        body: JSON.stringify({ ...userProfile, storyType, language: currentLanguage })
       })
       
       if (!res.ok) {
@@ -449,18 +449,18 @@ export default function CareerStoryteller() {
                       }
                     }}
                   />
-                  <button
-                    onClick={() => {
-                      const input = document.querySelector('input[placeholder*="skill"]') as HTMLInputElement
-                      if (input) {
-                        handleSkillInput(input.value)
-                        input.value = ''
-                      }
-                    }}
-                    className="btn-primary px-6"
-                  >
-                    {getTranslation(currentLanguage, 'ADD')}
-                  </button>
+                                     <button
+                     onClick={() => {
+                       const input = document.querySelector('input[placeholder*="' + getTranslation(currentLanguage, 'SKILL_PLACEHOLDER').toLowerCase() + '"]') as HTMLInputElement
+                       if (input) {
+                         handleSkillInput(input.value)
+                         input.value = ''
+                       }
+                     }}
+                     className="btn-primary px-6"
+                   >
+                     {getTranslation(currentLanguage, 'ADD')}
+                   </button>
                 </div>
                 {userProfile.keySkills.length > 0 && (
                   <div className="flex flex-wrap gap-2">
@@ -504,18 +504,18 @@ export default function CareerStoryteller() {
                       }
                     }}
                   />
-                  <button
-                    onClick={() => {
-                      const input = document.querySelector('input[placeholder*="achievement"]') as HTMLInputElement
-                      if (input) {
-                        handleAchievementInput(input.value)
-                        input.value = ''
-                      }
-                    }}
-                    className="btn-primary px-6"
-                  >
-                    {getTranslation(currentLanguage, 'ADD')}
-                  </button>
+                                     <button
+                     onClick={() => {
+                       const input = document.querySelector('input[placeholder*="' + getTranslation(currentLanguage, 'ACHIEVEMENT_PLACEHOLDER').toLowerCase() + '"]') as HTMLInputElement
+                       if (input) {
+                         handleAchievementInput(input.value)
+                         input.value = ''
+                       }
+                     }}
+                     className="btn-primary px-6"
+                   >
+                     {getTranslation(currentLanguage, 'ADD')}
+                   </button>
                 </div>
                 {userProfile.achievements.length > 0 && (
                   <div className="flex flex-wrap gap-2">
@@ -576,18 +576,18 @@ export default function CareerStoryteller() {
                       }
                     }}
                   />
-                  <button
-                    onClick={() => {
-                      const input = document.querySelector('input[placeholder*="interest"]') as HTMLInputElement
-                      if (input) {
-                        handleInterestInput(input.value)
-                        input.value = ''
-                      }
-                    }}
-                    className="btn-primary px-6"
-                  >
-                    {getTranslation(currentLanguage, 'ADD')}
-                  </button>
+                                     <button
+                     onClick={() => {
+                       const input = document.querySelector('input[placeholder*="' + getTranslation(currentLanguage, 'INTEREST_PLACEHOLDER').toLowerCase() + '"]') as HTMLInputElement
+                       if (input) {
+                         handleInterestInput(input.value)
+                         input.value = ''
+                       }
+                     }}
+                     className="btn-primary px-6"
+                   >
+                     {getTranslation(currentLanguage, 'ADD')}
+                   </button>
                 </div>
                 {userProfile.personalInterests.length > 0 && (
                   <div className="flex flex-wrap gap-2">

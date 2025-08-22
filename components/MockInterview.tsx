@@ -73,7 +73,7 @@ export default function MockInterview() {
       const res = await fetch('http://localhost:5000/api/mock-interview', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ role: selectedRole.trim() })
+        body: JSON.stringify({ role: selectedRole.trim(), language: 'en' })
       })
       
       const text = await res.text()
@@ -118,7 +118,8 @@ export default function MockInterview() {
           body: JSON.stringify({
             question: currentQ.question || currentQ.mainQuestion,
             answer: answer.trim(),
-            role: selectedRole
+            role: selectedRole,
+            language: 'en'
           })
         })
         

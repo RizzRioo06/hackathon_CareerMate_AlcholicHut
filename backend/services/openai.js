@@ -524,10 +524,24 @@ Be fair but thorough in your evaluation. Consider technical accuracy, clarity, a
 }
 
 // Function to generate career discovery insights using AI
-async function generateCareerDiscovery(userProfile) {
+async function generateCareerDiscovery(userProfile, language = 'en') {
   try {
     if (PROVIDER === 'gemini') {
-      const system = `You are an expert career discovery specialist. Analyze the user's unique combination of current role and interests to discover unexpected career possibilities. Return strict JSON in this exact format:
+      const languageInstructions = {
+        'en': 'Generate the response in English.',
+        'es': 'Generate the response in Spanish (Español).',
+        'fr': 'Generate the response in French (Français).',
+        'de': 'Generate the response in German (Deutsch).',
+        'it': 'Generate the response in Italian (Italiano).',
+        'pt': 'Generate the response in Portuguese (Português).',
+        'ru': 'Generate the response in Russian (Русский).',
+        'ja': 'Generate the response in Japanese (日本語).',
+        'ko': 'Generate the response in Korean (한국어).',
+        'zh': 'Generate the response in Chinese (中文).',
+        'my': 'Generate the response in Burmese (မြန်မာဘာသာ).'
+      };
+
+      const system = `You are an expert career discovery specialist. ${languageInstructions[language] || languageInstructions['en']} Analyze the user's unique combination of current role and interests to discover unexpected career possibilities. Return strict JSON in this exact format:
 {
   "careerPaths": [
     {
@@ -576,7 +590,23 @@ async function generateCareerDiscovery(userProfile) {
     }
 
     // Enhanced prompt for GPT to generate career discovery insights
+    const languageInstructions = {
+      'en': 'Generate the response in English.',
+      'es': 'Generate the response in Spanish (Español).',
+      'fr': 'Generate the response in French (Français).',
+      'de': 'Generate the response in German (Deutsch).',
+      'it': 'Generate the response in Italian (Italiano).',
+      'pt': 'Generate the response in Portuguese (Português).',
+      'ru': 'Generate the response in Russian (Русский).',
+      'ja': 'Generate the response in Japanese (日本語).',
+      'ko': 'Generate the response in Korean (한국어).',
+      'zh': 'Generate the response in Chinese (中文).',
+      'my': 'Generate the response in Burmese (မြန်မာဘာသာ).'
+    };
+
     const enhancedPrompt = `You are an expert career discovery specialist with deep knowledge of how different skills and interests can combine to create unique career opportunities.
+
+${languageInstructions[language] || languageInstructions['en']}
 
 Based on the user's profile, discover unexpected career possibilities that combine their current role with their interests. Think creatively about how their existing skills can transfer to new fields.
 
@@ -654,8 +684,24 @@ Return the response in this exact JSON format:
   }
 }
 
-async function generateCareerStory(userProfile, storyType) {
+async function generateCareerStory(userProfile, storyType, language = 'en') {
+  const languageInstructions = {
+    'en': 'Generate the story in English.',
+    'es': 'Generate the story in Spanish (Español).',
+    'fr': 'Generate the story in French (Français).',
+    'de': 'Generate the story in German (Deutsch).',
+    'it': 'Generate the story in Italian (Italiano).',
+    'pt': 'Generate the story in Portuguese (Português).',
+    'ru': 'Generate the story in Russian (Русский).',
+    'ja': 'Generate the story in Japanese (日本語).',
+    'ko': 'Generate the story in Korean (한국어).',
+    'zh': 'Generate the story in Chinese (中文).',
+    'my': 'Generate the story in Burmese (မြန်မာဘာသာ).'
+  };
+
   const prompt = `You are an expert career storyteller and personal branding specialist. 
+  
+  ${languageInstructions[language] || languageInstructions['en']}
   
   Create a compelling ${storyType} story for this person:
   

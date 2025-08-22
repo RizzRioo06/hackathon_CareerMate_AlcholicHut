@@ -168,7 +168,7 @@ app.post('/api/career-discovery', async (req, res) => {
     const openaiService = require('./services/openai');
     const response = await openaiService.generateCareerDiscovery({
       name, currentRole, primaryInterest, secondaryInterest, experience, education
-    });
+    }, req.body.language || 'en');
 
     res.json(response);
   } catch (error) {
@@ -189,7 +189,7 @@ app.post('/api/career-storyteller', async (req, res) => {
     }
 
     const openaiService = require('./services/openai');
-    const response = await openaiService.generateCareerStory(userProfile, storyType);
+    const response = await openaiService.generateCareerStory(userProfile, storyType, req.body.language || 'en');
 
     res.json(response);
   } catch (error) {

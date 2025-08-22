@@ -28,10 +28,10 @@ export default function Dashboard() {
     setIsLoading(true)
     try {
       const [discoveries, guidance, interviews, jobs] = await Promise.all([
-        fetch('https://your-render-backend.onrender.com/api/career-discoveries').then(res => res.ok ? res.json() : []),
-        fetch('https://your-render-backend.onrender.com/api/career-guidance').then(res => res.ok ? res.json() : []),
-        fetch('https://your-render-backend.onrender.com/api/mock-interviews').then(res => res.ok ? res.json() : []),
-        fetch('https://your-render-backend.onrender.com/api/job-suggestions').then(res => res.ok ? res.json() : [])
+        fetch('https://careermate-backend-nzb0.onrender.com/api/career-discoveries').then(res => res.ok ? res.json() : []),
+        fetch('https://careermate-backend-nzb0.onrender.com/api/career-guidance').then(res => res.ok ? res.json() : []),
+        fetch('https://careermate-backend-nzb0.onrender.com/api/mock-interviews').then(res => res.ok ? res.json() : []),
+        fetch('https://careermate-backend-nzb0.onrender.com/api/job-suggestions').then(res => res.ok ? res.json() : [])
       ])
 
       setSavedData({
@@ -53,7 +53,7 @@ export default function Dashboard() {
                      type === 'careerGuidance' ? 'career-guidance' :
                      type === 'mockInterviews' ? 'mock-interviews' : 'job-suggestions'
       
-      const res = await fetch(`https://your-render-backend.onrender.com/api/${endpoint}/${id}`, {
+      const res = await fetch(`https://careermate-backend-nzb0.onrender.com/api/${endpoint}/${id}`, {
         method: 'DELETE'
       })
       

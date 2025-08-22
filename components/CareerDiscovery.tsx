@@ -124,7 +124,7 @@ export default function CareerDiscovery() {
 
   const fetchSavedDiscoveries = async () => {
     try {
-      const res = await fetch('https://your-render-backend.onrender.com/api/career-discoveries')
+      const res = await fetch('https://careermate-backend-nzb0.onrender.com/api/career-discoveries')
       if (res.ok) {
         const data = await res.json()
         setSavedDiscoveries(data)
@@ -136,7 +136,7 @@ export default function CareerDiscovery() {
 
   const deleteDiscovery = async (id: string) => {
     try {
-      const res = await fetch(`https://your-render-backend.onrender.com/api/career-discoveries/${id}`, {
+      const res = await fetch(`https://careermate-backend-nzb0.onrender.com/api/career-discoveries/${id}`, {
         method: 'DELETE'
       })
       if (res.ok) {
@@ -163,7 +163,7 @@ export default function CareerDiscovery() {
       setConversation(userMessages)
       
       // Call AI discovery API
-      const res = await fetch('https://your-render-backend.onrender.com/api/career-discovery', {
+      const res = await fetch('https://careermate-backend-nzb0.onrender.com/api/career-discovery', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...userInputs })

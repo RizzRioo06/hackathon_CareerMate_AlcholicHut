@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { 
   BookOpen, 
   MessageSquare, 
@@ -42,6 +42,11 @@ interface UserProfile {
 
 export default function CareerStoryteller() {
   const { currentLanguage } = useTranslation()
+  
+  // Add refs for input fields
+  const skillInputRef = useRef<HTMLInputElement>(null)
+  const achievementInputRef = useRef<HTMLInputElement>(null)
+  const interestInputRef = useRef<HTMLInputElement>(null)
   
   const [userProfile, setUserProfile] = useState<UserProfile>({
     name: '',
@@ -439,6 +444,7 @@ export default function CareerStoryteller() {
               <div className="space-y-4">
                 <div className="flex space-x-3">
                   <input
+                    ref={skillInputRef}
                     type="text"
                     placeholder={getTranslation(currentLanguage, 'SKILL_PLACEHOLDER')}
                     className="input-field flex-1"
@@ -451,10 +457,9 @@ export default function CareerStoryteller() {
                   />
                                      <button
                      onClick={() => {
-                       const input = document.querySelector('input[placeholder*="' + getTranslation(currentLanguage, 'SKILL_PLACEHOLDER').toLowerCase() + '"]') as HTMLInputElement
-                       if (input) {
-                         handleSkillInput(input.value)
-                         input.value = ''
+                       if (skillInputRef.current) {
+                         handleSkillInput(skillInputRef.current.value)
+                         skillInputRef.current.value = ''
                        }
                      }}
                      className="btn-primary px-6"
@@ -494,6 +499,7 @@ export default function CareerStoryteller() {
               <div className="space-y-4">
                 <div className="flex space-x-3">
                   <input
+                    ref={achievementInputRef}
                     type="text"
                     placeholder={getTranslation(currentLanguage, 'ACHIEVEMENT_PLACEHOLDER')}
                     className="input-field flex-1"
@@ -506,10 +512,9 @@ export default function CareerStoryteller() {
                   />
                                      <button
                      onClick={() => {
-                       const input = document.querySelector('input[placeholder*="' + getTranslation(currentLanguage, 'ACHIEVEMENT_PLACEHOLDER').toLowerCase() + '"]') as HTMLInputElement
-                       if (input) {
-                         handleAchievementInput(input.value)
-                         input.value = ''
+                       if (achievementInputRef.current) {
+                         handleAchievementInput(achievementInputRef.current.value)
+                         achievementInputRef.current.value = ''
                        }
                      }}
                      className="btn-primary px-6"
@@ -566,6 +571,7 @@ export default function CareerStoryteller() {
               <div className="space-y-4">
                 <div className="flex space-x-3">
                   <input
+                    ref={interestInputRef}
                     type="text"
                     placeholder={getTranslation(currentLanguage, 'INTEREST_PLACEHOLDER')}
                     className="input-field flex-1"
@@ -578,10 +584,9 @@ export default function CareerStoryteller() {
                   />
                                      <button
                      onClick={() => {
-                       const input = document.querySelector('input[placeholder*="' + getTranslation(currentLanguage, 'INTEREST_PLACEHOLDER').toLowerCase() + '"]') as HTMLInputElement
-                       if (input) {
-                         handleInterestInput(input.value)
-                         input.value = ''
+                       if (interestInputRef.current) {
+                         handleInterestInput(interestInputRef.current.value)
+                         interestInputRef.current.value = ''
                        }
                      }}
                      className="btn-primary px-6"

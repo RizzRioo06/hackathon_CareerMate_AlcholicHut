@@ -541,7 +541,14 @@ async function generateCareerDiscovery(userProfile, language = 'en') {
         'my': 'Generate the response in Burmese (မြန်မာဘာသာ).'
       };
 
-      const system = `You are an expert career discovery specialist. ${languageInstructions[language] || languageInstructions['en']} Analyze the user's unique combination of current role and interests to discover unexpected career possibilities. Return strict JSON in this exact format:
+      const system = `You are an expert career discovery specialist. 
+
+IMPORTANT: You MUST generate the response in ${languageInstructions[language] || languageInstructions['en']}
+CRITICAL: The entire response must be written in the specified language. Do NOT use English.
+
+${languageInstructions[language] || languageInstructions['en']}
+
+Analyze the user's unique combination of current role and interests to discover unexpected career possibilities. Return strict JSON in this exact format:
 {
   "careerPaths": [
     {
@@ -574,7 +581,10 @@ async function generateCareerDiscovery(userProfile, language = 'en') {
       "type": "insight"
     }
   ]
-}`;
+}
+
+FINAL REMINDER: Generate the response in ${languageInstructions[language] || languageInstructions['en']}
+The entire response must be written in the target language, not in English.`;
       const userJson = JSON.stringify({
         name: userProfile.name,
         currentRole: userProfile.currentRole,
@@ -605,6 +615,9 @@ async function generateCareerDiscovery(userProfile, language = 'en') {
     };
 
     const enhancedPrompt = `You are an expert career discovery specialist with deep knowledge of how different skills and interests can combine to create unique career opportunities.
+
+IMPORTANT: You MUST generate the response in ${languageInstructions[language] || languageInstructions['en']}
+CRITICAL: The entire response must be written in the specified language. Do NOT use English.
 
 ${languageInstructions[language] || languageInstructions['en']}
 
@@ -655,7 +668,10 @@ Return the response in this exact JSON format:
       "type": "insight"
     }
   ]
-}`;
+}
+
+FINAL REMINDER: Generate the response in ${languageInstructions[language] || languageInstructions['en']}
+The entire response must be written in the target language, not in English.`;
 
     const completion = await openai.chat.completions.create({
       model: DEFAULT_MODEL,
@@ -700,54 +716,60 @@ async function generateCareerStory(userProfile, storyType, language = 'en') {
   };
 
   const prompt = `You are an expert career storyteller and personal branding specialist. 
-  
-  ${languageInstructions[language] || languageInstructions['en']}
-  
-  Create a compelling ${storyType} story for this person:
-  
-  Name: ${userProfile.name}
-  Current Role: ${userProfile.currentRole}
-  Experience: ${userProfile.experience}
-  Education: ${userProfile.education}
-  Key Skills: ${userProfile.keySkills.join(', ')}
-  Achievements: ${userProfile.achievements.join(', ')}
-  Career Goals: ${userProfile.careerGoals}
-  Personal Interests: ${userProfile.personalInterests.join(', ')}
-  
-  Generate a ${storyType} story that is:
-  
-  ${storyType === 'interview' ? 
-    '1. A compelling 2-3 minute story for "Tell me about yourself" or "Walk me through your background"\n' +
-    '2. Shows progression and growth\n' +
-    '3. Highlights key achievements and skills\n' +
-    '4. Connects personal interests to professional goals\n' +
-    '5. Ends with current role and future aspirations' :
-    storyType === 'linkedin' ? 
-    '1. A professional LinkedIn bio (150-200 words)\n' +
-    '2. Shows personality and expertise\n' +
-    '3. Includes relevant keywords for recruiters\n' +
-    '4. Has a clear call-to-action\n' +
-    '5. Professional yet approachable tone' :
-    storyType === 'networking' ? 
-    '1. A 30-second elevator pitch for networking events\n' +
-    '2. Clear value proposition\n' +
-    '3. Memorable and engaging\n' +
-    '4. Easy to remember and repeat\n' +
-    '5. Opens conversation naturally' :
-    '1. A compelling resume summary (3-4 sentences)\n' +
-    '2. Highlights key achievements and skills\n' +
-    '3. Shows career progression\n' +
-    '4. Tailored for their target role\n' +
-    '5. Professional and impactful'
-  }
-  
-  6. Use their actual name, role, and achievements
-  7. Make it personal and authentic
-  8. Show passion and enthusiasm
-  9. Keep it concise but impactful
-  10. Use active voice and strong verbs
-  
-  Return ONLY the story content, no additional formatting or explanations.`
+
+IMPORTANT: You MUST generate the story in ${languageInstructions[language] || languageInstructions['en']}
+CRITICAL: The entire story must be written in the specified language. Do NOT use English.
+
+${languageInstructions[language] || languageInstructions['en']}
+
+Create a compelling ${storyType} story for this person:
+
+Name: ${userProfile.name}
+Current Role: ${userProfile.currentRole}
+Experience: ${userProfile.experience}
+Education: ${userProfile.education}
+Key Skills: ${userProfile.keySkills.join(', ')}
+Achievements: ${userProfile.achievements.join(', ')}
+Career Goals: ${userProfile.careerGoals}
+Personal Interests: ${userProfile.personalInterests.join(', ')}
+
+Generate a ${storyType} story that is:
+
+${storyType === 'interview' ? 
+  '1. A compelling 2-3 minute story for "Tell me about yourself" or "Walk me through your background"\n' +
+  '2. Shows progression and growth\n' +
+  '3. Highlights key achievements and skills\n' +
+  '4. Connects personal interests to professional goals\n' +
+  '5. Ends with current role and future aspirations' :
+  storyType === 'linkedin' ? 
+  '1. A professional LinkedIn bio (150-200 words)\n' +
+  '2. Shows personality and expertise\n' +
+  '3. Includes relevant keywords for recruiters\n' +
+  '4. Has a clear call-to-action\n' +
+  '5. Professional yet approachable tone' :
+  storyType === 'networking' ? 
+  '1. A 30-second elevator pitch for networking events\n' +
+  '2. Clear value proposition\n' +
+  '3. Memorable and engaging\n' +
+  '4. Easy to remember and repeat\n' +
+  '5. Opens conversation naturally' :
+  '1. A compelling resume summary (3-4 sentences)\n' +
+  '2. Highlights key achievements and skills\n' +
+  '3. Shows career progression\n' +
+  '4. Tailored for their target role\n' +
+  '5. Professional and impactful'
+}
+
+6. Use their actual name, role, and achievements
+7. Make it personal and authentic
+8. Show passion and enthusiasm
+9. Keep it concise but impactful
+10. Use active voice and strong verbs
+
+FINAL REMINDER: Generate the story in ${languageInstructions[language] || languageInstructions['en']}
+The story must be written in the target language, not in English.
+
+Return ONLY the story content, no additional formatting or explanations.`
 
   try {
     if (PROVIDER === 'azure' || PROVIDER === 'openai') {
@@ -760,8 +782,9 @@ async function generateCareerStory(userProfile, storyType, language = 'en') {
       })
       return { story: response.choices[0].message.content.trim() }
     } else if (PROVIDER === 'gemini') {
-      const result = await genAI.generateContent(prompt)
-      const response = await result.response
+      const model = gemini.getGenerativeModel({ model: GEMINI_MODEL });
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
       return { story: response.text().trim() }
     }
   } catch (error) {

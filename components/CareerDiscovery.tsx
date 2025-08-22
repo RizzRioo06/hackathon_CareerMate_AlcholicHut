@@ -54,6 +54,10 @@ interface ConversationMessage {
 export default function CareerDiscovery() {
   
   const [currentStep, setCurrentStep] = useState<'start' | 'discovery' | 'analysis' | 'results'>('start')
+  
+  useEffect(() => {
+    fetchSavedDiscoveries()
+  }, [])
   const [isLoading, setIsLoading] = useState(false)
   const [conversation, setConversation] = useState<ConversationMessage[]>([])
   const [userInputs, setUserInputs] = useState({
@@ -65,6 +69,8 @@ export default function CareerDiscovery() {
     education: ''
   })
   const [discoverySession, setDiscoverySession] = useState<DiscoverySession | null>(null)
+  const [savedDiscoveries, setSavedDiscoveries] = useState<any[]>([])
+  const [showSavedDiscoveries, setShowSavedDiscoveries] = useState(false)
 
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
@@ -116,6 +122,31 @@ export default function CareerDiscovery() {
     startDiscovery()
   }
 
+  const fetchSavedDiscoveries = async () => {
+    try {
+      const res = await fetch('https://your-render-backend.onrender.com/api/career-discoveries')
+      if (res.ok) {
+        const data = await res.json()
+        setSavedDiscoveries(data)
+      }
+    } catch (error) {
+      console.error('Failed to fetch discoveries:', error)
+    }
+  }
+
+  const deleteDiscovery = async (id: string) => {
+    try {
+      const res = await fetch(`https://your-render-backend.onrender.com/api/career-discoveries/${id}`, {
+        method: 'DELETE'
+      })
+      if (res.ok) {
+        setSavedDiscoveries(prev => prev.filter(d => d._id !== id))
+      }
+    } catch (error) {
+      console.error('Failed to delete discovery:', error)
+    }
+  }
+
   const startDiscovery = async () => {
     setIsLoading(true)
     setErrorMessage(null)
@@ -132,7 +163,7 @@ export default function CareerDiscovery() {
       setConversation(userMessages)
       
       // Call AI discovery API
-      const res = await fetch('http://localhost:5000/api/career-discovery', {
+      const res = await fetch('https://your-render-backend.onrender.com/api/career-discovery', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...userInputs })
@@ -364,7 +395,44 @@ ${session.learningRoadmap.resources.networking.map(network => `• ${network}`).
                 </div>
               )}
               
-                             <div className="flex justify-center pt-6">
+              {/* Saved Discoveries Section */}
+              {savedDiscoveries.length > 0 && (
+                <div className="mt-8 p-6 bg-slate-800/50 rounded-2xl border border-slate-700/50">
+                  <div className="flex items-center justify-between mb-4">
+                    <h4 className="text-xl font-semibold text-slate-200">Your Previous Discoveries</h4>
+                    <button
+                      onClick={() => setShowSavedDiscoveries(!showSavedDiscoveries)}
+                      className="text-emerald-400 hover:text-emerald-300 transition-colors"
+                    >
+                      {showSavedDiscoveries ? 'Hide' : 'Show'} ({savedDiscoveries.length})
+                    </button>
+                  </div>
+                  
+                  {showSavedDiscoveries && (
+                    <div className="space-y-4">
+                      {savedDiscoveries.map((discovery) => (
+                        <div key={discovery._id} className="p-4 bg-slate-700/50 rounded-xl border border-slate-600/50">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <h5 className="font-semibold text-slate-200">{discovery.userProfile.name}</h5>
+                              <p className="text-slate-400 text-sm">{discovery.userProfile.currentRole}</p>
+                              <p className="text-slate-500 text-xs">{new Date(discovery.createdAt).toLocaleDateString()}</p>
+                            </div>
+                            <button
+                              onClick={() => deleteDiscovery(discovery._id)}
+                              className="text-red-400 hover:text-red-300 transition-colors"
+                            >
+                              Delete
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+              
+              <div className="flex justify-center pt-6">
                  <button
                    onClick={handleGenerateDiscovery}
                    disabled={!Object.values(userInputs).every(value => value.trim()) || isLoading}

@@ -4,6 +4,13 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
+const connectDB = require('./config/database');
+
+// Connect to database
+connectDB();
+
+// ... rest of your existing code
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -57,14 +64,21 @@ app.post('/api/career-guidance', async (req, res) => {
       });
     }
 
-
-
     const openaiService = require('./services/openai');
-    const response = await openaiService.generateCareerGuidance({
+    const aiResponse = await openaiService.generateCareerGuidance({
       skills, interests, goals, experience, education
     });
 
-    res.json(response);
+    // Save to database
+    const CareerGuidance = require('./models/CareerGuidance');
+    const careerGuidance = new CareerGuidance({
+      userProfile: { skills, interests, goals, experience, education },
+      guidance: aiResponse
+    });
+
+    await careerGuidance.save();
+
+    res.json(aiResponse);
   } catch (error) {
     console.error('Career guidance error:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -79,8 +93,6 @@ app.post('/api/mock-interview', async (req, res) => {
     if (!role) {
       return res.status(400).json({ error: 'Job role is required' });
     }
-
-
 
     const openaiService = require('./services/openai');
     const questions = await openaiService.generateMockInterview(role);
@@ -98,6 +110,19 @@ app.post('/api/mock-interview', async (req, res) => {
       overallScore: 0,
       summary: 'Complete the interview to get your overall score and summary.'
     };
+
+    // Save to database
+    const MockInterview = require('./models/MockInterview');
+    const mockInterview = new MockInterview({
+      role,
+      questions: questions.questions,
+      answers: [],
+      overallScore: 0,
+      summary: 'Complete the interview to get your overall score and summary.',
+      completed: false
+    });
+
+    await mockInterview.save();
 
     res.json(response);
   } catch (error) {
@@ -140,14 +165,21 @@ app.post('/api/job-suggestions', async (req, res) => {
       });
     }
 
-
-
     const openaiService = require('./services/openai');
-    const response = await openaiService.generateJobSuggestions({
+    const aiResponse = await openaiService.generateJobSuggestions({
       skills, experience, location, preferredRole, education, interests
     });
 
-    res.json(response);
+    // Save to database
+    const JobSuggestion = require('./models/JobSuggestion');
+    const jobSuggestion = new JobSuggestion({
+      userProfile: { skills, experience, location, preferredRole, education, interests },
+      suggestions: aiResponse.suggestions
+    });
+
+    await jobSuggestion.save();
+
+    res.json(aiResponse);
   } catch (error) {
     console.error('Job suggestions error:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -166,11 +198,22 @@ app.post('/api/career-discovery', async (req, res) => {
     }
 
     const openaiService = require('./services/openai');
-    const response = await openaiService.generateCareerDiscovery({
+    const aiResponse = await openaiService.generateCareerDiscovery({
       name, currentRole, primaryInterest, secondaryInterest, experience, education
     });
 
-    res.json(response);
+    // Save to database
+    const CareerDiscovery = require('./models/CareerDiscovery');
+    const careerDiscovery = new CareerDiscovery({
+      userProfile: { name, currentRole, primaryInterest, secondaryInterest, experience, education },
+      careerPaths: aiResponse.careerPaths,
+      learningRoadmap: aiResponse.learningRoadmap,
+      conversation: aiResponse.conversation
+    });
+
+    await careerDiscovery.save();
+
+    res.json(aiResponse);
   } catch (error) {
     console.error('Career discovery error:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -198,9 +241,83 @@ app.post('/api/career-storyteller', async (req, res) => {
   }
 });
 
+// Get saved career discoveries
+app.get('/api/career-discoveries', async (req, res) => {
+  try {
+    const CareerDiscovery = require('./models/CareerDiscovery');
+    const discoveries = await CareerDiscovery.find().sort({ createdAt: -1 }).limit(10);
+    res.json(discoveries);
+  } catch (error) {
+    console.error('Error fetching discoveries:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
+// Get specific career discovery by ID
+app.get('/api/career-discoveries/:id', async (req, res) => {
+  try {
+    const CareerDiscovery = require('./models/CareerDiscovery');
+    const discovery = await CareerDiscovery.findById(req.params.id);
+    if (!discovery) {
+      return res.status(404).json({ error: 'Discovery not found' });
+    }
+    res.json(discovery);
+  } catch (error) {
+    console.error('Error fetching discovery:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
+// Delete career discovery
+app.delete('/api/career-discoveries/:id', async (req, res) => {
+  try {
+    const CareerDiscovery = require('./models/CareerDiscovery');
+    const discovery = await CareerDiscovery.findByIdAndDelete(req.params.id);
+    if (!discovery) {
+      return res.status(404).json({ error: 'Discovery not found' });
+    }
+    res.json({ message: 'Discovery deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting discovery:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
+// Get all saved career guidance sessions
+app.get('/api/career-guidance', async (req, res) => {
+  try {
+    const CareerGuidance = require('./models/CareerGuidance');
+    const sessions = await CareerGuidance.find().sort({ createdAt: -1 }).limit(10);
+    res.json(sessions);
+  } catch (error) {
+    console.error('Error fetching career guidance sessions:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get all saved mock interviews
+app.get('/api/mock-interviews', async (req, res) => {
+  try {
+    const MockInterview = require('./models/MockInterview');
+    const interviews = await MockInterview.find().sort({ createdAt: -1 }).limit(10);
+    res.json(interviews);
+  } catch (error) {
+    console.error('Error fetching mock interviews:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get all saved job suggestions
+app.get('/api/job-suggestions', async (req, res) => {
+  try {
+    const JobSuggestion = require('./models/JobSuggestion');
+    const suggestions = await JobSuggestion.find().sort({ createdAt: -1 }).limit(10);
+    res.json(suggestions);
+  } catch (error) {
+    console.error('Error fetching job suggestions:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -222,6 +339,12 @@ app.listen(PORT, () => {
   console.log(`   POST /api/job-suggestions`);
   console.log(`   POST /api/career-discovery`);
   console.log(`   POST /api/career-storyteller`);
+  console.log(`   GET /api/career-discoveries`);
+  console.log(`   GET /api/career-discoveries/:id`);
+  console.log(`   DELETE /api/career-discoveries/:id`);
+  console.log(`   GET /api/career-guidance`);
+  console.log(`   GET /api/mock-interviews`);
+  console.log(`   GET /api/job-suggestions`);
 
   console.log(`🔑 Remember to set your AI API credentials in your .env file`);
 });

@@ -5,6 +5,7 @@ import JobSuggestions from '../components/JobSuggestions'
 import MockInterview from '../components/MockInterview'
 import CareerDiscovery from '../components/CareerDiscovery'
 import CareerStoryteller from '../components/CareerStoryteller'
+import Dashboard from '../components/Dashboard'
 import { useState } from 'react'
 import { 
   Brain, 
@@ -17,7 +18,8 @@ import {
   Mail, 
   Phone,
   Sparkles,
-  BookOpen
+  BookOpen,
+  BarChart3
 } from 'lucide-react'
 
 export default function Home() {
@@ -29,6 +31,7 @@ export default function Home() {
     { id: 'jobs', label: 'Job Opportunities', icon: Briefcase, description: 'Personalized job recommendations' },
     { id: 'discovery', label: 'Career Discovery', icon: Sparkles, description: 'AI-powered career path discovery' },
     { id: 'storyteller', label: 'Career Storyteller', icon: BookOpen, description: 'AI-powered career storytelling' },
+    { id: 'dashboard', label: 'Dashboard', icon: BarChart3, description: 'View all your saved data' },
   ]
 
   const renderActiveComponent = () => {
@@ -43,6 +46,8 @@ export default function Home() {
         return <CareerDiscovery />
       case 'storyteller':
         return <CareerStoryteller />
+      case 'dashboard':
+        return <Dashboard />
       default:
         return <CareerGuidance />
     }

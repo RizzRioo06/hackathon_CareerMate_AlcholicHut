@@ -25,10 +25,11 @@ app.use(cors({
 app.use(express.json({ limit: '10mb' }));
 
 // Rate limiting
-const limiter = rateLimit({               
+const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   max: 100, // limit each IP to 100 requests per windowMs
-  message: 'Too many requests from this IP, please try again later.'
+  message: 'Too many requests from this IP, please try again later.',
+  trustProxy: true // Trust proxy headers from Render
 });
 app.use('/api/', limiter);
 
@@ -204,11 +205,33 @@ app.post('/api/career-discovery', async (req, res) => {
 
     // Save to database
     const CareerDiscovery = require('./models/CareerDiscovery');
+    
+    // Ensure conversation is properly formatted as an array
+    let conversation = [];
+    if (aiResponse.conversation) {
+      if (Array.isArray(aiResponse.conversation)) {
+        conversation = aiResponse.conversation;
+      } else if (typeof aiResponse.conversation === 'string') {
+        try {
+          // Try to parse if it's a string representation of an array
+          conversation = JSON.parse(aiResponse.conversation);
+        } catch (e) {
+          // If parsing fails, create a default conversation entry
+          conversation = [{
+            role: 'ai',
+            content: aiResponse.conversation,
+            timestamp: Date.now(),
+            type: 'insight'
+          }];
+        }
+      }
+    }
+    
     const careerDiscovery = new CareerDiscovery({
       userProfile: { name, currentRole, primaryInterest, secondaryInterest, experience, education },
       careerPaths: aiResponse.careerPaths,
       learningRoadmap: aiResponse.learningRoadmap,
-      conversation: aiResponse.conversation
+      conversation: conversation
     });
 
     await careerDiscovery.save();

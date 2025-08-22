@@ -44,11 +44,11 @@ export default function JobSuggestions() {
     setIsLoading(true)
     
     try {
-      const res = await fetch('/api/job-suggestions', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
-      })
+          const res = await fetch('http://localhost:5000/api/job-suggestions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formData)
+    })
       
       if (res.ok) {
         const data = await res.json()

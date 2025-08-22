@@ -120,7 +120,7 @@ export default function CareerStoryteller() {
       const newStories: CareerStory[] = []
       
       for (const type of storyTypes) {
-        const res = await fetch('/api/career-storyteller', {
+        const res = await fetch('http://localhost:5000/api/career-storyteller', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ...userProfile, storyType: type })
@@ -174,7 +174,7 @@ export default function CareerStoryteller() {
     setErrorMessage(null)
     
     try {
-      const res = await fetch('/api/career-storyteller', {
+      const res = await fetch('http://localhost:5000/api/career-storyteller', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...userProfile, storyType })

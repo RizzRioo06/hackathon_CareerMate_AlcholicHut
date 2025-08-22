@@ -135,7 +135,7 @@ export default function CareerDiscovery() {
       setConversation(userMessages)
       
       // Call AI discovery API
-      const res = await fetch('/api/career-discovery', {
+      const res = await fetch('http://localhost:5000/api/career-discovery', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userInputs)

@@ -26,11 +26,9 @@ interface AuthContextType {
   user: User | null
   token: string | null
   isLoading: boolean
-  isGuest: boolean
   login: (email: string, password: string) => Promise<void>
   register: (userData: RegisterData) => Promise<void>
   logout: () => void
-  continueAsGuest: () => void
   switchAccount: () => void
   updateProfile: (profileData: Partial<User['profile']>) => Promise<void>
 }
@@ -61,7 +59,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null)
   const [token, setToken] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
-  const [isGuest, setIsGuest] = useState(false)
 
   // Check for existing token on mount
   useEffect(() => {
@@ -166,18 +163,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem('careermate_user')
   }
 
-  const continueAsGuest = () => {
-    setUser(null)
-    setToken(null)
-    setIsGuest(true)
-    localStorage.removeItem('careermate_token')
-    localStorage.removeItem('careermate_user')
-  }
-
   const switchAccount = () => {
     setUser(null)
     setToken(null)
-    setIsGuest(false)
     localStorage.removeItem('careermate_token')
     localStorage.removeItem('careermate_user')
     // This will show the login/register screen again
@@ -213,11 +201,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     user,
     token,
     isLoading,
-    isGuest,
     login,
     register,
     logout,
-    continueAsGuest,
     switchAccount,
     updateProfile
   }

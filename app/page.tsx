@@ -27,7 +27,7 @@ import {
 } from 'lucide-react'
 
 export default function Home() {
-  const { user, isLoading, isGuest, logout, continueAsGuest } = useAuth()
+  const { user, isLoading, logout } = useAuth()
   const [activeTab, setActiveTab] = useState('career')
   const [showAuth, setShowAuth] = useState(false)
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login')
@@ -67,71 +67,65 @@ export default function Home() {
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-purple-400/10 via-pink-400/10 to-rose-400/10 rounded-full blur-3xl animate-pulse-glow"></div>
       </div>
 
-      {/* Header */}
-      <header className="relative bg-slate-900/90 backdrop-blur-xl shadow-2xl border-b border-slate-700/30">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex items-center justify-between h-24">
-            <div className="flex items-center space-x-6">
-              <div className="relative">
-                <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 p-3 rounded-xl shadow-lg animate-pulse-glow">
-                  <Sparkles className="h-7 w-7 text-white" />
+      {/* Header - Only show when user is logged in or showing auth */}
+      {(user || showAuth) && (
+        <header className="relative bg-slate-900/90 backdrop-blur-xl shadow-2xl border-b border-slate-700/30">
+          <div className="max-w-7xl mx-auto px-6 lg:px-8">
+            <div className="flex items-center justify-between h-24">
+              <div className="flex items-center space-x-6">
+                <div className="relative">
+                  <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 p-3 rounded-xl shadow-lg animate-pulse-glow">
+                    <Sparkles className="h-7 w-7 text-white" />
+                  </div>
+                  <div className="absolute -top-2 -right-2 w-4 h-4 bg-amber-400 rounded-full animate-bounce"></div>
                 </div>
-                <div className="absolute -top-2 -right-2 w-4 h-4 bg-amber-400 rounded-full animate-bounce"></div>
+                <div>
+                  <h1 className="text-3xl font-bold bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
+                    CareerMate
+                  </h1>
+                  <p className="text-base text-slate-300 font-medium mt-1">AI Career & Interview Mentor</p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
-                  CareerMate
-                </h1>
-                <p className="text-base text-slate-300 font-medium mt-1">AI Career & Interview Mentor</p>
-              </div>
-            </div>
-            <div className="flex items-center space-x-8">
-              {user ? (
-                <div className="flex items-center space-x-4">
-                  <div className="hidden md:flex items-center space-x-3 text-sm text-slate-300">
-                    <div className="flex items-center space-x-2">
-                      <User className="h-5 w-5 text-indigo-400" />
-                      <span>
-                        {isGuest ? 'Welcome, Guest!' : `Welcome, ${user.firstName}!`}
-                      </span>
+              <div className="flex items-center space-x-8">
+                {user ? (
+                  <div className="flex items-center space-x-4">
+                    <div className="hidden md:flex items-center space-x-3 text-sm text-slate-300">
+                      <div className="flex items-center space-x-2">
+                        <User className="h-5 w-5 text-indigo-400" />
+                        <span>
+                          Welcome, {user.firstName}!
+                        </span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={logout}
+                      className="flex items-center space-x-2 px-4 py-2 bg-red-500/20 border border-red-500/30 rounded-xl text-red-400 hover:bg-red-500/30 transition-all duration-200"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      <span className="hidden md:inline">Logout</span>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="hidden md:flex items-center space-x-6 text-sm text-slate-300">
+                    <div className="flex items-center space-x-3">
+                      <Star className="h-5 w-5 text-amber-500 fill-current" />
+                      <span>Powered by AI</span>
+                    </div>
+                    <div className="flex items-center space-x-3">
+                      <span>Real-time Guidance</span>
                     </div>
                   </div>
-                  <button
-                    onClick={logout}
-                    className="flex items-center space-x-2 px-4 py-2 bg-red-500/20 border border-red-500/30 rounded-xl text-red-400 hover:bg-red-500/30 transition-all duration-200"
-                  >
-                    <LogOut className="h-4 w-4" />
-                    <span className="hidden md:inline">Logout</span>
-                  </button>
-                  {isGuest && (
-                    <div className="hidden md:flex items-center space-x-2 px-3 py-2 bg-slate-700/30 border border-slate-600/30 rounded-xl text-slate-300">
-                      <User className="h-4 w-4" />
-                      <span>Guest Mode</span>
-                    </div>
-                  )}
-                </div>
-              ) : (
-                <div className="hidden md:flex items-center space-x-6 text-sm text-slate-300">
-                  <div className="flex items-center space-x-3">
-                    <Star className="h-5 w-5 text-amber-500 fill-current" />
-                    <span>Powered by AI</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <span>Real-time Guidance</span>
-                  </div>
-                </div>
-              )}
-              
-
+                )}
+              </div>
             </div>
           </div>
-        </div>
-      </header>
+        </header>
+      )}
 
 
 
       {/* Navigation Tabs - Only show when user is authenticated */}
-      {(user || isGuest) && (
+      {user && (
         <nav className="relative bg-slate-900/80 backdrop-blur-xl shadow-xl border-b border-slate-700/30">
           <div className="max-w-7xl mx-auto px-6 lg:px-8">
             <div className="flex justify-center space-x-8 py-8">
@@ -155,23 +149,7 @@ export default function Home() {
               })}
             </div>
             
-            {/* Guest User CTA */}
-            {isGuest && (
-              <div className="text-center mt-6">
-                <div className="inline-flex items-center space-x-3 p-4 bg-slate-800/50 rounded-xl border border-slate-600/30">
-                  <span className="text-slate-300">Want to save your progress?</span>
-                  <button
-                    onClick={() => {
-                      setShowAuth(true)
-                      setAuthMode('register')
-                    }}
-                    className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200"
-                  >
-                    Create Account
-                  </button>
-                </div>
-              </div>
-            )}
+
           </div>
         </nav>
       )}
@@ -185,7 +163,7 @@ export default function Home() {
               <p className="text-slate-400 text-lg">Loading CareerMate...</p>
             </div>
           </div>
-        ) : user || isGuest ? (
+        ) : user ? (
           <div className="animate-fade-in">
             {renderActiveComponent()}
           </div>
@@ -201,7 +179,6 @@ export default function Home() {
               setAuthMode('login')
               setShowAuth(true)
             }}
-            onContinueAsGuest={continueAsGuest}
           />
         )}
       </main>

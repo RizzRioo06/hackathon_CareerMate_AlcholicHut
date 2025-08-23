@@ -96,11 +96,31 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
     return true
   }
 
+  const validateStep2 = () => {
+    if (!formData.profile.currentRole || !formData.profile.experience || !formData.profile.education || !formData.profile.location) {
+      setError('Please fill in all profile fields')
+      return false
+    }
+    setError('')
+    return true
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
 
-    if (!validateStep1()) return
+    // Validate both steps before submitting
+    if (!validateStep1()) {
+      setCurrentStep(1) // Go back to step 1 if validation fails
+      return
+    }
+
+    // Additional validation for step 2
+    if (currentStep === 2) {
+      if (!validateStep2()) {
+        return
+      }
+    }
 
     setIsLoading(true)
 

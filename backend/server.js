@@ -4,13 +4,10 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
-// Force Render redeployment - Authentication endpoints are ready!
 const connectDB = require('./config/database');
 
 // Connect to database
 connectDB();
-
-// ... rest of your existing code
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -101,15 +98,6 @@ app.get('/api/auth/test', (req, res) => {
   res.json({ 
     status: 'OK', 
     message: 'Auth test endpoint is working',
-    timestamp: new Date().toISOString()
-  });
-});
-
-// Test delete endpoint for debugging
-app.delete('/api/test-delete/:id', (req, res) => {
-  res.json({ 
-    message: 'Test delete endpoint working', 
-    id: req.params.id,
     timestamp: new Date().toISOString()
   });
 });
@@ -259,8 +247,6 @@ app.post('/api/evaluate-answer', async (req, res) => {
       return res.status(400).json({ error: 'Question, answer, and role are required' });
     }
 
-
-
     const openaiService = require('./services/openai');
     const feedback = await openaiService.evaluateInterviewAnswer(question, answer, role);
     
@@ -304,8 +290,6 @@ app.post('/api/job-suggestions', async (req, res) => {
   }
 });
 
-
-
 // Career Storyteller API
 app.post('/api/career-storyteller', async (req, res) => {
   try {
@@ -326,8 +310,6 @@ app.post('/api/career-storyteller', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
-
 
 // Delete career guidance session
 app.delete('/api/career-guidance/:id', async (req, res) => {

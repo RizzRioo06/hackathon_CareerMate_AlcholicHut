@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import { useAuth } from './AuthContext'
+import config from './config'
 import { Briefcase, MapPin, Building, Loader2, TrendingUp, Search, Target, Star, Clock, DollarSign, Users } from 'lucide-react'
 
 interface JobOpportunity {
@@ -23,6 +25,7 @@ interface JobSuggestionsResponse {
 }
 
 export default function JobSuggestions() {
+  const { token } = useAuth()
   const [formData, setFormData] = useState({
     skills: '',
     experience: '',
@@ -33,6 +36,7 @@ export default function JobSuggestions() {
   })
   const [isLoading, setIsLoading] = useState(false)
   const [response, setResponse] = useState<JobSuggestionsResponse | null>(null)
+  const [error, setError] = useState('')
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -41,23 +45,35 @@ export default function JobSuggestions() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    if (!token) {
+      setError('Please log in to use this feature')
+      return
+    }
+    
     setIsLoading(true)
+    setError('')
     
     try {
-          const res = await fetch('https://careermate-backend-nzb0.onrender.com/api/job-suggestions', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...formData, language: 'en' })
-    })
+      const res = await fetch(`${config.apiUrl}/job-suggestions`, {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ ...formData, language: 'en' })
+      })
       
       if (res.ok) {
         const data = await res.json()
         setResponse(data)
       } else {
-        throw new Error('Failed to get job suggestions')
+        const errorData = await res.json()
+        throw new Error(errorData.error || 'Failed to get job suggestions')
       }
     } catch (error) {
       console.error('Error:', error)
+      setError(error instanceof Error ? error.message : 'Failed to get job suggestions')
     } finally {
       setIsLoading(false)
     }
@@ -73,6 +89,17 @@ export default function JobSuggestions() {
     if (match >= 80) return 'bg-emerald-900/20'
     if (match >= 60) return 'bg-amber-900/20'
     return 'bg-red-900/20'
+  }
+
+  if (!token) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-white mb-4">Authentication Required</h1>
+          <p className="text-slate-400 text-lg">Please log in to access Job Suggestions</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -104,6 +131,12 @@ export default function JobSuggestions() {
             </div>
             <h3 className="text-3xl font-bold text-slate-100">Your Profile</h3>
           </div>
+          
+          {error && (
+            <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+              <p className="text-red-400 text-center">{error}</p>
+            </div>
+          )}
           
           <form onSubmit={handleSubmit} className="space-y-10">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-10">

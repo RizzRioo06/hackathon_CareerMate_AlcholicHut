@@ -1,6 +1,8 @@
 'use client'
 
 import { useState } from 'react'
+import { useAuth } from './AuthContext'
+import config from './config'
 import { MessageSquare, Play, CheckCircle, Star, Loader2, ArrowRight, Brain, Target, Award, Clock, Users, Search } from 'lucide-react'
 
 interface InterviewQuestion {
@@ -24,6 +26,7 @@ interface MockInterviewResponse {
 }
 
 export default function MockInterview() {
+  const { token } = useAuth()
   const [selectedRole, setSelectedRole] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [currentQuestion, setCurrentQuestion] = useState(0)
@@ -67,12 +70,20 @@ export default function MockInterview() {
   const startInterview = async () => {
     if (!selectedRole.trim()) return
     
+    if (!token) {
+      setErrorMessage('Please log in to use this feature')
+      return
+    }
+    
     setIsLoading(true)
     setErrorMessage(null)
     try {
-      const res = await fetch('https://careermate-backend-nzb0.onrender.com/api/mock-interview', {
+      const res = await fetch(`${config.apiUrl}/mock-interview`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ role: selectedRole.trim(), language: 'en' })
       })
       
@@ -152,6 +163,17 @@ export default function MockInterview() {
     setUserAnswers([])
     setSelectedRole('')
     setErrorMessage(null)
+  }
+
+  if (!token) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-white mb-4">Authentication Required</h1>
+          <p className="text-slate-400 text-lg">Please log in to access Mock Interview</p>
+        </div>
+      </div>
+    )
   }
 
   if (!interviewStarted) {

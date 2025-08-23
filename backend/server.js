@@ -42,6 +42,20 @@ app.get('/health', (req, res) => {
   res.json({ status: 'OK', message: 'CareerMate API is running' });
 });
 
+// Auth health check endpoint
+app.get('/api/auth/health', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    message: 'Authentication endpoints are working',
+    endpoints: [
+      'POST /api/auth/register',
+      'POST /api/auth/login',
+      'GET /api/auth/profile',
+      'PUT /api/auth/profile'
+    ]
+  });
+});
+
 // Test delete endpoint for debugging
 app.delete('/api/test-delete/:id', (req, res) => {
   res.json({ 
@@ -57,11 +71,17 @@ app.get('/', (req, res) => {
     status: 'OK', 
     message: 'CareerMate Backend API is running',
     endpoints: [
-      'POST /api/career-guidance',
-      'POST /api/mock-interview', 
-      'POST /api/evaluate-answer',
-      'POST /api/job-suggestions',
-      'POST /api/career-storyteller'
+      '🔐 AUTH:',
+      '  POST /api/auth/register',
+      '  POST /api/auth/login',
+      '  GET /api/auth/profile',
+      '  PUT /api/auth/profile',
+      '🎯 CAREER:',
+      '  POST /api/career-guidance',
+      '  POST /api/mock-interview', 
+      '  POST /api/evaluate-answer',
+      '  POST /api/job-suggestions',
+      '  POST /api/career-storyteller'
     ]
   });
 });

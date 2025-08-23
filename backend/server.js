@@ -7,6 +7,10 @@ require('dotenv').config();
 // FORCE RENDER REDEPLOYMENT - Enhanced validation logging is ready!
 const connectDB = require('./config/database');
 
+// Import authentication middleware early
+const { authenticateToken, generateToken } = require('./middleware/auth');
+const User = require('./models/User');
+
 // Connect to database
 connectDB();
 
@@ -395,8 +399,6 @@ app.get('/api/job-suggestions', authenticateToken, async (req, res) => {
 
 // Authentication routes
 console.log('🔐 Loading authentication routes...');
-const { authenticateToken, generateToken } = require('./middleware/auth');
-const User = require('./models/User');
 console.log('✅ Authentication middleware loaded');
 
 // User registration

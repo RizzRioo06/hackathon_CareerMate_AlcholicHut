@@ -5,7 +5,6 @@ import { Brain, Target, MessageSquare, Briefcase, Trash2, Eye, Calendar, User } 
 import config from './config'
 
 interface SavedData {
-  careerDiscoveries: any[]
   careerGuidance: any[]
   mockInterviews: any[]
   jobSuggestions: any[]
@@ -13,13 +12,12 @@ interface SavedData {
 
 export default function Dashboard() {
   const [savedData, setSavedData] = useState<SavedData>({
-    careerDiscoveries: [],
     careerGuidance: [],
     mockInterviews: [],
     jobSuggestions: []
   })
   const [isLoading, setIsLoading] = useState(true)
-  const [activeTab, setActiveTab] = useState<'discoveries' | 'guidance' | 'interviews' | 'jobs'>('discoveries')
+  const [activeTab, setActiveTab] = useState<'guidance' | 'interviews' | 'jobs'>('guidance')
 
   useEffect(() => {
     fetchAllData()
@@ -34,15 +32,13 @@ export default function Dashboard() {
         console.warn('Backend health check failed, backend might not be running')
       }
       
-      const [discoveries, guidance, interviews, jobs] = await Promise.all([
-        fetch(`${config.apiUrl}/career-discoveries`).then(res => res.ok ? res.json() : []),
+      const [guidance, interviews, jobs] = await Promise.all([
         fetch(`${config.apiUrl}/career-guidance`).then(res => res.ok ? res.json() : []),
         fetch(`${config.apiUrl}/mock-interviews`).then(res => res.ok ? res.json() : []),
         fetch(`${config.apiUrl}/job-suggestions`).then(res => res.ok ? res.json() : [])
       ])
 
       setSavedData({
-        careerDiscoveries: discoveries,
         careerGuidance: guidance,
         mockInterviews: interviews,
         jobSuggestions: jobs
@@ -56,8 +52,7 @@ export default function Dashboard() {
 
   const deleteItem = async (type: keyof SavedData, id: string) => {
     try {
-      const endpoint = type === 'careerDiscoveries' ? 'career-discoveries' : 
-                     type === 'careerGuidance' ? 'career-guidance' :
+      const endpoint = type === 'careerGuidance' ? 'career-guidance' :
                      type === 'mockInterviews' ? 'mock-interviews' : 'job-suggestions'
       
       console.log(`Attempting to delete ${type} with ID: ${id} from endpoint: /api/${endpoint}/${id}`)
@@ -115,18 +110,7 @@ export default function Dashboard() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <div className="bg-slate-800/50 rounded-2xl p-6 border border-slate-700/50">
-            <div className="flex items-center space-x-3">
-              <div className="p-2 bg-emerald-500/20 rounded-lg">
-                <Brain className="h-6 w-6 text-emerald-400" />
-              </div>
-              <div>
-                <p className="text-2xl font-bold">{savedData.careerDiscoveries.length}</p>
-                <p className="text-slate-400 text-sm">Discoveries</p>
-              </div>
-            </div>
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 
           <div className="bg-slate-800/50 rounded-2xl p-6 border border-slate-700/50">
             <div className="flex items-center space-x-3">
@@ -169,7 +153,6 @@ export default function Dashboard() {
         <div className="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-2 mb-8">
           <div className="flex space-x-2">
             {[
-              { id: 'discoveries', label: 'Career Discoveries', icon: Brain, count: savedData.careerDiscoveries.length },
               { id: 'guidance', label: 'Career Guidance', icon: Target, count: savedData.careerGuidance.length },
               { id: 'interviews', label: 'Mock Interviews', icon: MessageSquare, count: savedData.mockInterviews.length },
               { id: 'jobs', label: 'Job Suggestions', icon: Briefcase, count: savedData.jobSuggestions.length }
@@ -195,40 +178,6 @@ export default function Dashboard() {
 
         {/* Content */}
         <div className="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-6">
-          {activeTab === 'discoveries' && (
-            <div className="space-y-4">
-              <h3 className="text-2xl font-bold mb-6">Career Discoveries</h3>
-              {savedData.careerDiscoveries.length === 0 ? (
-                <p className="text-slate-400 text-center py-8">No career discoveries yet. Start exploring!</p>
-              ) : (
-                savedData.careerDiscoveries.map((discovery) => (
-                  <div key={discovery._id} className="p-4 bg-slate-700/50 rounded-xl border border-slate-600/50">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-4">
-                        <div className="p-2 bg-emerald-500/20 rounded-lg">
-                          <User className="h-5 w-5 text-emerald-400" />
-                        </div>
-                        <div>
-                          <h4 className="font-semibold text-lg">{discovery.userProfile.name}</h4>
-                          <p className="text-slate-400">{discovery.userProfile.currentRole}</p>
-                          <p className="text-slate-500 text-sm flex items-center space-x-2">
-                            <Calendar className="h-4 w-4" />
-                            <span>{new Date(discovery.createdAt).toLocaleDateString()}</span>
-                          </p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={() => deleteItem('careerDiscoveries', discovery._id)}
-                        className="p-2 text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-lg transition-colors"
-                      >
-                        <Trash2 className="h-5 w-5" />
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          )}
 
           {activeTab === 'guidance' && (
             <div className="space-y-4">

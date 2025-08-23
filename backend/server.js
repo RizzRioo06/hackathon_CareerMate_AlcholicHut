@@ -60,7 +60,8 @@ app.get('/', (req, res) => {
       'POST /api/career-guidance',
       'POST /api/mock-interview', 
       'POST /api/evaluate-answer',
-      'POST /api/job-suggestions'
+      'POST /api/job-suggestions',
+      'POST /api/career-storyteller'
     ]
   });
 });
@@ -234,127 +235,7 @@ app.post('/api/job-suggestions', async (req, res) => {
   }
 });
 
-// Career Discovery API
-app.post('/api/career-discovery', async (req, res) => {
-  try {
-    const { name, currentRole, primaryInterest, secondaryInterest, experience, education } = req.body;
-    
-    if (!name || !currentRole || !primaryInterest) {
-      return res.status(400).json({ 
-        error: 'Missing required fields: name, currentRole, and primaryInterest are required' 
-      });
-    }
 
-    const openaiService = require('./services/openai');
-    const aiResponse = await openaiService.generateCareerDiscovery({
-      name, currentRole, primaryInterest, secondaryInterest, experience, education
-    });
-
-    // Validate AI response structure
-    validateAIResponse(aiResponse, ['careerPaths', 'learningRoadmap', 'conversation']);
-
-    // Log the AI response for debugging
-    console.log('AI Response for Career Discovery:', JSON.stringify(aiResponse, null, 2));
-    console.log('Conversation type:', typeof aiResponse.conversation);
-    console.log('Conversation value:', aiResponse.conversation);
-
-    // Pre-process the conversation field to ensure it's an array
-    let processedConversation = [];
-    if (aiResponse.conversation) {
-      if (typeof aiResponse.conversation === 'string') {
-        try {
-          // Try to parse if it's a JSON string
-          const parsed = JSON.parse(aiResponse.conversation);
-          if (Array.isArray(parsed)) {
-            processedConversation = parsed;
-          } else {
-            // If parsed but not array, wrap in array
-            processedConversation = [parsed];
-          }
-        } catch (e) {
-          console.log('Failed to parse conversation as JSON, trying to clean the string...');
-          
-          // Try to clean the string if it contains concatenated parts
-          let cleanedString = aiResponse.conversation;
-          
-          // Remove common concatenation artifacts
-          cleanedString = cleanedString.replace(/\\n/g, '\n');
-          cleanedString = cleanedString.replace(/\\'/g, "'");
-          cleanedString = cleanedString.replace(/\\"/g, '"');
-          
-          // Try to extract the actual content
-          if (cleanedString.includes("role: 'ai'") || cleanedString.includes('role: "ai"')) {
-            // Extract the content from the string
-            const contentMatch = cleanedString.match(/content:\s*['"]([^'"]+)['"]/);
-            if (contentMatch) {
-              processedConversation = [{
-                role: 'ai',
-                content: contentMatch[1],
-                timestamp: Date.now(),
-                type: 'insight'
-              }];
-            } else {
-              // Fallback: use the entire string as content
-              processedConversation = [{
-                role: 'ai',
-                content: cleanedString,
-                timestamp: Date.now(),
-                type: 'insight'
-              }];
-            }
-          } else {
-            // Fallback: use the entire string as content
-            processedConversation = [{
-              role: 'ai',
-              content: aiResponse.conversation,
-              timestamp: Date.now(),
-              type: 'insight'
-            }];
-          }
-        }
-      } else if (Array.isArray(aiResponse.conversation)) {
-        processedConversation = aiResponse.conversation;
-      } else {
-        // If it's not a string and not an array, make it an array
-        processedConversation = [aiResponse.conversation];
-      }
-    }
-
-    console.log('Processed conversation:', processedConversation);
-
-    // Save to database
-    const CareerDiscovery = require('./models/CareerDiscovery');
-    
-    // Create career discovery document with processed data
-    const careerDiscovery = new CareerDiscovery({
-      userProfile: { name, currentRole, primaryInterest, secondaryInterest, experience, education },
-      careerPaths: aiResponse.careerPaths || [],
-      learningRoadmap: aiResponse.learningRoadmap || {},
-      conversation: processedConversation
-    });
-
-    console.log('Before save - conversation:', careerDiscovery.conversation);
-    console.log('Before save - conversation type:', typeof careerDiscovery.conversation);
-
-    await careerDiscovery.save();
-
-    console.log('After save - conversation:', careerDiscovery.conversation);
-
-    res.json(aiResponse);
-  } catch (error) {
-    console.error('Career discovery error:', error);
-    
-    // Provide more specific error messages
-    if (error.name === 'ValidationError') {
-      return res.status(400).json({ 
-        error: 'Data validation failed', 
-        details: error.message 
-      });
-    }
-    
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
 
 // Career Storyteller API
 app.post('/api/career-storyteller', async (req, res) => {
@@ -377,47 +258,7 @@ app.post('/api/career-storyteller', async (req, res) => {
   }
 });
 
-// Get saved career discoveries
-app.get('/api/career-discoveries', async (req, res) => {
-  try {
-    const CareerDiscovery = require('./models/CareerDiscovery');
-    const discoveries = await CareerDiscovery.find().sort({ createdAt: -1 }).limit(10);
-    res.json(discoveries);
-  } catch (error) {
-    console.error('Error fetching discoveries:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
 
-// Get specific career discovery by ID
-app.get('/api/career-discoveries/:id', async (req, res) => {
-  try {
-    const CareerDiscovery = require('./models/CareerDiscovery');
-    const discovery = await CareerDiscovery.findById(req.params.id);
-    if (!discovery) {
-      return res.status(404).json({ error: 'Discovery not found' });
-    }
-    res.json(discovery);
-  } catch (error) {
-    console.error('Error fetching discovery:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
-
-// Delete career discovery
-app.delete('/api/career-discoveries/:id', async (req, res) => {
-  try {
-    const CareerDiscovery = require('./models/CareerDiscovery');
-    const discovery = await CareerDiscovery.findByIdAndDelete(req.params.id);
-    if (!discovery) {
-      return res.status(404).json({ error: 'Discovery not found' });
-    }
-    res.json({ message: 'Discovery deleted successfully' });
-  } catch (error) {
-    console.error('Error deleting discovery:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
 
 // Delete career guidance session
 app.delete('/api/career-guidance/:id', async (req, res) => {
@@ -500,6 +341,116 @@ app.get('/api/job-suggestions', async (req, res) => {
   }
 });
 
+// Authentication routes
+const { authenticateToken, generateToken } = require('./middleware/auth');
+const User = require('./models/User');
+
+// User registration
+app.post('/api/auth/register', async (req, res) => {
+  try {
+    const { email, password, firstName, lastName, profile } = req.body;
+    
+    // Check if user already exists
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ error: 'User with this email already exists' });
+    }
+    
+    // Create new user
+    const user = new User({
+      email,
+      password,
+      firstName,
+      lastName,
+      profile: profile || {}
+    });
+    
+    await user.save();
+    
+    // Generate token
+    const token = generateToken(user._id);
+    
+    res.status(201).json({
+      message: 'User registered successfully',
+      token,
+      user: user.getPublicProfile()
+    });
+  } catch (error) {
+    console.error('Registration error:', error);
+    if (error.name === 'ValidationError') {
+      return res.status(400).json({ error: 'Validation failed', details: error.message });
+    }
+    res.status(500).json({ error: 'Registration failed' });
+  }
+});
+
+// User login
+app.post('/api/auth/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    
+    // Find user by email
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    
+    // Check password
+    const isPasswordValid = await user.comparePassword(password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    
+    // Update last login
+    user.lastLogin = new Date();
+    await user.save();
+    
+    // Generate token
+    const token = generateToken(user._id);
+    
+    res.json({
+      message: 'Login successful',
+      token,
+      user: user.getPublicProfile()
+    });
+  } catch (error) {
+    console.error('Login error:', error);
+    res.status(500).json({ error: 'Login failed' });
+  }
+});
+
+// Get current user profile
+app.get('/api/auth/profile', authenticateToken, async (req, res) => {
+  try {
+    res.json({ user: req.user });
+  } catch (error) {
+    console.error('Profile fetch error:', error);
+    res.status(500).json({ error: 'Failed to fetch profile' });
+  }
+});
+
+// Update user profile
+app.put('/api/auth/profile', authenticateToken, async (req, res) => {
+  try {
+    const { firstName, lastName, profile } = req.body;
+    
+    const user = await User.findById(req.user._id);
+    if (firstName) user.firstName = firstName;
+    if (lastName) user.lastName = lastName;
+    if (profile) user.profile = { ...user.profile, ...profile };
+    
+    await user.save();
+    
+    res.json({
+      message: 'Profile updated successfully',
+      user: user.getPublicProfile()
+    });
+  } catch (error) {
+    console.error('Profile update error:', error);
+    res.status(500).json({ error: 'Failed to update profile' });
+  }
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
@@ -514,21 +465,23 @@ app.use('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`🚀 CareerMate Backend running on port ${PORT}`);
   console.log(`📚 API endpoints:`);
-  console.log(`   POST /api/career-guidance`);
-  console.log(`   POST /api/mock-interview`);
-  console.log(`   POST /api/evaluate-answer`);
-  console.log(`   POST /api/job-suggestions`);
-  console.log(`   POST /api/career-discovery`);
-  console.log(`   POST /api/career-storyteller`);
-  console.log(`   GET /api/career-discoveries`);
-  console.log(`   GET /api/career-discoveries/:id`);
-  console.log(`   DELETE /api/career-discoveries/:id`);
-  console.log(`   GET /api/career-guidance`);
-  console.log(`   DELETE /api/career-guidance/:id`);
-  console.log(`   GET /api/mock-interviews`);
-  console.log(`   DELETE /api/mock-interviews/:id`);
-  console.log(`   GET /api/job-suggestions`);
-  console.log(`   DELETE /api/job-suggestions/:id`);
+  console.log(`   🔐 AUTH:`);
+  console.log(`      POST /api/auth/register`);
+  console.log(`      POST /api/auth/login`);
+  console.log(`      GET /api/auth/profile`);
+  console.log(`      PUT /api/auth/profile`);
+  console.log(`   🎯 CAREER:`);
+  console.log(`      POST /api/career-guidance`);
+  console.log(`      POST /api/mock-interview`);
+  console.log(`      POST /api/evaluate-answer`);
+  console.log(`      POST /api/job-suggestions`);
+  console.log(`      POST /api/career-storyteller`);
+  console.log(`      GET /api/career-guidance`);
+  console.log(`      DELETE /api/career-guidance/:id`);
+  console.log(`      GET /api/mock-interviews`);
+  console.log(`      DELETE /api/mock-interviews/:id`);
+  console.log(`      GET /api/job-suggestions`);
+  console.log(`      DELETE /api/job-suggestions/:id`);
 
   console.log(`🔑 Remember to set your AI API credentials in your .env file`);
 });

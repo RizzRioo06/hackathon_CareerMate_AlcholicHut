@@ -90,12 +90,7 @@ export default function WelcomeScreen({ onShowRegister, onShowLogin, onContinueA
           </button>
         </div>
 
-        {/* Benefits */}
-        <div className="mt-16 text-center">
-          <p className="text-slate-400 text-sm">
-            Create an account to save your progress, access personalized recommendations, and track your career growth journey.
-          </p>
-        </div>
+
       </main>
     </div>
   )

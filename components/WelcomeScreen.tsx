@@ -1,7 +1,7 @@
 'use client'
 
 import React from 'react'
-import { UserPlus, LogIn, User, Sparkles, Brain, MessageSquare, Briefcase, BookOpen } from 'lucide-react'
+import { UserPlus, LogIn, User, Sparkles } from 'lucide-react'
 
 interface WelcomeScreenProps {
   onShowRegister: () => void
@@ -52,40 +52,7 @@ export default function WelcomeScreen({ onShowRegister, onShowLogin, onContinueA
           </p>
         </div>
 
-        {/* Feature Preview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
-          <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-600/30 text-center">
-            <div className="bg-gradient-to-r from-indigo-500 to-purple-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Brain className="h-8 w-8 text-white" />
-            </div>
-            <h3 className="text-lg font-semibold text-white mb-2">Career Guidance</h3>
-            <p className="text-slate-400 text-sm">AI-powered career path analysis</p>
-          </div>
 
-          <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-600/30 text-center">
-            <div className="bg-gradient-to-r from-green-500 to-emerald-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <MessageSquare className="h-8 w-8 text-white" />
-            </div>
-            <h3 className="text-lg font-semibold text-white mb-2">Mock Interviews</h3>
-            <p className="text-slate-400 text-sm">Practice with AI interviewer</p>
-          </div>
-
-          <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-600/30 text-center">
-            <div className="bg-gradient-to-r from-blue-500 to-cyan-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Briefcase className="h-8 w-8 text-white" />
-            </div>
-            <h3 className="text-lg font-semibold text-white mb-2">Job Suggestions</h3>
-            <p className="text-slate-400 text-sm">Personalized job recommendations</p>
-          </div>
-
-          <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl p-6 border border-slate-600/30 text-center">
-            <div className="bg-gradient-to-r from-purple-500 to-pink-500 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-              <BookOpen className="h-8 w-8 text-white" />
-            </div>
-            <h3 className="text-lg font-semibold text-white mb-2">Career Stories</h3>
-            <p className="text-slate-400 text-sm">AI-powered career storytelling</p>
-          </div>
-        </div>
 
         {/* Action Buttons */}
         <div className="space-y-6 max-w-md mx-auto">

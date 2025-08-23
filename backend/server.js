@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
+// Force Render redeployment - Authentication endpoints are ready!
 const connectDB = require('./config/database');
 
 // Connect to database

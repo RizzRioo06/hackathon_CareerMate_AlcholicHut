@@ -35,11 +35,43 @@ const limiter = rateLimit({
 // Enable trust proxy for deployed environments
 app.set('trust proxy', 1);
 
-app.use('/api/', limiter);
+// Apply rate limiting to all API routes except auth
+app.use('/api/career-guidance', limiter);
+app.use('/api/mock-interview', limiter);
+app.use('/api/evaluate-answer', limiter);
+app.use('/api/job-suggestions', limiter);
+app.use('/api/career-storyteller', limiter);
+app.use('/api/career-guidance/:id', limiter);
+app.use('/api/mock-interviews/:id', limiter);
+app.use('/api/job-suggestions/:id', limiter);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
   res.json({ status: 'OK', message: 'CareerMate API is running' });
+});
+
+// Simple test endpoint
+app.get('/test', (req, res) => {
+  res.json({ status: 'OK', message: 'Test endpoint is working' });
+});
+
+// Route list endpoint for debugging
+app.get('/routes', (req, res) => {
+  const routes = [];
+  app._router.stack.forEach(middleware => {
+    if (middleware.route) {
+      const methods = Object.keys(middleware.route.methods);
+      routes.push({
+        path: middleware.route.path,
+        methods: methods
+      });
+    }
+  });
+  res.json({ 
+    status: 'OK', 
+    message: 'Registered routes',
+    routes: routes
+  });
 });
 
 // Auth health check endpoint
@@ -53,6 +85,15 @@ app.get('/api/auth/health', (req, res) => {
       'GET /api/auth/profile',
       'PUT /api/auth/profile'
     ]
+  });
+});
+
+// Test auth endpoint
+app.get('/api/auth/test', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    message: 'Auth test endpoint is working',
+    timestamp: new Date().toISOString()
   });
 });
 
@@ -362,10 +403,13 @@ app.get('/api/job-suggestions', async (req, res) => {
 });
 
 // Authentication routes
+console.log('🔐 Loading authentication routes...');
 const { authenticateToken, generateToken } = require('./middleware/auth');
 const User = require('./models/User');
+console.log('✅ Authentication middleware loaded');
 
 // User registration
+console.log('🔐 Registering /api/auth/register route');
 app.post('/api/auth/register', async (req, res) => {
   try {
     const { email, password, firstName, lastName, profile } = req.body;
@@ -405,6 +449,7 @@ app.post('/api/auth/register', async (req, res) => {
 });
 
 // User login
+console.log('🔐 Registering /api/auth/login route');
 app.post('/api/auth/login', async (req, res) => {
   try {
     const { email, password } = req.body;

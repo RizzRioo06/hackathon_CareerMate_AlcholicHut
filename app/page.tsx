@@ -6,6 +6,7 @@ import MockInterview from '../components/MockInterview'
 import CareerStoryteller from '../components/CareerStoryteller'
 import Dashboard from '../components/Dashboard'
 import Auth from '../components/Auth'
+import WelcomeScreen from '../components/WelcomeScreen'
 import { useAuth } from '../components/AuthContext'
 import { useState, useEffect, useRef } from 'react'
 import { 
@@ -22,42 +23,14 @@ import {
   BookOpen,
   BarChart3,
   LogOut,
-  User,
-  Menu,
-  X,
-  Settings
+  User
 } from 'lucide-react'
 
 export default function Home() {
-  const { user, isLoading, logout } = useAuth()
+  const { user, isLoading, isGuest, logout, continueAsGuest } = useAuth()
   const [activeTab, setActiveTab] = useState('career')
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const mobileMenuRef = useRef<HTMLDivElement>(null)
-
-  // Close mobile menu when clicking outside or pressing escape
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
-        setIsMobileMenuOpen(false)
-      }
-    }
-
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setIsMobileMenuOpen(false)
-      }
-    }
-
-    if (isMobileMenuOpen) {
-      document.addEventListener('mousedown', handleClickOutside)
-      document.addEventListener('keydown', handleEscape)
-    }
-
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-      document.removeEventListener('keydown', handleEscape)
-    }
-  }, [isMobileMenuOpen])
+  const [showAuth, setShowAuth] = useState(false)
+  const [authMode, setAuthMode] = useState<'login' | 'register'>('login')
 
   const tabs = [
     { id: 'career', label: 'Career Guidance', icon: Brain, description: 'AI-powered career path analysis' },
@@ -118,7 +91,9 @@ export default function Home() {
                   <div className="hidden md:flex items-center space-x-3 text-sm text-slate-300">
                     <div className="flex items-center space-x-2">
                       <User className="h-5 w-5 text-indigo-400" />
-                      <span>Welcome, {user.firstName}!</span>
+                      <span>
+                        {isGuest ? 'Welcome, Guest!' : `Welcome, ${user.firstName}!`}
+                      </span>
                     </div>
                   </div>
                   <button
@@ -128,6 +103,12 @@ export default function Home() {
                     <LogOut className="h-4 w-4" />
                     <span className="hidden md:inline">Logout</span>
                   </button>
+                  {isGuest && (
+                    <div className="hidden md:flex items-center space-x-2 px-3 py-2 bg-slate-700/30 border border-slate-600/30 rounded-xl text-slate-300">
+                      <User className="h-4 w-4" />
+                      <span>Guest Mode</span>
+                    </div>
+                  )}
                 </div>
               ) : (
                 <div className="hidden md:flex items-center space-x-6 text-sm text-slate-300">
@@ -141,112 +122,13 @@ export default function Home() {
                 </div>
               )}
               
-              {/* Mobile menu button */}
-              {user && (
-                <button
-                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                  className="md:hidden flex items-center justify-center w-10 h-10 bg-slate-800/50 border border-slate-600/30 rounded-xl text-slate-300 hover:bg-slate-700/50 transition-all duration-200"
-                >
-                  {isMobileMenuOpen ? (
-                    <X className="h-5 w-5" />
-                  ) : (
-                    <Menu className="h-5 w-5" />
-                  )}
-                </button>
-              )}
+
             </div>
           </div>
         </div>
       </header>
 
-      {/* Mobile Menu Dropdown */}
-      {isMobileMenuOpen && user && (
-        <div ref={mobileMenuRef} className="md:hidden absolute top-24 left-0 right-0 z-50 bg-slate-900/95 backdrop-blur-xl border-b border-slate-700/30 shadow-2xl">
-          <div className="max-w-7xl mx-auto px-6 py-4">
-            <div className="space-y-4">
-              {/* Header with close button */}
-              <div className="flex items-center justify-between">
-                <h3 className="text-lg font-semibold text-white">Quick Menu</h3>
-                <button
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="p-2 hover:bg-slate-700/50 rounded-lg transition-colors duration-200"
-                >
-                  <X className="h-5 w-5 text-slate-400" />
-                </button>
-              </div>
-              
-              {/* User Info */}
-              <div className="flex items-center space-x-3 p-3 bg-slate-800/50 rounded-xl border border-slate-600/30">
-                <div className="w-10 h-10 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-full flex items-center justify-center">
-                  <User className="h-5 w-5 text-white" />
-                </div>
-                <div>
-                  <p className="text-white font-medium">{user.firstName} {user.lastName}</p>
-                  <p className="text-slate-400 text-sm">{user.email}</p>
-                </div>
-              </div>
-              
-              {/* Quick Actions */}
-              <div className="grid grid-cols-2 gap-3">
-                <button
-                  onClick={() => {
-                    setActiveTab('dashboard')
-                    setIsMobileMenuOpen(false)
-                  }}
-                  className="flex items-center space-x-3 p-3 bg-slate-800/50 hover:bg-slate-700/50 rounded-xl border border-slate-600/30 text-slate-300 hover:text-white transition-all duration-200"
-                >
-                  <BarChart3 className="h-5 w-5 text-indigo-400" />
-                  <span>Dashboard</span>
-                </button>
-                <button
-                  onClick={() => {
-                    setActiveTab('career')
-                    setIsMobileMenuOpen(false)
-                  }}
-                  className="flex items-center space-x-3 p-3 bg-slate-800/50 hover:bg-slate-700/50 rounded-xl border border-slate-600/30 text-slate-300 hover:text-white transition-all duration-200"
-                >
-                  <Brain className="h-5 w-5 text-green-400" />
-                  <span>Career Guide</span>
-                </button>
-              </div>
-              
-              {/* Account Actions */}
-              <div className="space-y-2">
-                <button
-                  onClick={() => {
-                    // TODO: Add settings functionality
-                    setIsMobileMenuOpen(false)
-                  }}
-                  className="w-full flex items-center space-x-3 p-3 bg-slate-800/50 hover:bg-slate-700/50 rounded-xl border border-slate-600/30 text-slate-300 hover:text-white transition-all duration-200"
-                >
-                  <Settings className="h-5 w-5 text-blue-400" />
-                  <span>Settings</span>
-                </button>
-                <button
-                  onClick={() => {
-                    logout()
-                    setIsMobileMenuOpen(false)
-                  }}
-                  className="w-full flex items-center space-x-3 p-3 bg-red-500/20 hover:bg-red-500/30 rounded-xl border border-red-500/30 text-red-400 hover:text-red-300 transition-all duration-200"
-                >
-                  <LogOut className="h-5 w-5" />
-                  <span>Logout</span>
-                </button>
-                <button
-                  onClick={() => {
-                    // This will show the login/register screen again
-                    setIsMobileMenuOpen(false)
-                  }}
-                  className="w-full flex items-center space-x-3 p-3 bg-slate-800/50 hover:bg-slate-700/50 rounded-xl border border-slate-600/30 text-slate-300 hover:text-white transition-all duration-200"
-                >
-                  <User className="h-5 w-5 text-indigo-400" />
-                  <span>Switch Account</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+
 
       {/* Navigation Tabs */}
       <nav className="relative bg-slate-900/80 backdrop-blur-xl shadow-xl border-b border-slate-700/30">
@@ -271,6 +153,24 @@ export default function Home() {
               )
             })}
           </div>
+          
+          {/* Guest User CTA */}
+          {isGuest && (
+            <div className="text-center mt-6">
+              <div className="inline-flex items-center space-x-3 p-4 bg-slate-800/50 rounded-xl border border-slate-600/30">
+                <span className="text-slate-300">Want to save your progress?</span>
+                <button
+                  onClick={() => {
+                    setShowAuth(true)
+                    setAuthMode('register')
+                  }}
+                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200"
+                >
+                  Create Account
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </nav>
 
@@ -283,12 +183,24 @@ export default function Home() {
               <p className="text-slate-400 text-lg">Loading CareerMate...</p>
             </div>
           </div>
-        ) : user ? (
+        ) : user || isGuest ? (
           <div className="animate-fade-in">
             {renderActiveComponent()}
           </div>
-        ) : (
+        ) : showAuth ? (
           <Auth />
+        ) : (
+          <WelcomeScreen 
+            onShowRegister={() => {
+              setAuthMode('register')
+              setShowAuth(true)
+            }}
+            onShowLogin={() => {
+              setAuthMode('login')
+              setShowAuth(true)
+            }}
+            onContinueAsGuest={continueAsGuest}
+          />
         )}
       </main>
 

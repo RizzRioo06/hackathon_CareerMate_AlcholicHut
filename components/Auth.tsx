@@ -9,6 +9,15 @@ export default function Auth() {
 
   return (
     <div>
+      <div className="text-center mb-8">
+        <button
+          onClick={() => window.location.reload()}
+          className="inline-flex items-center space-x-2 text-slate-400 hover:text-white transition-colors duration-200"
+        >
+          <span>← Back to Welcome</span>
+        </button>
+      </div>
+      
       {isLogin ? (
         <Login onSwitchToRegister={() => setIsLogin(false)} />
       ) : (

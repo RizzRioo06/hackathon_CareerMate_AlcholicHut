@@ -102,7 +102,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (email: string, password: string) => {
     try {
-      const response = await fetch(`${config.apiUrl}/api/auth/login`, {
+      const response = await fetch(`${config.apiUrl}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -128,10 +128,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const register = async (userData: RegisterData) => {
     try {
       console.log('🔐 AuthContext: Starting registration request')
-      console.log('🔐 AuthContext: API URL:', `${config.apiUrl}/api/auth/register`)
+      console.log('🔐 AuthContext: API URL:', `${config.apiUrl}/auth/register`)
       console.log('🔐 AuthContext: User data:', userData)
       
-      const response = await fetch(`${config.apiUrl}/api/auth/register`, {
+      const response = await fetch(`${config.apiUrl}/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -187,7 +187,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (!token) throw new Error('No authentication token')
 
     try {
-      const response = await fetch(`${config.apiUrl}/api/auth/profile`, {
+      const response = await fetch(`${config.apiUrl}/auth/profile`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,

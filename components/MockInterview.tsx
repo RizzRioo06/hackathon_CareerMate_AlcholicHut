@@ -123,7 +123,7 @@ export default function MockInterview() {
     try {
       const currentQ = response?.questions[currentQuestion]
       if (currentQ && answer.trim()) {
-        const evalResponse = await fetch('https://careermate-backend-nzb0.onrender.com/api/evaluate-answer', {
+                 const evalResponse = await fetch(`${config.apiUrl}/evaluate-answer`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({

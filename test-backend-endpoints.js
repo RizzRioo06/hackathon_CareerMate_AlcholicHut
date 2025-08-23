@@ -1,7 +1,7 @@
 // Test script to check backend authentication endpoints
 // Run this after Render redeploys: node test-backend-endpoints.js
 
-const API_URL = 'https://careermate-backend.onrender.com'
+const API_URL = 'https://careermate-backend-nzb0.onrender.com'
 
 async function testBackendEndpoints() {
   console.log('🧪 Testing CareerMate Backend Authentication Endpoints...\n')

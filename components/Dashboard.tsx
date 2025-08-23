@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Brain, Target, MessageSquare, Briefcase, Trash2, Eye, Calendar, User } from 'lucide-react'
 import config from './config'
+import { useAuth } from './AuthContext'
 
 interface SavedData {
   careerGuidance: any[]
@@ -11,6 +12,7 @@ interface SavedData {
 }
 
 export default function Dashboard() {
+  const { token } = useAuth()
   const [savedData, setSavedData] = useState<SavedData>({
     careerGuidance: [],
     mockInterviews: [],
@@ -21,22 +23,41 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchAllData()
-  }, [])
+  }, [token])
 
   const fetchAllData = async () => {
+    if (!token) {
+      console.log('No authentication token found, skipping data fetch')
+      setIsLoading(false)
+      return
+    }
+
     setIsLoading(true)
     try {
+      console.log('🔐 Fetching user data with token:', token.substring(0, 20) + '...')
+      
       // First check if backend is accessible
       const healthCheck = await fetch(`${config.apiUrl.replace('/api', '')}/health`)
       if (!healthCheck.ok) {
         console.warn('Backend health check failed, backend might not be running')
       }
       
+      const headers = {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+      
       const [guidance, interviews, jobs] = await Promise.all([
-        fetch(`${config.apiUrl}/career-guidance`).then(res => res.ok ? res.json() : []),
-        fetch(`${config.apiUrl}/mock-interviews`).then(res => res.ok ? res.json() : []),
-        fetch(`${config.apiUrl}/job-suggestions`).then(res => res.ok ? res.json() : [])
+        fetch(`${config.apiUrl}/career-guidance`, { headers }).then(res => res.ok ? res.json() : []),
+        fetch(`${config.apiUrl}/mock-interviews`, { headers }).then(res => res.ok ? res.json() : []),
+        fetch(`${config.apiUrl}/job-suggestions`, { headers }).then(res => res.ok ? res.json() : [])
       ])
+
+      console.log('📊 Fetched data:', {
+        careerGuidance: guidance.length,
+        mockInterviews: interviews.length,
+        jobSuggestions: jobs.length
+      })
 
       setSavedData({
         careerGuidance: guidance,
@@ -51,6 +72,11 @@ export default function Dashboard() {
   }
 
   const deleteItem = async (type: keyof SavedData, id: string) => {
+    if (!token) {
+      alert('No authentication token found. Please log in again.')
+      return
+    }
+
     try {
       const endpoint = type === 'careerGuidance' ? 'career-guidance' :
                      type === 'mockInterviews' ? 'mock-interviews' : 'job-suggestions'
@@ -58,7 +84,11 @@ export default function Dashboard() {
       console.log(`Attempting to delete ${type} with ID: ${id} from endpoint: /api/${endpoint}/${id}`)
       
       const res = await fetch(`${config.apiUrl}/${endpoint}/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
       })
       
       console.log(`Delete response status: ${res.status}`)
@@ -84,6 +114,20 @@ export default function Dashboard() {
 
   const getTotalCount = () => {
     return Object.values(savedData).reduce((total, array) => total + array.length, 0)
+  }
+
+  if (!token) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-red-500/20 rounded-2xl shadow-2xl mb-6">
+            <User className="h-10 w-10 text-red-400" />
+          </div>
+          <h1 className="text-2xl font-bold text-white mb-4">Authentication Required</h1>
+          <p className="text-slate-400 text-lg">Please log in to view your dashboard</p>
+        </div>
+      </div>
+    )
   }
 
   if (isLoading) {

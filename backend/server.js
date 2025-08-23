@@ -357,11 +357,11 @@ app.delete('/api/job-suggestions/:id', async (req, res) => {
   }
 });
 
-// Get all saved career guidance sessions
-app.get('/api/career-guidance', async (req, res) => {
+// Get user's saved career guidance sessions
+app.get('/api/career-guidance', authenticateToken, async (req, res) => {
   try {
     const CareerGuidance = require('./models/CareerGuidance');
-    const sessions = await CareerGuidance.find().sort({ createdAt: -1 }).limit(10);
+    const sessions = await CareerGuidance.find({ userId: req.user._id }).sort({ createdAt: -1 }).limit(10);
     res.json(sessions);
   } catch (error) {
     console.error('Error fetching career guidance sessions:', error);
@@ -369,11 +369,11 @@ app.get('/api/career-guidance', async (req, res) => {
   }
 });
 
-// Get all saved mock interviews
-app.get('/api/mock-interviews', async (req, res) => {
+// Get user's saved mock interviews
+app.get('/api/mock-interviews', authenticateToken, async (req, res) => {
   try {
     const MockInterview = require('./models/MockInterview');
-    const interviews = await MockInterview.find().sort({ createdAt: -1 }).limit(10);
+    const interviews = await MockInterview.find({ userId: req.user._id }).sort({ createdAt: -1 }).limit(10);
     res.json(interviews);
   } catch (error) {
     console.error('Error fetching mock interviews:', error);
@@ -381,11 +381,11 @@ app.get('/api/mock-interviews', async (req, res) => {
   }
 });
 
-// Get all saved job suggestions
-app.get('/api/job-suggestions', async (req, res) => {
+// Get user's saved job suggestions
+app.get('/api/job-suggestions', authenticateToken, async (req, res) => {
   try {
     const JobSuggestion = require('./models/JobSuggestion');
-    const suggestions = await JobSuggestion.find().sort({ createdAt: -1 }).limit(10);
+    const suggestions = await JobSuggestion.find({ userId: req.user._id }).sort({ createdAt: -1 }).limit(10);
     res.json(suggestions);
   } catch (error) {
     console.error('Error fetching job suggestions:', error);

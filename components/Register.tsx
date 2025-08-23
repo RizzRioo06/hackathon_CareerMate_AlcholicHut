@@ -97,10 +97,27 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
   }
 
   const validateStep2 = () => {
-    if (!formData.profile.currentRole || !formData.profile.experience || !formData.profile.education || !formData.profile.location) {
-      setError('Please fill in all profile fields')
-      return false
+    // Check if required profile fields have meaningful content (not just empty strings or whitespace)
+    const requiredFields = [
+      { field: 'currentRole', label: 'Current Role' },
+      { field: 'experience', label: 'Experience' },
+      { field: 'education', label: 'Education' },
+      { field: 'location', label: 'Location' }
+    ]
+    
+    console.log('🔍 Validating Step 2 with profile data:', formData.profile)
+    
+    for (const { field, label } of requiredFields) {
+      const value = formData.profile[field as keyof typeof formData.profile]
+      console.log(`  Checking ${field}: "${value}" (trimmed: "${typeof value === 'string' ? value.trim() : value}")`)
+      if (!value || (typeof value === 'string' && value.trim() === '')) {
+        console.log(`❌ Validation failed for ${field}: "${value}"`)
+        setError(`Please fill in ${label}`)
+        return false
+      }
     }
+    
+    console.log('✅ Step 2 validation passed')
     setError('')
     return true
   }
@@ -108,23 +125,38 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    
+    console.log('🚀 Form submission started')
+    console.log('📊 Current step:', currentStep)
+    console.log('📝 Form data:', formData)
 
     // Validate both steps before submitting
     if (!validateStep1()) {
+      console.log('❌ Step 1 validation failed, staying on step 1')
       setCurrentStep(1) // Go back to step 1 if validation fails
       return
     }
+    console.log('✅ Step 1 validation passed')
 
-    // Additional validation for step 2
-    if (currentStep === 2) {
-      if (!validateStep2()) {
-        return
-      }
+    // Always validate step 2 if we're submitting the complete form
+    if (!validateStep2()) {
+      console.log('❌ Step 2 validation failed, moving to step 2')
+      setCurrentStep(2) // Go to step 2 if validation fails
+      return
     }
+    console.log('✅ Step 2 validation passed, proceeding with registration')
 
     setIsLoading(true)
 
     try {
+      console.log('📤 Sending registration data to backend:', {
+        email: formData.email,
+        password: formData.password,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        profile: formData.profile
+      })
+      
       await register({
         email: formData.email,
         password: formData.password,
@@ -132,7 +164,10 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
         lastName: formData.lastName,
         profile: formData.profile
       })
+      
+      console.log('✅ Registration successful')
     } catch (error) {
+      console.error('❌ Registration error:', error)
       setError(error instanceof Error ? error.message : 'Registration failed')
     } finally {
       setIsLoading(false)

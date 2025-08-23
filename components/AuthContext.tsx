@@ -127,6 +127,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const register = async (userData: RegisterData) => {
     try {
+      console.log('🔐 AuthContext: Starting registration request')
+      console.log('🔐 AuthContext: API URL:', `${config.apiUrl}/api/auth/register`)
+      console.log('🔐 AuthContext: User data:', userData)
+      
       const response = await fetch(`${config.apiUrl}/api/auth/register`, {
         method: 'POST',
         headers: {
@@ -135,17 +139,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         body: JSON.stringify(userData)
       })
 
+      console.log('🔐 AuthContext: Response status:', response.status)
+      console.log('🔐 AuthContext: Response ok:', response.ok)
+
       if (!response.ok) {
         const errorData = await response.json()
+        console.error('🔐 AuthContext: Registration failed with error:', errorData)
         throw new Error(errorData.error || 'Registration failed')
       }
 
       const data = await response.json()
+      console.log('🔐 AuthContext: Registration successful:', data)
       setUser(data.user)
       setToken(data.token)
       localStorage.setItem('careermate_token', data.token)
     } catch (error) {
-      console.error('Registration error:', error)
+      console.error('🔐 AuthContext: Registration error:', error)
       throw error
     }
   }

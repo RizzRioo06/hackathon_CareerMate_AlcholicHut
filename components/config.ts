@@ -6,4 +6,10 @@ const config = {
     : 'http://localhost:5000/api',
 };
 
+// Debug logging
+console.log('🔧 Config loaded:')
+console.log('  NODE_ENV:', process.env.NODE_ENV)
+console.log('  NEXT_PUBLIC_API_URL:', process.env.NEXT_PUBLIC_API_URL)
+console.log('  Final API URL:', config.apiUrl)
+
 export default config;

@@ -6,10 +6,12 @@ const API_URL = 'https://careermate-backend-nzb0.onrender.com'
 async function testDifferentScenarios() {
   console.log('🔍 Testing Different Registration Data Scenarios...\n')
   
+  const timestamp = Date.now()
+  
   // Scenario 1: Complete data (should work)
   console.log('1️⃣ Testing with complete data...')
   await testRegistration({
-    email: 'test1@example.com',
+    email: `test1-${timestamp}@example.com`,
     password: 'password123',
     firstName: 'John',
     lastName: 'Doe',
@@ -27,7 +29,7 @@ async function testDifferentScenarios() {
   // Scenario 2: Missing profile fields (might fail)
   console.log('\n2️⃣ Testing with missing profile fields...')
   await testRegistration({
-    email: 'test2@example.com',
+    email: `test2-${timestamp}@example.com`,
     password: 'password123',
     firstName: 'Jane',
     lastName: 'Smith',
@@ -45,7 +47,7 @@ async function testDifferentScenarios() {
   // Scenario 3: Empty strings (might fail)
   console.log('\n3️⃣ Testing with empty strings...')
   await testRegistration({
-    email: 'test3@example.com',
+    email: `test3-${timestamp}@example.com`,
     password: 'password123',
     firstName: 'Bob',
     lastName: 'Johnson',
@@ -63,11 +65,20 @@ async function testDifferentScenarios() {
   // Scenario 4: Missing profile entirely
   console.log('\n4️⃣ Testing without profile...')
   await testRegistration({
-    email: 'test4@example.com',
+    email: `test4-${timestamp}@example.com`,
     password: 'password123',
     firstName: 'Alice',
     lastName: 'Brown'
     // No profile field
+  })
+  
+  // Scenario 5: Test with minimal required fields only
+  console.log('\n5️⃣ Testing with minimal required fields...')
+  await testRegistration({
+    email: `test5-${timestamp}@example.com`,
+    password: 'password123',
+    firstName: 'Minimal',
+    lastName: 'User'
   })
 }
 
@@ -92,6 +103,11 @@ async function testRegistration(data) {
       if (error.fieldErrors) {
         console.log('   Field errors:', error.fieldErrors)
       }
+      if (error.details) {
+        console.log('   Details:', error.details)
+      }
+      console.log('   Status:', response.status)
+      console.log('   Status Text:', response.statusText)
     }
     
   } catch (error) {

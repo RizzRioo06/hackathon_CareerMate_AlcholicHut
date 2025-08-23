@@ -404,6 +404,15 @@ app.post('/api/auth/register', async (req, res) => {
   try {
     const { email, password, firstName, lastName, profile } = req.body;
     
+    // Log the received data for debugging
+    console.log('🔐 Registration attempt with data:', {
+      email: email ? 'provided' : 'missing',
+      password: password ? 'provided' : 'missing',
+      firstName: firstName ? 'provided' : 'missing',
+      lastName: lastName ? 'provided' : 'missing',
+      profile: profile ? 'provided' : 'missing'
+    });
+    
     // Check if user already exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -432,7 +441,16 @@ app.post('/api/auth/register', async (req, res) => {
   } catch (error) {
     console.error('Registration error:', error);
     if (error.name === 'ValidationError') {
-      return res.status(400).json({ error: 'Validation failed', details: error.message });
+      console.error('Validation details:', error.message);
+      console.error('Validation errors:', error.errors);
+      return res.status(400).json({ 
+        error: 'Validation failed', 
+        details: error.message,
+        fieldErrors: Object.keys(error.errors).map(key => ({
+          field: key,
+          message: error.errors[key].message
+        }))
+      });
     }
     res.status(500).json({ error: 'Registration failed' });
   }

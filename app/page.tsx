@@ -155,7 +155,7 @@ export default function Home() {
       )}
 
       {/* Main Content */}
-      <main className="relative max-w-7xl mx-auto px-6 lg:px-8 py-16">
+      <main className="relative max-w-7xl mx-auto px-6 lg:px-8 py-8">
         {isLoading ? (
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">

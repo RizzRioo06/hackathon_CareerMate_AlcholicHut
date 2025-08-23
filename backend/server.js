@@ -146,7 +146,7 @@ function validateAIResponse(response, expectedFields) {
 }
 
 // Career Guidance API
-app.post('/api/career-guidance', async (req, res) => {
+app.post('/api/career-guidance', authenticateToken, async (req, res) => {
   try {
     const { skills, interests, goals, experience, education } = req.body;
     
@@ -167,9 +167,10 @@ app.post('/api/career-guidance', async (req, res) => {
     // Log the AI response for debugging
     console.log('AI Response for Career Guidance:', JSON.stringify(aiResponse, null, 2));
 
-    // Save to database
+    // Save to database with userId
     const CareerGuidance = require('./models/CareerGuidance');
     const careerGuidance = new CareerGuidance({
+      userId: req.user._id, // Add this line!
       userProfile: { skills, interests, goals, experience, education },
       guidance: {
         careerPaths: aiResponse.careerPaths || [],
@@ -197,7 +198,7 @@ app.post('/api/career-guidance', async (req, res) => {
 });
 
 // Mock Interview API
-app.post('/api/mock-interview', async (req, res) => {
+app.post('/api/mock-interview', authenticateToken, async (req, res) => {
   try {
     const { role } = req.body;
     
@@ -222,9 +223,10 @@ app.post('/api/mock-interview', async (req, res) => {
       summary: 'Complete the interview to get your overall score and summary.'
     };
 
-    // Save to database
+    // Save to database with userId
     const MockInterview = require('./models/MockInterview');
     const mockInterview = new MockInterview({
+      userId: req.user._id, // Add this line!
       role,
       questions: questions.questions,
       answers: [],
@@ -264,7 +266,7 @@ app.post('/api/evaluate-answer', async (req, res) => {
 });
 
 // Job Suggestions API
-app.post('/api/job-suggestions', async (req, res) => {
+app.post('/api/job-suggestions', authenticateToken, async (req, res) => {
   try {
     const { skills, experience, location, preferredRole, education, interests } = req.body;
     
@@ -279,9 +281,10 @@ app.post('/api/job-suggestions', async (req, res) => {
       skills, experience, location, preferredRole, education, interests
     });
 
-    // Save to database
+    // Save to database with userId
     const JobSuggestion = require('./models/JobSuggestion');
     const jobSuggestion = new JobSuggestion({
+      userId: req.user._id, // Add this line!
       userProfile: { skills, experience, location, preferredRole, education, interests },
       suggestions: aiResponse.suggestions
     });
@@ -317,7 +320,7 @@ app.post('/api/career-storyteller', async (req, res) => {
 });
 
 // Delete career guidance session
-app.delete('/api/career-guidance/:id', async (req, res) => {
+app.delete('/api/career-guidance/:id', authenticateToken, async (req, res) => {
   try {
     const CareerGuidance = require('./models/CareerGuidance');
     const guidance = await CareerGuidance.findByIdAndDelete(req.params.id);
@@ -332,7 +335,7 @@ app.delete('/api/career-guidance/:id', async (req, res) => {
 });
 
 // Delete mock interview
-app.delete('/api/mock-interviews/:id', async (req, res) => {
+app.delete('/api/mock-interviews/:id', authenticateToken, async (req, res) => {
   try {
     const MockInterview = require('./models/MockInterview');
     const interview = await MockInterview.findByIdAndDelete(req.params.id);
@@ -347,7 +350,7 @@ app.delete('/api/mock-interviews/:id', async (req, res) => {
 });
 
 // Delete job suggestion
-app.delete('/api/job-suggestions/:id', async (req, res) => {
+app.delete('/api/job-suggestions/:id', authenticateToken, async (req, res) => {
   try {
     const JobSuggestion = require('./models/JobSuggestion');
     const suggestion = await JobSuggestion.findByIdAndDelete(req.params.id);

@@ -4,8 +4,12 @@ import React, { useState } from 'react'
 import Login from './Login'
 import Register from './Register'
 
-export default function Auth() {
-  const [isLogin, setIsLogin] = useState(true)
+interface AuthProps {
+  mode?: 'login' | 'register'
+}
+
+export default function Auth({ mode = 'login' }: AuthProps) {
+  const [isLogin, setIsLogin] = useState(mode === 'login')
 
   return (
     <div>

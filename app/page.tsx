@@ -130,49 +130,51 @@ export default function Home() {
 
 
 
-      {/* Navigation Tabs */}
-      <nav className="relative bg-slate-900/80 backdrop-blur-xl shadow-xl border-b border-slate-700/30">
-        <div className="max-w-7xl mx-auto px-6 lg:px-8">
-          <div className="flex justify-center space-x-8 py-8">
-            {tabs.map((tab) => {
-              const Icon = tab.icon
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex flex-col items-center space-y-4 px-10 py-6 rounded-2xl font-medium transition-all duration-300 transform hover:scale-105 min-w-[200px] ${
-                    activeTab === tab.id
-                      ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white shadow-xl transform scale-105'
-                      : 'bg-slate-800/90 backdrop-blur-sm text-slate-300 hover:bg-slate-700 border border-slate-600/50 shadow-slate-900/50 hover:shadow-lg transition-all duration-300 hover:scale-105'
-                  }`}
-                >
-                  <Icon className="h-8 w-8" />
-                  <span className="font-semibold text-lg">{tab.label}</span>
-                  <span className="text-sm opacity-75 text-center leading-tight">{tab.description}</span>
-                </button>
-              )
-            })}
-          </div>
-          
-          {/* Guest User CTA */}
-          {isGuest && (
-            <div className="text-center mt-6">
-              <div className="inline-flex items-center space-x-3 p-4 bg-slate-800/50 rounded-xl border border-slate-600/30">
-                <span className="text-slate-300">Want to save your progress?</span>
-                <button
-                  onClick={() => {
-                    setShowAuth(true)
-                    setAuthMode('register')
-                  }}
-                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200"
-                >
-                  Create Account
-                </button>
-              </div>
+      {/* Navigation Tabs - Only show when user is authenticated */}
+      {(user || isGuest) && (
+        <nav className="relative bg-slate-900/80 backdrop-blur-xl shadow-xl border-b border-slate-700/30">
+          <div className="max-w-7xl mx-auto px-6 lg:px-8">
+            <div className="flex justify-center space-x-8 py-8">
+              {tabs.map((tab) => {
+                const Icon = tab.icon
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex flex-col items-center space-y-4 px-10 py-6 rounded-2xl font-medium transition-all duration-300 transform hover:scale-105 min-w-[200px] ${
+                      activeTab === tab.id
+                        ? 'bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 text-white shadow-xl transform scale-105'
+                        : 'bg-slate-800/90 backdrop-blur-sm text-slate-300 hover:bg-slate-700 border border-slate-600/50 shadow-slate-900/50 hover:shadow-lg transition-all duration-300 hover:scale-105'
+                    }`}
+                  >
+                    <Icon className="h-8 w-8" />
+                    <span className="font-semibold text-lg">{tab.label}</span>
+                    <span className="text-sm opacity-75 text-center leading-tight">{tab.description}</span>
+                  </button>
+                )
+              })}
             </div>
-          )}
-        </div>
-      </nav>
+            
+            {/* Guest User CTA */}
+            {isGuest && (
+              <div className="text-center mt-6">
+                <div className="inline-flex items-center space-x-3 p-4 bg-slate-800/50 rounded-xl border border-slate-600/30">
+                  <span className="text-slate-300">Want to save your progress?</span>
+                  <button
+                    onClick={() => {
+                      setShowAuth(true)
+                      setAuthMode('register')
+                    }}
+                    className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-4 py-2 rounded-lg font-medium transition-all duration-200"
+                  >
+                    Create Account
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </nav>
+      )}
 
       {/* Main Content */}
       <main className="relative max-w-7xl mx-auto px-6 lg:px-8 py-16">
@@ -188,7 +190,7 @@ export default function Home() {
             {renderActiveComponent()}
           </div>
         ) : showAuth ? (
-          <Auth />
+          <Auth mode={authMode} />
         ) : (
           <WelcomeScreen 
             onShowRegister={() => {

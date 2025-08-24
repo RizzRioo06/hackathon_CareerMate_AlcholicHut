@@ -319,6 +319,65 @@ app.post('/api/career-storyteller', async (req, res) => {
   }
 });
 
+// Personality Analysis endpoint
+app.post('/api/analyze-personality', async (req, res) => {
+  try {
+    const { answers, prompt } = req.body
+
+    if (!answers || !Array.isArray(answers)) {
+      return res.status(400).json({ error: 'Invalid answers format' })
+    }
+
+    // Use existing OpenAI integration
+    const openai = require('./services/openai')
+    
+    const completion = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content: "You are a career counselor and personality analyst. Provide insights based on user preferences."
+        },
+        {
+          role: "user",
+          content: prompt
+        }
+      ],
+      max_tokens: 300,
+      temperature: 0.7
+    })
+
+    const response = completion.choices[0].message.content
+    
+    // Try to parse JSON response, fallback to structured text if needed
+    try {
+      const parsedResponse = JSON.parse(response)
+      res.json(parsedResponse)
+    } catch (parseError) {
+      // If AI doesn't return valid JSON, create structured response
+      const fallbackResponse = {
+        insight: "Based on your preferences, you have a unique work style that can be leveraged for career success.",
+        careers: ["Career Development", "Professional Growth", "Skill Building"],
+        workStyle: "Your work preferences suggest a balanced approach to projects and collaboration.",
+        learningStyle: "You adapt well to different learning environments and methods."
+      }
+      res.json(fallbackResponse)
+    }
+
+  } catch (error) {
+    console.error('Personality analysis error:', error)
+    
+    // Fallback response if OpenAI fails
+    const fallbackResponse = {
+      insight: "Based on your preferences, you have a unique work style that can be leveraged for career success.",
+      careers: ["Career Development", "Professional Growth", "Skill Building"],
+      workStyle: "Your work preferences suggest a balanced approach to projects and collaboration.",
+      learningStyle: "You adapt well to different learning environments and methods."
+    }
+    res.json(fallbackResponse)
+  }
+})
+
 // Delete career guidance session
 app.delete('/api/career-guidance/:id', authenticateToken, async (req, res) => {
   try {

@@ -3,8 +3,9 @@
 import { useState } from 'react'
 import { useAuth } from './AuthContext'
 import config from './config'
-import { Target, BookOpen, TrendingUp, Loader2, Sparkles, Rocket, Lightbulb, GraduationCap } from 'lucide-react'
+import { Target, BookOpen, TrendingUp, Loader2, Sparkles, Rocket, Lightbulb, GraduationCap, Brain } from 'lucide-react'
 import Logo from './Logo'
+import PersonalitySnapshot from './PersonalitySnapshot'
 
 interface CareerGuidanceResponse {
   careerPaths: string[]
@@ -18,6 +19,7 @@ interface CareerGuidanceResponse {
 
 export default function CareerGuidance() {
   const { token } = useAuth()
+  const [activeTab, setActiveTab] = useState<'profile' | 'personality'>('profile')
   const [formData, setFormData] = useState({
     skills: '',
     interests: '',
@@ -28,6 +30,7 @@ export default function CareerGuidance() {
   const [isLoading, setIsLoading] = useState(false)
   const [response, setResponse] = useState<CareerGuidanceResponse | null>(null)
   const [error, setError] = useState('')
+  const [personalityResults, setPersonalityResults] = useState<any>(null)
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -103,16 +106,50 @@ export default function CareerGuidance() {
         </div>
       </div>
 
-      {/* Enhanced Form */}
-      <div className="card max-w-6xl mx-auto relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-2xl"></div>
-        <div className="relative">
-          <div className="flex items-center space-x-4 mb-10">
-            <div className="p-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl">
-              <Sparkles className="h-7 w-7 text-white" />
+      {/* Tab Navigation */}
+      <div className="max-w-6xl mx-auto">
+        <div className="flex justify-center space-x-4 mb-8">
+          <button
+            onClick={() => setActiveTab('profile')}
+            className={`px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 ${
+              activeTab === 'profile'
+                ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-xl transform scale-105'
+                : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-600/50'
+            }`}
+          >
+            <div className="flex items-center space-x-3">
+              <Sparkles className="h-5 w-5" />
+              <span>Career Profile</span>
             </div>
-            <h3 className="text-3xl font-bold text-slate-100">Your Profile</h3>
-          </div>
+          </button>
+          
+          <button
+            onClick={() => setActiveTab('personality')}
+            className={`px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 ${
+              activeTab === 'personality'
+                ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-xl transform scale-105'
+                : 'bg-slate-800/50 text-slate-300 hover:bg-slate-700/50 border border-slate-600/50'
+            }`}
+          >
+            <div className="flex items-center space-x-3">
+              <Brain className="h-5 w-5" />
+              <span>Personality Snapshot</span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      {/* Enhanced Form - Profile Tab */}
+      {activeTab === 'profile' && (
+        <div className="card max-w-6xl mx-auto relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-40 h-40 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-2xl"></div>
+          <div className="relative">
+            <div className="flex items-center space-x-4 mb-10">
+              <div className="p-4 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl">
+                <Sparkles className="h-7 w-7 text-white" />
+              </div>
+              <h3 className="text-3xl font-bold text-slate-100">Your Profile</h3>
+            </div>
           
           {error && (
             <div className="mb-6 p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
@@ -242,6 +279,7 @@ export default function CareerGuidance() {
           </form>
         </div>
       </div>
+      )}
 
       {/* Enhanced Response */}
       {response && (
@@ -322,6 +360,110 @@ export default function CareerGuidance() {
                     <span>Project Suggestions</span>
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {response.learningRoadmap.projects.map((project, index) => (
+                      <div key={index} className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-2xl p-4 hover:shadow-lg transition-all duration-300 hover:scale-105">
+                        <span className="text-purple-800 font-medium">{project}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Personality Tab */}
+      {activeTab === 'personality' && (
+        <div className="max-w-6xl mx-auto">
+          <PersonalitySnapshot 
+            onComplete={(results) => {
+              setPersonalityResults(results)
+              // You can store results in database here if needed
+            }}
+          />
+        </div>
+      )}
+
+      {/* Enhanced Response - Only show for profile tab */}
+      {activeTab === 'profile' && response && (
+        <div className="max-w-6xl mx-auto space-y-8 animate-slide-up">
+          {/* Career Paths */}
+          <div className="card relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-green-400/10 to-emerald-400/10 rounded-full blur-2xl"></div>
+            <div className="relative">
+              <div className="flex items-center space-x-4 mb-6">
+                <div className="p-3 bg-gradient-to-r from-green-500 to-emerald-500 rounded-2xl">
+                  <TrendingUp className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Recommended Career Paths</h3>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {response.careerPaths.map((path, index) => (
+                  <div key={index} className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-300 hover:scale-105">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-3 h-3 bg-green-500 rounded-full"></div>
+                      <span className="text-green-800 font-semibold text-lg">{path}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Skill Gaps */}
+          <div className="card relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-orange-400/10 to-red-400/10 rounded-full blur-2xl"></div>
+            <div className="relative">
+              <div className="flex items-center space-x-4 mb-6">
+                <div className="p-3 bg-gradient-to-r from-orange-500 to-red-500 rounded-2xl">
+                  <BookOpen className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Skill Gap Analysis</h3>
+              </div>
+              <div className="space-y-4">
+                {response.skillGaps.map((gap, index) => (
+                  <div key={index} className="flex items-start space-x-4 p-4 bg-gradient-to-r from-orange-50 to-red-50 rounded-2xl border border-orange-200">
+                    <div className="w-3 h-3 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
+                    <span className="text-gray-800 text-lg">{gap}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Learning Roadmap */}
+          <div className="card relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-400/10 to-purple-400/10 rounded-full blur-2xl"></div>
+            <div className="relative">
+              <div className="flex items-center space-x-4 mb-8">
+                <div className="p-3 bg-gradient-to-r from-blue-500 to-purple-500 rounded-2xl">
+                  <BookOpen className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100">Personalized Learning Roadmap</h3>
+              </div>
+              
+              <div className="space-y-8">
+                <div>
+                  <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-4 text-xl flex items-center space-x-2">
+                    <GraduationCap className="h-5 w-5 text-blue-500" />
+                    <span>Recommended Courses</span>
+                  </h4>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {response.learningRoadmap.courses.map((course, index) => (
+                      <div key={index} className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-2xl p-4 hover:shadow-lg transition-all duration-300 hover:scale-105">
+                        <span className="text-blue-800 font-medium">{course}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div>
+                  <h4 className="font-bold text-gray-900 dark:text-gray-100 mb-4 text-xl flex items-center space-x-2">
+                    <Rocket className="h-5 w-5 text-purple-500" />
+                    <span>Project Suggestions</span>
+                  </h4>
+                  <div className="grid grid-cols-2 gap-4">
                     {response.learningRoadmap.projects.map((project, index) => (
                       <div key={index} className="bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 rounded-2xl p-4 hover:shadow-lg transition-all duration-300 hover:scale-105">
                         <span className="text-purple-800 font-medium">{project}</span>

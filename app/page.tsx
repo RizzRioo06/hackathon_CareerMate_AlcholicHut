@@ -23,15 +23,18 @@ import {
   BookOpen,
   BarChart3,
   LogOut,
-  User
+  User,
+  Crown
 } from 'lucide-react'
 import Logo from '../components/Logo'
+import SubscriptionModal from '../components/SubscriptionModal'
 
 export default function Home() {
   const { user, isLoading, logout } = useAuth()
   const [activeTab, setActiveTab] = useState('career')
   const [showAuth, setShowAuth] = useState(false)
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login')
+  const [showSubscriptionModal, setShowSubscriptionModal] = useState(false)
 
   const tabs = [
     { id: 'career', label: 'Mission Control', icon: Brain, description: 'AI-powered career path analysis' },
@@ -87,6 +90,14 @@ export default function Home() {
                         </span>
                       </div>
                     </div>
+                    <button
+                      onClick={() => setShowSubscriptionModal(true)}
+                      className="flex items-center space-x-2 px-4 py-2 bg-slate-700/50 border border-slate-600/50 rounded-xl text-slate-300 hover:bg-slate-600/50 transition-all duration-200"
+                      title="Subscription & Usage"
+                    >
+                      <Crown className="h-4 w-4" />
+                      <span className="hidden md:inline">Subscription</span>
+                    </button>
                     <button
                       onClick={logout}
                       className="flex items-center space-x-2 px-4 py-2 bg-red-500/20 border border-red-500/30 rounded-xl text-red-400 hover:bg-red-500/30 transition-all duration-200"
@@ -212,6 +223,12 @@ export default function Home() {
           </div>
         </div>
       </footer>
+
+      {/* Subscription Modal */}
+      <SubscriptionModal 
+        isOpen={showSubscriptionModal} 
+        onClose={() => setShowSubscriptionModal(false)} 
+      />
     </div>
   )
 }

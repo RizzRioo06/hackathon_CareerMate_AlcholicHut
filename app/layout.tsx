@@ -7,8 +7,8 @@ import { AuthProvider } from '../components/AuthContext'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'CareerMate - AI Career & Interview Mentor',
-  description: 'AI-powered career guidance, mock interview practice, and personalized job recommendations',
+  title: 'CosmicCraft - AI Career & Interview Navigator',
+  description: 'AI-powered career guidance through the cosmos, mock interview practice, and personalized job recommendations',
 }
 
 export default function RootLayout({

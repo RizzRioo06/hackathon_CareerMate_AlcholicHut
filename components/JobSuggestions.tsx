@@ -96,7 +96,7 @@ export default function JobSuggestions() {
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-white mb-4">Authentication Required</h1>
-          <p className="text-slate-400 text-lg">Please log in to access Job Suggestions</p>
+          <p className="text-slate-400 text-lg">Please log in to access Opportunity Scanner</p>
         </div>
       </div>
     )
@@ -113,10 +113,10 @@ export default function JobSuggestions() {
           <div className="inline-flex items-center justify-center w-28 h-28 bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl shadow-2xl mb-8 animate-bounce-in">
             <Briefcase className="h-14 w-14 text-white" />
           </div>
-          <h2 className="text-5xl font-bold gradient-text mb-6">Job Opportunities</h2>
+          <h2 className="text-5xl font-bold gradient-text mb-6">Opportunity Scanner</h2>
           <p className="text-xl text-slate-300 max-w-4xl mx-auto leading-relaxed">
-            Discover personalized job and internship opportunities based on your skills and preferences. 
-            Our AI analyzes your profile to find the best matches in the market.
+            Welcome to the Opportunity Scanner! Discover personalized job and internship opportunities based on your skills and preferences. 
+            Our AI analyzes your profile to find the best matches in the vast universe of career opportunities.
           </p>
         </div>
       </div>
@@ -268,12 +268,12 @@ export default function JobSuggestions() {
                 {isLoading ? (
                   <div className="flex items-center space-x-3">
                     <Loader2 className="h-6 w-6 animate-spin" />
-                    <span>Finding Opportunities...</span>
+                    <span>Scanning Universe...</span>
                   </div>
                 ) : (
                   <div className="flex items-center space-x-3">
                     <Search className="h-6 w-6" />
-                    <span>Find Job Opportunities</span>
+                    <span>Launch Opportunity Scanner</span>
                   </div>
                 )}
               </button>

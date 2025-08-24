@@ -170,7 +170,7 @@ export default function MockInterview() {
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-white mb-4">Authentication Required</h1>
-          <p className="text-slate-400 text-lg">Please log in to access Mock Interview</p>
+          <p className="text-slate-400 text-lg">Please log in to access Training Simulator</p>
         </div>
       </div>
     )
@@ -188,9 +188,9 @@ export default function MockInterview() {
             <div className="inline-flex items-center justify-center w-28 h-28 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl shadow-2xl mb-8 animate-bounce-in">
               <MessageSquare className="h-14 w-14 text-white" />
             </div>
-            <h2 className="text-5xl font-bold gradient-text mb-6">AI Interview Practice</h2>
+            <h2 className="text-5xl font-bold gradient-text mb-6">Training Simulator</h2>
             <p className="text-xl text-slate-300 max-w-4xl mx-auto leading-relaxed">
-              Practice your interview skills with our AI-powered mock interviews. Answer questions in your own words to improve your interview performance.
+              Welcome to the Training Simulator! Practice your interview skills with our AI-powered mock interviews. Answer questions in your own words to improve your interview performance and prepare for your mission.
             </p>
           </div>
         </div>
@@ -262,12 +262,12 @@ export default function MockInterview() {
               {isLoading ? (
                 <div className="flex items-center space-x-3">
                   <Loader2 className="h-6 w-6 animate-spin" />
-                  <span>Preparing Interview...</span>
+                  <span>Initializing Simulator...</span>
                 </div>
               ) : (
                 <div className="flex items-center space-x-3">
                   <Play className="h-6 w-6" />
-                  <span>Start AI Interview Practice</span>
+                  <span>Launch Training Simulator</span>
                 </div>
               )}
             </button>

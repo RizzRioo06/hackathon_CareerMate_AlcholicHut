@@ -310,7 +310,7 @@ export default function CareerStoryteller() {
             className="btn-secondary flex items-center space-x-3"
           >
             <Sparkles className="h-5 w-5" />
-            <span>Create New Stories</span>
+            <span>Forge New Narrative</span>
           </button>
         </div>
       </div>
@@ -334,10 +334,11 @@ export default function CareerStoryteller() {
             <BookOpen className="h-10 w-10 text-white" />
           </div>
           <h2 className="text-4xl font-bold gradient-text mb-6">
-            AI Career Storyteller
+            Narrative Forge
           </h2>
           <p className="text-xl text-slate-300 max-w-4xl mx-auto leading-relaxed">
-            Create compelling stories that showcase your professional journey and achievements for any context.
+            Welcome to the Narrative Forge! Create compelling stories that showcase your professional journey and achievements for any context. 
+            Forge your career narrative in the cosmic forge of storytelling.
           </p>
         </div>
       </div>
@@ -630,12 +631,12 @@ export default function CareerStoryteller() {
                 {isGenerating ? (
                   <div className="flex items-center space-x-3">
                     <Loader2 className="h-6 w-6 animate-spin" />
-                    <span>Generating Stories...</span>
+                    <span>Forging Narrative...</span>
                   </div>
                 ) : (
                   <div className="flex items-center space-x-3">
                     <Sparkles className="h-6 w-6" />
-                    <span>Generate My Stories</span>
+                    <span>Forge My Narrative</span>
                   </div>
                 )}
               </button>

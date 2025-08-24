@@ -1,6 +1,6 @@
-# 🚀 CareerMate - AI-Powered Career Guidance Platform
+# 🚀 CosmicCraft - AI-Powered Space Career Navigator
 
-> **Your AI-powered career companion for guidance, practice, and opportunities**
+> **Your AI-powered cosmic companion for navigating the universe of career opportunities**
 
 [![Next.js](https://img.shields.io/badge/Next.js-14-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![React](https://img.shields.io/badge/React-18-blue?style=for-the-badge&logo=react)](https://reactjs.org/)
@@ -10,47 +10,47 @@
 [![MongoDB](https://img.shields.io/badge/MongoDB-6.0-47A248?style=for-the-badge&logo=mongodb)](https://www.mongodb.com/)
 
 ## 🌟 **Live Demo**
-**[Try CareerMate Now](https://hackathon-career-mate-alcholic-hut-eight.vercel.app/)** 🎯
+**[Launch CosmicCraft Now](https://hackathon-career-mate-alcholic-hut-eight.vercel.app/)** 🎯
 
-## 📖 **About CareerMate**
+## 📖 **About CosmicCraft**
 
-CareerMate is an innovative AI-powered career development platform that revolutionizes how professionals navigate their career journey. Built with cutting-edge technology and powered by OpenAI's GPT-5, CareerMate provides personalized career guidance, realistic mock interviews, targeted job recommendations, and compelling career storytelling.
+CosmicCraft is an innovative AI-powered career development platform that revolutionizes how professionals navigate their career journey through the cosmos of opportunities. Built with cutting-edge technology and powered by OpenAI's GPT-5, CosmicCraft provides personalized career guidance, realistic mock interviews, targeted job recommendations, and compelling career storytelling - all within an immersive space exploration theme.
 
 ### 🎯 **Problem We Solve**
-- **Career Navigation Complexity**: Many professionals struggle with identifying optimal career paths
+- **Career Navigation Complexity**: Many professionals struggle with identifying optimal career paths in the vast universe of opportunities
 - **Interview Preparation Gap**: Traditional interview prep lacks real-time feedback and role-specific questions
 - **Skill Gap Identification**: Difficulty in understanding what skills are needed for career advancement
 - **Personal Branding**: Challenge in creating compelling career narratives for different platforms
 
 ### 💡 **Our Solution**
-CareerMate leverages advanced AI to provide:
-- **Personalized Career Guidance** with GPT-5 analysis
-- **Real-time Mock Interviews** with instant feedback
-- **AI-powered Job Recommendations** from real companies
-- **Career Storytelling** for LinkedIn, resumes, and networking
-- **Skill Gap Analysis** with actionable improvement plans
+CosmicCraft leverages advanced AI to provide:
+- **Personalized Career Guidance** with GPT-5 analysis through our Mission Control
+- **Real-time Mock Interviews** with instant feedback in our Training Simulator
+- **AI-powered Job Recommendations** from real companies via our Opportunity Scanner
+- **Career Storytelling** for LinkedIn, resumes, and networking through our Narrative Forge
+- **Skill Gap Analysis** with actionable improvement plans via our Cosmic Assessment
 
 ## ✨ **Key Features**
 
-### 🤖 **AI-Powered Career Guidance**
+### 🤖 **AI-Powered Career Guidance (Mission Control)**
 - **Personalized Analysis**: GPT-5 analyzes your profile and provides tailored career paths
 - **Skill Gap Identification**: AI identifies specific skills needed for your target roles
 - **Learning Roadmaps**: Customized learning paths with real course recommendations
 - **Project Suggestions**: AI-generated project ideas to build your portfolio
 
-### 💬 **Mock Interview Practice**
+### 💬 **Mock Interview Practice (Training Simulator)**
 - **Role-Specific Questions**: AI generates questions tailored to your target position
 - **Instant Feedback**: Real-time evaluation of your answers with improvement suggestions
 - **Multiple Categories**: Technical, behavioral, system design, and problem-solving questions
 - **Progress Tracking**: Monitor your interview performance over time
 
-### 💼 **Job Recommendations**
+### 💼 **Job Recommendations (Opportunity Scanner)**
 - **Real Company Listings**: AI suggests opportunities from actual companies
 - **Skill Matching**: Intelligent matching based on your profile and requirements
 - **Market Insights**: Current salary ranges and market trends
 - **Personalized Advice**: Actionable recommendations for career advancement
 
-### 📚 **Career Storytelling**
+### 📚 **Career Storytelling (Narrative Forge)**
 - **LinkedIn Bios**: AI-generated professional bios that stand out
 - **Resume Summaries**: Compelling resume narratives that highlight achievements
 - **Elevator Pitches**: 30-second pitches for networking events
@@ -93,7 +93,7 @@ CareerMate leverages advanced AI to provide:
 ```bash
 # Clone the repository
 git clone https://github.com/RizzRioo06/hackathon_CareerMate_AlcholicHut
-cd careermate
+cd cosmiccraft
 
 # Install dependencies
 npm install
@@ -139,22 +139,22 @@ JWT_SECRET=your_jwt_secret_key
 - Sign up with your email and basic information
 - Complete your profile with skills, experience, and goals
 
-### **2. Get Career Guidance**
-- Navigate to Career Guidance
+### **2. Get Career Guidance (Mission Control)**
+- Navigate to Mission Control
 - AI analyzes your profile and provides personalized recommendations
 - Review suggested career paths and skill gaps
 
-### **3. Practice Interviews**
+### **3. Practice Interviews (Training Simulator)**
 - Choose your target role
 - Answer AI-generated questions
 - Receive instant feedback and improvement suggestions
 
-### **4. Discover Opportunities**
+### **4. Discover Opportunities (Opportunity Scanner)**
 - Browse AI-recommended job opportunities
 - Filter by location, role, and company
 - Get personalized career advice
 
-### **5. Build Your Brand**
+### **5. Build Your Brand (Narrative Forge)**
 - Generate compelling career stories
 - Create professional LinkedIn bios
 - Craft elevator pitches for networking
@@ -185,37 +185,40 @@ JWT_SECRET=your_jwt_secret_key
 - **First GPT-5 Integration**: Among the first to leverage OpenAI's latest model
 - **Real-time AI Feedback**: Instant interview evaluation and career guidance
 - **Personalized Learning**: AI-driven skill development roadmaps
+- **Unique Space Theme**: Stands out from generic career platforms
 
 ### **Technical Excellence**
 - **Full-Stack Development**: Complete web application with modern tech stack
 - **AI Integration**: Sophisticated prompt engineering for career scenarios
 - **Responsive Design**: Professional UI/UX that works on all devices
+- **Immersive Experience**: Space-themed interface that engages users
 
 ### **Business Value**
 - **Market Need**: Addresses real career development challenges
 - **Scalability**: Built for growth and enterprise adoption
 - **Revenue Potential**: Multiple monetization strategies
+- **Brand Differentiation**: Unique space exploration theme
 
 ## 🔮 **Future Roadmap**
 
 ### **Phase 1 (Current)**
 - ✅ User authentication and profiles
-- ✅ AI career guidance
-- ✅ Mock interview practice
-- ✅ Job recommendations
-- ✅ Career storytelling
+- ✅ AI career guidance (Mission Control)
+- ✅ Mock interview practice (Training Simulator)
+- ✅ Job recommendations (Opportunity Scanner)
+- ✅ Career storytelling (Narrative Forge)
 
 ### **Phase 2 (Next)**
-- 🔄 Advanced analytics dashboard
-- 🔄 Skill assessment tests
-- 🔄 Resume builder with AI
-- 🔄 Networking event integration
+- 🔄 Advanced analytics dashboard (Cosmic Observatory)
+- 🔄 Skill assessment tests (Aptitude Testing Chamber)
+- 🔄 Resume builder with AI (Document Forge)
+- 🔄 Networking event integration (Communication Hub)
 
 ### **Phase 3 (Future)**
-- 📋 Corporate team accounts
-- 📋 AI career coach chatbot
-- 📋 Integration with job platforms
-- 📋 Mobile applications
+- 📋 Corporate team accounts (Fleet Management)
+- 📋 AI career coach chatbot (AI Navigator)
+- 📋 Integration with job platforms (Universal Scanner)
+- 📋 Mobile applications (Mobile Command Center)
 
 ## 🤝 **Contributing**
 
@@ -241,7 +244,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📞 **Contact**
 
-- **Project Link**: [https://github.com/yourusername/careermate](https://github.com/RizzRioo06/hackathon_CareerMate_AlcholicHut)
+- **Project Link**: [https://github.com/yourusername/cosmiccraft](https://github.com/RizzRioo06/hackathon_CareerMate_AlcholicHut)
 - **Live Demo**: [https://your-vercel-url.vercel.app](https://hackathon-career-mate-alcholic-hut-eight.vercel.app/)
 - **Issues**: [GitHub Issues](https://github.com/RizzRioo06/hackathon_CareerMate_AlcholicHut/issues)
 
@@ -249,5 +252,5 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 <div align="center">
   <p><strong>Built with ❤️ for the lablab.ai Hackathon</strong></p>
-  <p>Empowering careers through AI innovation</p>
+  <p>Navigating careers through the cosmos with AI innovation</p>
 </div>

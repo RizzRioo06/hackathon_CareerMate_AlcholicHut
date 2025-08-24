@@ -1,7 +1,7 @@
 {
-  "name": "careermate-backend",
+  "name": "cosmiccraft-backend",
   "version": "1.0.0",
-  "description": "CareerMate Backend API Server",
+  "description": "CosmicCraft Backend API Server",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
@@ -31,6 +31,6 @@
     "interview",
     "api"
   ],
-  "author": "CareerMate Team",
+  "author": "CosmicCraft Team",
   "license": "MIT"
 }

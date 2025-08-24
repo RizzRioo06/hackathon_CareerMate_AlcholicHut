@@ -33,11 +33,11 @@ export default function Home() {
   const [authMode, setAuthMode] = useState<'login' | 'register'>('login')
 
   const tabs = [
-    { id: 'career', label: 'Career Guidance', icon: Brain, description: 'AI-powered career path analysis' },
-    { id: 'interview', label: 'AI Interview Practice', icon: MessageSquare, description: 'Practice with AI interviewer' },
-    { id: 'jobs', label: 'Job Opportunities', icon: Briefcase, description: 'Personalized job recommendations' },
-    { id: 'storyteller', label: 'Career Storyteller', icon: BookOpen, description: 'AI-powered career storytelling' },
-    { id: 'dashboard', label: 'Dashboard', icon: BarChart3, description: 'View all your saved data' },
+    { id: 'career', label: 'Mission Control', icon: Brain, description: 'AI-powered career path analysis' },
+    { id: 'interview', label: 'Training Simulator', icon: MessageSquare, description: 'Practice with AI interviewer' },
+    { id: 'jobs', label: 'Opportunity Scanner', icon: Briefcase, description: 'Personalized job recommendations' },
+    { id: 'storyteller', label: 'Narrative Forge', icon: BookOpen, description: 'AI-powered career storytelling' },
+    { id: 'dashboard', label: 'Cosmic Observatory', icon: BarChart3, description: 'View all your saved data' },
   ]
 
   const renderActiveComponent = () => {
@@ -81,9 +81,9 @@ export default function Home() {
                 </div>
                 <div>
                   <h1 className="text-3xl font-bold bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
-                    CareerMate
+                    CosmicCraft
                   </h1>
-                  <p className="text-base text-slate-300 font-medium mt-1">AI Career & Interview Mentor</p>
+                  <p className="text-base text-slate-300 font-medium mt-1">AI Career & Interview Navigator</p>
                 </div>
               </div>
               <div className="flex items-center space-x-8">
@@ -160,7 +160,7 @@ export default function Home() {
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
               <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-500 mx-auto mb-4"></div>
-              <p className="text-slate-400 text-lg">Loading CareerMate...</p>
+              <p className="text-slate-400 text-lg">Loading CosmicCraft...</p>
             </div>
           </div>
         ) : user ? (
@@ -192,9 +192,9 @@ export default function Home() {
                 <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 p-2 rounded-lg">
                   <Sparkles className="h-5 w-5 text-white" />
                 </div>
-                <h3 className="text-2xl font-bold bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">CareerMate</h3>
+                <h3 className="text-2xl font-bold bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">CosmicCraft</h3>
               </div>
-              <p className="text-slate-300 text-lg leading-relaxed">Your AI-powered career companion for guidance, practice, and opportunities.</p>
+                              <p className="text-slate-300 text-lg leading-relaxed">Your AI-powered cosmic companion for navigating the universe of career opportunities.</p>
             </div>
             
             <div className="text-center">
@@ -218,7 +218,7 @@ export default function Home() {
           </div>
           
           <div className="border-t border-slate-700 mt-12 pt-8 text-center">
-            <p className="text-slate-400 text-base">&copy; 2025 CareerMate. Built with ❤️ for career growth.</p>
+            <p className="text-slate-400 text-base">&copy; 2025 CosmicCraft. Built with ❤️ for career growth.</p>
           </div>
         </div>
       </footer>

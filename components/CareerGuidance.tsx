@@ -74,7 +74,7 @@ export default function CareerGuidance() {
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-bold text-white mb-4">Authentication Required</h1>
-          <p className="text-slate-400 text-lg">Please log in to access Career Guidance</p>
+          <p className="text-slate-400 text-lg">Please log in to access Mission Control</p>
         </div>
       </div>
     )
@@ -91,10 +91,10 @@ export default function CareerGuidance() {
           <div className="inline-flex items-center justify-center w-28 h-28 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl shadow-2xl mb-8 animate-bounce-in">
             <Target className="h-14 w-14 text-white" />
           </div>
-          <h2 className="text-5xl font-bold gradient-text mb-6">Career Guidance</h2>
+          <h2 className="text-5xl font-bold gradient-text mb-6">Mission Control</h2>
           <p className="text-xl text-slate-300 max-w-4xl mx-auto leading-relaxed">
-            Tell us about your skills, interests, and goals. Our AI will provide personalized career recommendations, 
-            skill gap analysis, and a learning roadmap to help you succeed.
+            Welcome to Mission Control! Tell us about your skills, interests, and goals. Our AI will chart your course through the cosmos of career opportunities, 
+            identify skill gaps, and create a personalized learning roadmap for your journey to success.
           </p>
         </div>
       </div>

@@ -26,13 +26,17 @@ export default function Dashboard() {
 
   // NEW: Toggle expanded state
   const toggleExpanded = (itemId: string) => {
+    console.log('🔄 Toggling expanded state for item:', itemId)
     setExpandedItems(prev => {
       const newSet = new Set(prev)
       if (newSet.has(itemId)) {
         newSet.delete(itemId)
+        console.log('📁 Collapsed item:', itemId)
       } else {
         newSet.add(itemId)
+        console.log('📂 Expanded item:', itemId)
       }
+      console.log('📊 Current expanded items:', Array.from(newSet))
       return newSet
     })
   }
@@ -288,8 +292,55 @@ export default function Dashboard() {
                        
                                                 {/* Expandable Content */}
                          {isExpanded && (
-                           <div className="mt-4 pt-4 border-t border-slate-600/50 expand-down">
-                           <div className="space-y-4">
+                           <div className="mt-4 pt-4 border-t border-slate-600/50">
+                             {/* Debug info - remove this later */}
+                             <div className="mb-4 p-2 bg-slate-800/50 rounded text-xs text-slate-400">
+                               <strong>Debug:</strong> Available data: {JSON.stringify({
+                                 hasCareerPaths: !!guidance.careerPaths,
+                                 careerPathsLength: guidance.careerPaths?.length || 0,
+                                 hasSkillGaps: !!guidance.skillGaps,
+                                 skillGapsLength: guidance.skillGaps?.length || 0,
+                                 hasLearningRoadmap: !!guidance.learningRoadmap
+                               })}
+                             </div>
+                             
+                             {/* Raw AI Response - let's see what we actually have */}
+                             <div className="mb-4 p-3 bg-yellow-900/20 rounded border border-yellow-600/30">
+                               <h6 className="text-yellow-200 text-sm font-medium mb-2">🔍 Raw AI Response:</h6>
+                               <pre className="text-yellow-200 text-xs overflow-auto max-h-40">
+                                 {JSON.stringify(guidance, null, 2)}
+                               </pre>
+                             </div>
+                             
+                             {/* Test message - should always show when expanded */}
+                             <div className="mb-4 p-3 bg-green-900/20 rounded border border-green-600/30">
+                               <p className="text-green-200 text-sm">
+                                 ✅ <strong>Expandable content is working!</strong> This message should always appear when expanded.
+                               </p>
+                             </div>
+                             
+                             {/* Check for any AI response content */}
+                             {guidance.aiResponse && (
+                               <div className="mb-4 p-3 bg-blue-900/20 rounded border border-blue-600/30">
+                                 <h6 className="text-blue-200 text-sm font-medium mb-2">🤖 AI Response:</h6>
+                                 <p className="text-blue-200 text-sm">{guidance.aiResponse}</p>
+                               </div>
+                             )}
+                             
+                             {guidance.response && (
+                               <div className="mb-4 p-3 bg-blue-900/20 rounded border border-blue-600/30">
+                                 <h6 className="text-blue-200 text-sm font-medium mb-2">🤖 AI Response (response field):</h6>
+                                 <p className="text-blue-200 text-sm">{guidance.response}</p>
+                               </div>
+                             )}
+                             
+                             {guidance.guidance && (
+                               <div className="mb-4 p-3 bg-blue-900/20 rounded border border-blue-600/30">
+                                 <h6 className="text-blue-200 text-sm font-medium mb-2">🤖 AI Response (guidance field):</h6>
+                                 <p className="text-blue-200 text-sm">{guidance.guidance}</p>
+                               </div>
+                             )}
+                             <div className="space-y-4">
                              {/* Career Paths */}
                              {guidance.careerPaths && guidance.careerPaths.length > 0 && (
                                <div>
@@ -367,6 +418,18 @@ export default function Dashboard() {
                                      </div>
                                    )}
                                  </div>
+                               </div>
+                             )}
+                             
+                             {/* Fallback message if no content */}
+                             {(!guidance.careerPaths || guidance.careerPaths.length === 0) && 
+                              (!guidance.skillGaps || guidance.skillGaps.length === 0) && 
+                              !guidance.learningRoadmap && (
+                               <div className="text-center py-8">
+                                 <p className="text-slate-400 text-sm">
+                                   No detailed content available for this session. 
+                                   The AI response may not have included structured data.
+                                 </p>
                                </div>
                              )}
                            </div>

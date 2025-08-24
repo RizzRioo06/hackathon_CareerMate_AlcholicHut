@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { Brain, Lightbulb, Target, CheckCircle } from 'lucide-react'
+import config from './config'
 
 interface PersonalitySnapshotProps {
   onComplete: (results: any) => void
@@ -71,7 +72,7 @@ export default function PersonalitySnapshot({ onComplete }: PersonalitySnapshotP
       
       Keep it short, practical, and career-focused.`
 
-      const response = await fetch('/api/analyze-personality', {
+      const response = await fetch(`${config.apiUrl}/analyze-personality`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ answers: userAnswers, prompt })

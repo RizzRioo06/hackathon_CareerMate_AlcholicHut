@@ -322,47 +322,38 @@ app.post('/api/career-storyteller', async (req, res) => {
 // Personality Analysis endpoint
 app.post('/api/analyze-personality', async (req, res) => {
   try {
-    const { answers, prompt } = req.body
+    const { answers } = req.body
 
     if (!answers || !Array.isArray(answers)) {
       return res.status(400).json({ error: 'Invalid answers format' })
     }
 
-    // Use existing OpenAI integration
-    const openai = require('./services/openai')
+    // Use existing OpenAI service functions
+    const openaiService = require('./services/openai')
     
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      messages: [
-        {
-          role: "system",
-          content: "You are a career counselor and personality analyst. Provide insights based on user preferences."
-        },
-        {
-          role: "user",
-          content: prompt
-        }
-      ],
-      max_tokens: 300,
-      temperature: 0.7
-    })
-
-    const response = completion.choices[0].message.content
-    
-    // Try to parse JSON response, fallback to structured text if needed
-    try {
-      const parsedResponse = JSON.parse(response)
-      res.json(parsedResponse)
-    } catch (parseError) {
-      // If AI doesn't return valid JSON, create structured response
-      const fallbackResponse = {
-        insight: "Based on your preferences, you have a unique work style that can be leveraged for career success.",
-        careers: ["Career Development", "Professional Growth", "Skill Building"],
-        workStyle: "Your work preferences suggest a balanced approach to projects and collaboration.",
-        learningStyle: "You adapt well to different learning environments and methods."
-      }
-      res.json(fallbackResponse)
+    // Create a mock user profile based on personality answers
+    const mockProfile = {
+      skills: answers.join(', '),
+      interests: 'Personality-based career guidance',
+      goals: 'Career development based on work preferences',
+      experience: 'Entry level',
+      education: 'Self-assessment',
+      location: 'Remote',
+      preferredRole: 'Career guidance'
     }
+
+    // Use the existing generateCareerGuidance function
+    const careerData = await openaiService.generateCareerGuidance(mockProfile)
+    
+    // Transform the response to match personality format
+    const personalityResponse = {
+      insight: `Based on your work preferences (${answers.join(', ')}), you have a unique approach to projects and collaboration.`,
+      careers: careerData.careerPaths.slice(0, 3), // Take first 3 career paths
+      workStyle: `Your preferences suggest a ${answers.includes('A') ? 'structured' : answers.includes('B') ? 'dynamic' : 'collaborative'} work approach.`,
+      learningStyle: `You learn best through ${answers.includes('A') ? 'systematic study' : answers.includes('B') ? 'hands-on experience' : 'discussion and collaboration'}.`
+    }
+
+    res.json(personalityResponse)
 
   } catch (error) {
     console.error('Personality analysis error:', error)

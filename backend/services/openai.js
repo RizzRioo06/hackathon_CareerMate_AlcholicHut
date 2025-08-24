@@ -610,5 +610,7 @@ module.exports = {
   generateMockInterview,
   generateJobSuggestions,
   evaluateInterviewAnswer,
-  generateCareerStory
+  generateCareerStory,
+  // Export the OpenAI client for direct use
+  openai: openai
 };

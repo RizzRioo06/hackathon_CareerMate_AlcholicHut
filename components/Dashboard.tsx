@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Target, MessageSquare, Briefcase, Trash2, Calendar, User, Settings, Crown, Star, Zap } from 'lucide-react'
+import { Target, MessageSquare, Briefcase, Trash2, Calendar, User } from 'lucide-react'
 import config from './config'
 import { useAuth } from './AuthContext'
 import Logo from './Logo'
@@ -21,15 +21,6 @@ export default function Dashboard() {
   })
   const [isLoading, setIsLoading] = useState(true)
   const [activeTab, setActiveTab] = useState<'guidance' | 'interviews' | 'jobs'>('guidance')
-  const [showPaymentModal, setShowPaymentModal] = useState(false)
-  const [userTier, setUserTier] = useState<'free' | 'pro' | 'team' | 'enterprise'>('free')
-
-  // Mock usage data for showcase
-  const usageData = {
-    careerGuidance: { used: 2, limit: 3 },
-    mockInterviews: { used: 1, limit: 1 },
-    jobSuggestions: { used: 3, limit: 5 }
-  }
 
   useEffect(() => {
     fetchAllData()
@@ -138,29 +129,12 @@ export default function Dashboard() {
     <div className="min-h-screen bg-slate-900 text-slate-100">
       <div className="max-w-7xl mx-auto px-6 py-12">
         {/* Header */}
-        <div className="flex items-center justify-between mb-12">
-          <div className="text-center flex-1">
-            <div className="inline-flex items-center justify-center mb-6">
-              <Logo size="xl" />
-            </div>
-            <h1 className="text-4xl font-bold mb-4">Your CosmicCraft Dashboard</h1>
-            <p className="text-xl text-slate-400">All your AI-generated career insights in one place</p>
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center justify-center mb-6">
+            <Logo size="xl" />
           </div>
-          
-          {/* User Info & Settings */}
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2 text-slate-300">
-              <User className="h-5 w-5" />
-              <span>Welcome, Admin!</span>
-            </div>
-            <button
-              onClick={() => setShowPaymentModal(true)}
-              className="p-3 bg-slate-700/50 hover:bg-slate-600/50 rounded-xl border border-slate-600/50 transition-colors group"
-              title="Account Settings & Subscription"
-            >
-              <Settings className="h-5 w-5 text-slate-300 group-hover:text-white transition-colors" />
-            </button>
-          </div>
+          <h1 className="text-4xl font-bold mb-4">Your CosmicCraft Dashboard</h1>
+          <p className="text-xl text-slate-400">All your AI-generated career insights in one place</p>
         </div>
 
         {/* Stats Cards */}
@@ -364,207 +338,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Payment Modal */}
-      {showPaymentModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="bg-slate-800 rounded-2xl border border-slate-700/50 p-8 max-w-4xl w-full mx-4 max-h-[90vh] overflow-y-auto">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h2 className="text-3xl font-bold text-white mb-2">Account Settings</h2>
-                <p className="text-slate-400">Manage your subscription and usage</p>
-              </div>
-              <button
-                onClick={() => setShowPaymentModal(false)}
-                className="p-2 text-slate-400 hover:text-white hover:bg-slate-700/50 rounded-lg transition-colors"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
-            </div>
 
-            {/* Current Usage */}
-            <div className="bg-slate-700/50 rounded-xl p-6 mb-8">
-              <h3 className="text-xl font-semibold text-white mb-4">Current Usage (Free Tier)</h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="bg-slate-600/50 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-slate-300 text-sm">Career Guidance</span>
-                    <span className="text-white font-semibold">{usageData.careerGuidance.used}/{usageData.careerGuidance.limit}</span>
-                  </div>
-                  <div className="w-full bg-slate-500 rounded-full h-2">
-                    <div 
-                      className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${(usageData.careerGuidance.used / usageData.careerGuidance.limit) * 100}%` }}
-                    ></div>
-                  </div>
-                </div>
-                <div className="bg-slate-600/50 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-slate-300 text-sm">Mock Interviews</span>
-                    <span className="text-white font-semibold">{usageData.mockInterviews.used}/{usageData.mockInterviews.limit}</span>
-                  </div>
-                  <div className="w-full bg-slate-500 rounded-full h-2">
-                    <div 
-                      className="bg-purple-500 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${(usageData.mockInterviews.used / usageData.mockInterviews.limit) * 100}%` }}
-                    ></div>
-                  </div>
-                </div>
-                <div className="bg-slate-600/50 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-slate-300 text-sm">Job Suggestions</span>
-                    <span className="text-white font-semibold">{usageData.jobSuggestions.used}/{usageData.jobSuggestions.limit}</span>
-                  </div>
-                  <div className="w-full bg-slate-500 rounded-full h-2">
-                    <div 
-                      className="bg-orange-500 h-2 rounded-full transition-all duration-300"
-                      style={{ width: `${(usageData.jobSuggestions.used / usageData.jobSuggestions.limit) * 100}%` }}
-                    ></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Pricing Plans */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {/* Free Tier */}
-              <div className="bg-slate-700/50 rounded-xl p-6 border border-slate-600/50">
-                <div className="text-center mb-4">
-                  <div className="w-12 h-12 bg-slate-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <Star className="h-6 w-6 text-slate-300" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-white">Free</h3>
-                  <p className="text-3xl font-bold text-white">$0</p>
-                  <p className="text-slate-400 text-sm">Forever</p>
-                </div>
-                <ul className="space-y-2 mb-6">
-                  <li className="flex items-center text-sm text-slate-300">
-                    <div className="w-2 h-2 bg-slate-500 rounded-full mr-2"></div>
-                    3 Career Guidance sessions
-                  </li>
-                  <li className="flex items-center text-sm text-slate-300">
-                    <div className="w-2 h-2 bg-slate-500 rounded-full mr-2"></div>
-                    1 Mock Interview
-                  </li>
-                  <li className="flex items-center text-sm text-slate-300">
-                    <div className="w-2 h-2 bg-slate-500 rounded-full mr-2"></div>
-                    5 Job Suggestions
-                  </li>
-                </ul>
-                <button className="w-full py-2 px-4 bg-slate-600 text-white rounded-lg cursor-not-allowed opacity-50">
-                  Current Plan
-                </button>
-              </div>
-
-              {/* Pro Tier */}
-              <div className="bg-gradient-to-br from-purple-600/20 to-blue-600/20 rounded-xl p-6 border border-purple-500/30 relative">
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  <div className="bg-gradient-to-r from-purple-500 to-blue-500 text-white text-xs px-3 py-1 rounded-full font-semibold">
-                    POPULAR
-                  </div>
-                </div>
-                <div className="text-center mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <Crown className="h-6 w-6 text-white" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-white">Pro</h3>
-                  <p className="text-3xl font-bold text-white">$19</p>
-                  <p className="text-slate-400 text-sm">per month</p>
-                </div>
-                <ul className="space-y-2 mb-6">
-                  <li className="flex items-center text-sm text-slate-300">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
-                    Unlimited Career Guidance
-                  </li>
-                  <li className="flex items-center text-sm text-slate-300">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
-                    10 Mock Interviews
-                  </li>
-                  <li className="flex items-center text-sm text-slate-300">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
-                    Advanced Job Matching
-                  </li>
-                  <li className="flex items-center text-sm text-slate-300">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full mr-2"></div>
-                    Priority Support
-                  </li>
-                </ul>
-                <button className="w-full py-2 px-4 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-lg hover:from-purple-600 hover:to-blue-600 transition-all duration-200 font-semibold">
-                  Upgrade to Pro
-                </button>
-              </div>
-
-              {/* Team Tier */}
-              <div className="bg-slate-700/50 rounded-xl p-6 border border-slate-600/50">
-                <div className="text-center mb-4">
-                  <div className="w-12 h-12 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <Zap className="h-6 w-6 text-white" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-white">Team</h3>
-                  <p className="text-3xl font-bold text-white">$49</p>
-                  <p className="text-slate-400 text-sm">per month</p>
-                </div>
-                <ul className="space-y-2 mb-6">
-                  <li className="flex items-center text-sm text-slate-300">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                    Everything in Pro
-                  </li>
-                  <li className="flex items-center text-sm text-slate-300">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                    Up to 5 team members
-                  </li>
-                  <li className="flex items-center text-sm text-slate-300">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                    Team collaboration
-                  </li>
-                  <li className="flex items-center text-sm text-slate-300">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                    Advanced analytics
-                  </li>
-                </ul>
-                <button className="w-full py-2 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200 font-semibold">
-                  Get Team Plan
-                </button>
-              </div>
-
-              {/* Enterprise Tier */}
-              <div className="bg-slate-700/50 rounded-xl p-6 border border-slate-600/50">
-                <div className="text-center mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-red-500 rounded-full flex items-center justify-center mx-auto mb-3">
-                    <Crown className="h-6 w-6 text-white" />
-                  </div>
-                  <h3 className="text-lg font-semibold text-white">Enterprise</h3>
-                  <p className="text-3xl font-bold text-white">Custom</p>
-                  <p className="text-slate-400 text-sm">Contact us</p>
-                </div>
-                <ul className="space-y-2 mb-6">
-                  <li className="flex items-center text-sm text-slate-300">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
-                    Unlimited everything
-                  </li>
-                  <li className="flex items-center text-sm text-slate-300">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
-                    White-label options
-                  </li>
-                  <li className="flex items-center text-sm text-slate-300">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
-                    API access
-                  </li>
-                  <li className="flex items-center text-sm text-slate-300">
-                    <div className="w-2 h-2 bg-orange-500 rounded-full mr-2"></div>
-                    Dedicated support
-                  </li>
-                </ul>
-                <button className="w-full py-2 px-4 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-lg hover:from-orange-600 hover:to-red-600 transition-all duration-200 font-semibold">
-                  Contact Sales
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   )
 }

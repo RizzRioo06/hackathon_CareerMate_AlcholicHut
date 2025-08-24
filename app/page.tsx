@@ -25,6 +25,7 @@ import {
   LogOut,
   User
 } from 'lucide-react'
+import Logo from '../components/Logo'
 
 export default function Home() {
   const { user, isLoading, logout } = useAuth()
@@ -73,18 +74,7 @@ export default function Home() {
           <div className="max-w-7xl mx-auto px-6 lg:px-8">
             <div className="flex items-center justify-between h-24">
               <div className="flex items-center space-x-6">
-                <div className="relative">
-                  <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 p-3 rounded-xl shadow-lg animate-pulse-glow">
-                    <Sparkles className="h-7 w-7 text-white" />
-                  </div>
-                  <div className="absolute -top-2 -right-2 w-4 h-4 bg-amber-400 rounded-full animate-bounce"></div>
-                </div>
-                <div>
-                  <h1 className="text-3xl font-bold bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
-                    CosmicCraft
-                  </h1>
-                  <p className="text-base text-slate-300 font-medium mt-1">AI Career & Interview Navigator</p>
-                </div>
+                <Logo size="lg" />
               </div>
               <div className="flex items-center space-x-8">
                 {user ? (
@@ -159,6 +149,9 @@ export default function Home() {
         {isLoading ? (
           <div className="flex items-center justify-center min-h-[400px]">
             <div className="text-center">
+              <div className="mb-6">
+                <Logo size="xl" />
+              </div>
               <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-500 mx-auto mb-4"></div>
               <p className="text-slate-400 text-lg">Loading CosmicCraft...</p>
             </div>
@@ -188,11 +181,8 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6 lg:px-8 py-16">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
             <div className="text-center md:text-left">
-              <div className="flex items-center justify-center md:justify-start space-x-4 mb-6">
-                <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 p-2 rounded-lg">
-                  <Sparkles className="h-5 w-5 text-white" />
-                </div>
-                <h3 className="text-2xl font-bold bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">CosmicCraft</h3>
+              <div className="flex items-center justify-center md:justify-start mb-6">
+                <Logo size="md" />
               </div>
                               <p className="text-slate-300 text-lg leading-relaxed">Your AI-powered cosmic companion for navigating the universe of career opportunities.</p>
             </div>

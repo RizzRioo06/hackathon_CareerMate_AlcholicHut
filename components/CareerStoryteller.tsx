@@ -18,6 +18,7 @@ import {
   Target,
   Heart
 } from 'lucide-react'
+import Logo from './Logo'
 
 
 interface CareerStory {
@@ -330,8 +331,8 @@ export default function CareerStoryteller() {
 
           </div>
           
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl shadow-xl mb-6 animate-bounce-in">
-            <BookOpen className="h-10 w-10 text-white" />
+          <div className="inline-flex items-center justify-center mb-6 animate-bounce-in">
+            <Logo size="xl" />
           </div>
           <h2 className="text-4xl font-bold gradient-text mb-6">
             Narrative Forge

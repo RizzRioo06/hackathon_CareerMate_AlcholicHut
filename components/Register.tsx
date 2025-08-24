@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { useAuth } from './AuthContext'
 import { Eye, EyeOff, Mail, Lock, User, UserPlus, Briefcase, GraduationCap, MapPin, Target, Sparkles } from 'lucide-react'
+import Logo from './Logo'
 
 interface RegisterProps {
   onSwitchToLogin: () => void
@@ -189,10 +190,10 @@ export default function Register({ onSwitchToLogin }: RegisterProps) {
       <div className="w-full max-w-2xl">
         {/* Header */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-2xl shadow-2xl mb-6">
-            <UserPlus className="h-10 w-10 text-white" />
+          <div className="inline-flex items-center justify-center mb-6">
+            <Logo size="lg" />
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Join CareerMate</h1>
+          <h1 className="text-3xl font-bold text-white mb-2">Join CosmicCraft</h1>
           <p className="text-slate-400">Create your account and start your career journey</p>
         </div>
 

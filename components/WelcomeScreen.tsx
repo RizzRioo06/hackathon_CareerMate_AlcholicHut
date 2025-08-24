@@ -2,6 +2,7 @@
 
 import React from 'react'
 import { UserPlus, LogIn, Sparkles } from 'lucide-react'
+import Logo from './Logo'
 
 interface WelcomeScreenProps {
   onShowRegister: () => void
@@ -20,24 +21,15 @@ export default function WelcomeScreen({ onShowRegister, onShowLogin }: WelcomeSc
 
       {/* Subtle Brand Element */}
       <div className="absolute top-8 left-8">
-        <div className="flex items-center space-x-3">
-          <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 p-2 rounded-lg shadow-lg">
-            <Sparkles className="h-5 w-5 text-white" />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
-              CareerMate
-            </h1>
-          </div>
-        </div>
+        <Logo size="sm" />
       </div>
 
       {/* Main Content */}
       <main className="relative max-w-4xl mx-auto px-6 lg:px-8 pt-32 pb-16">
         <div className="text-center mb-20">
           <div className="mb-8">
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 rounded-3xl shadow-2xl mb-8 animate-bounce-in">
-              <Sparkles className="h-12 w-12 text-white" />
+            <div className="inline-flex items-center justify-center mb-8 animate-bounce-in">
+              <Logo size="xl" />
             </div>
           </div>
           <h2 className="text-5xl md:text-6xl font-bold text-white mb-8">

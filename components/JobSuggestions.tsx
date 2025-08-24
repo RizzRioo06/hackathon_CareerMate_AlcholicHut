@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useAuth } from './AuthContext'
 import config from './config'
 import { Briefcase, MapPin, Building, Loader2, TrendingUp, Search, Target, Star, Clock, DollarSign, Users } from 'lucide-react'
+import Logo from './Logo'
 
 interface JobOpportunity {
   title: string
@@ -95,6 +96,9 @@ export default function JobSuggestions() {
     return (
       <div className="min-h-screen bg-slate-900 flex items-center justify-center">
         <div className="text-center">
+          <div className="mb-6">
+            <Logo size="xl" />
+          </div>
           <h1 className="text-2xl font-bold text-white mb-4">Authentication Required</h1>
           <p className="text-slate-400 text-lg">Please log in to access Opportunity Scanner</p>
         </div>
@@ -110,8 +114,8 @@ export default function JobSuggestions() {
           <div className="w-40 h-40 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse-glow"></div>
         </div>
         <div className="relative">
-          <div className="inline-flex items-center justify-center w-28 h-28 bg-gradient-to-r from-purple-600 to-pink-600 rounded-3xl shadow-2xl mb-8 animate-bounce-in">
-            <Briefcase className="h-14 w-14 text-white" />
+          <div className="inline-flex items-center justify-center mb-8 animate-bounce-in">
+            <Logo size="xl" />
           </div>
           <h2 className="text-5xl font-bold gradient-text mb-6">Opportunity Scanner</h2>
           <p className="text-xl text-slate-300 max-w-4xl mx-auto leading-relaxed">
